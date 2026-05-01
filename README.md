@@ -6,8 +6,6 @@ It turns repository context into a fast project overview, native launch copy, an
 
 Repository: https://github.com/moose-lab/QuickFork
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmoose-lab%2FQuickFork&project-name=quickfork&repository-name=QuickFork)
-
 ![QuickFork example cover](public/examples/twvp-cover-en.png)
 
 ## Why QuickFork Exists
@@ -67,7 +65,6 @@ flowchart LR
 - Vitest
 - Testing Library
 - lucide-react
-- Vercel-ready static deployment
 
 ## Project Structure
 
@@ -128,26 +125,6 @@ npm run dev
 npm test
 npm run build
 ```
-
-## Vercel Deployment
-
-QuickFork is ready for Vercel.
-
-Fast path:
-
-1. Click the **Deploy with Vercel** button at the top of this README.
-2. Import `moose-lab/QuickFork`.
-3. Keep the default Vite settings.
-4. Deploy.
-
-Recommended Vercel settings:
-
-- Framework Preset: `Vite`
-- Install Command: `npm install`
-- Build Command: `npm run build`
-- Output Directory: `dist`
-
-The same settings are captured in `vercel.json`.
 
 ## Roadmap
 
