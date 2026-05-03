@@ -14,6 +14,7 @@ describe("repo launch pipeline", () => {
     expect(repo.owner).toBe("QwenLM");
     expect(repo.name).toBe("FlashQLA");
     expect(repo.fullName).toBe("QwenLM/FlashQLA");
+    expect(repo.ownerAvatarUrl).toBe("https://github.com/QwenLM.png");
   });
 
   it("rejects non GitHub repository URLs", () => {
@@ -43,6 +44,11 @@ describe("repo launch pipeline", () => {
     expect(insightCounts).toEqual([3, 3, 3]);
     expect(stepCounts).toEqual([3, 3, 3]);
     expect(promptSlots.flat().every(Boolean)).toBe(true);
+    expect(pack.locales[0].coverPrompt).toContain("official brand logo");
+    expect(pack.locales[0].coverPrompt).toContain("https://github.com/deepseek-ai.png");
+    expect(pack.locales[0].coverPrompt).toContain("GitHub logo is only for the bottom GitHub strip");
+    expect(pack.locales[0].coverPrompt).toContain("Never synthesize random logos");
+    expect(pack.locales[0].coverPrompt).not.toContain("use the GitHub logo with owner text");
   });
 
   it("offers image sizes for README, slides, and social platforms", () => {

@@ -5,6 +5,7 @@ export interface RepoRef {
   name: string;
   fullName: string;
   url: string;
+  ownerAvatarUrl: string;
 }
 
 export interface ModelSettings {
@@ -143,6 +144,7 @@ export function parseGitHubRepoUrl(url: string): RepoRef {
     name,
     fullName: `${owner}/${name}`,
     url: `https://github.com/${owner}/${name}`,
+    ownerAvatarUrl: `https://github.com/${owner}.png`,
   };
 }
 
@@ -237,6 +239,7 @@ function buildCoverPrompt(repo: RepoRef, projectName: string, content: ReturnTyp
     `Primary request: Create a polished launch cover for GitHub project "${projectName}".`,
     "",
     "Style: clean white technical infographic, deep electric blue accent, faint perspective grid, crisp rounded rectangles, modern sans-serif type.",
+    `Identity/logo rule: the card logo slot must use the project's official brand logo when a real logo source asset is supplied. If no official brand logo source is supplied, use the real GitHub account avatar for "${repo.owner}". Owner avatar source URL: ${repo.ownerAvatarUrl}. The GitHub logo is only for the bottom GitHub strip, not the project identity slot. Never synthesize random logos, abstract brand marks, mascots, badges, or unrelated symbols.`,
     `Title text: "${projectName}"`,
     `Subtitle text: "${content.subtitle}"`,
     `Metrics/callouts: ${metrics.join("; ")}`,
@@ -246,8 +249,8 @@ function buildCoverPrompt(repo: RepoRef, projectName: string, content: ReturnTyp
     ...content.steps.map((step, index) => `Step ${index + 1}: ${step}`),
     `GitHub strip URL: github.com/${repo.fullName}`,
     "",
-    "Composition: left column for title and three feature rows; right column for deep-blue three-step workflow panel; top token tiles for inputs; bottom tiles for outputs.",
-    "Constraints: keep text legible, no unrelated logos, no watermark, no fake clutter.",
+    "Composition: left column for official brand logo or real owner avatar identity slot, title, and three feature rows; right column for deep-blue three-step workflow panel; top token tiles for inputs; bottom tiles for outputs.",
+    "Constraints: keep text legible, no random logos, no unrelated logos, no watermark, no fake clutter.",
   ].join("\n");
 }
 

@@ -14,7 +14,7 @@ Good open source projects often hide their best ideas inside README files, paper
 
 - a clear project overview
 - aligned English, Chinese, and Japanese launch copy
-- infographic prompts with fixed visual structure
+- infographic prompts with fixed visual structure and source-backed brand or GitHub account identity assets
 - image size presets for README, PPT, and social platforms
 - model settings surfaced in the app and secrets documented separately
 
@@ -34,6 +34,7 @@ It includes:
 - output size presets for GitHub README, PowerPoint, X/LinkedIn, and square social posts
 - multilingual copy preview
 - infographic prompt preview
+- Brand logo / GitHub account avatar rule to avoid random generated logos
 - example materials from the original FlashQLA / Thinking with Visual Primitives workflow
 
 ## Workflow
