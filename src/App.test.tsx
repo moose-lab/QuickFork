@@ -1,11 +1,17 @@
 import { readFileSync } from "node:fs";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import App from "./App";
 
 const appStyles = readFileSync("src/styles/app.css", "utf8");
 
 describe("App", () => {
+  const originalPath = window.location.pathname;
+
+  afterEach(() => {
+    window.history.replaceState({}, "", originalPath);
+  });
+
   it("renders the landing architecture from the reference page", () => {
     render(<App />);
 
@@ -49,5 +55,28 @@ describe("App", () => {
     expect(defaultQuestion).toBeInTheDocument();
     expect(defaultQuestion).toHaveAttribute("open");
     expect(screen.getByText(/Can the page use real product data later/i)).toBeInTheDocument();
+  });
+
+  it("renders sign-in and sign-up routes for auth entry", () => {
+    window.history.replaceState({}, "", "/sign-in");
+    const { rerender } = render(<App />);
+
+    expect(screen.getByRole("heading", { name: /sign in to quickfork/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /continue with google/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /send sign-in code/i })).toBeInTheDocument();
+
+    window.history.replaceState({}, "", "/sign-up");
+    rerender(<App />);
+
+    expect(screen.getByRole("heading", { name: /create your quickfork account/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/display name/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /send sign-up code/i })).toBeInTheDocument();
+  });
+
+  it("shows auth state controls in the top navigation", () => {
+    render(<App />);
+
+    expect(screen.getByRole("link", { name: /sign in/i })).toHaveAttribute("href", "/sign-in");
+    expect(screen.getByRole("link", { name: /sign up/i })).toHaveAttribute("href", "/sign-up");
   });
 });

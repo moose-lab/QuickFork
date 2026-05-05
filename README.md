@@ -66,6 +66,9 @@ flowchart LR
 - Vitest
 - Testing Library
 - lucide-react
+- Better Auth
+- Neon Postgres
+- Drizzle ORM
 
 ## Project Structure
 
@@ -73,17 +76,26 @@ flowchart LR
 src/
   App.tsx                 Web app shell and product interface
   main.tsx                React entry point
+  components/auth/        Sign-in, sign-up, and user state controls
   core/
     pipeline.ts           Repo parsing, presets, settings, launch package generation
     pipeline.test.ts      Core workflow tests
+  server/
+    auth.ts               Better Auth configuration
+    db/                   Neon Drizzle client and auth schema
   styles/
     app.css               Responsive product UI
+api/
+  auth/[...all].ts        Vercel Function mounted at /api/auth/*
+drizzle/
+  *.sql                   Database migrations
 public/
   examples/               Reference and generated cover images
 docs/
   plans/                  Implementation notes
+drizzle.config.ts         Drizzle migration config
 vercel.json               Vercel deployment config
-.github/workflows/ci.yml  Test and build workflow
+.github/workflows/ci.yml  CI/CD workflow for tests, build, and Vercel production deploys
 ```
 
 ## Model Settings
@@ -102,6 +114,37 @@ Secrets belong on the server, not in browser code:
 
 ```env
 OPENAI_API_KEY=
+DATABASE_URL=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=
+BETTER_AUTH_TRUSTED_ORIGINS=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+RESEND_API_KEY=
+AUTH_EMAIL_FROM=
+```
+
+## Authentication
+
+QuickFork uses Better Auth with Neon Postgres and Drizzle.
+
+- `/sign-up` creates or verifies an account through email OTP.
+- `/sign-in` signs users in with email OTP or Google.
+- `/api/auth/*` is handled by a Vercel Function.
+- The top navigation shows sign-in/sign-up links when signed out and user identity controls when signed in.
+
+Database setup:
+
+```bash
+npm run db:generate
+npm run db:migrate
+```
+
+Google OAuth redirect URLs should include:
+
+```text
+http://localhost:5173/api/auth/callback/google
+https://your-domain.example/api/auth/callback/google
 ```
 
 For live generation, add a Node API layer or Vercel serverless route that:
@@ -120,12 +163,33 @@ npm install
 npm run dev
 ```
 
+Use `npm run dev:vercel` when testing auth locally because `/api/auth/*` is served by Vercel Functions.
+
 ## Verification
 
 ```bash
 npm test
 npm run build
 ```
+
+## Deployment Automation
+
+GitHub Actions runs the full CI/CD workflow in `.github/workflows/ci.yml`.
+
+- Pull requests to `main` run install, tests, and production build.
+- Pushes to `main` run the same verification first, then deploy to Vercel production with prebuilt artifacts.
+- Manual runs are available from the GitHub Actions `workflow_dispatch` button.
+- Vercel native Git auto-deployments are disabled in `vercel.json` so this workflow is the single production deployment path.
+
+Required GitHub repository secrets:
+
+```env
+VERCEL_TOKEN=
+VERCEL_ORG_ID=
+VERCEL_PROJECT_ID=
+```
+
+`VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` come from `.vercel/project.json`. Create `VERCEL_TOKEN` in Vercel account settings and store it only as a GitHub Actions secret.
 
 ## Roadmap
 

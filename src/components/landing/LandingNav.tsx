@@ -1,4 +1,5 @@
 import { navLinks } from "../../content/landing";
+import { UserMenu } from "../auth/UserMenu";
 
 export function LandingNav() {
   return (
@@ -17,9 +18,12 @@ export function LandingNav() {
             </a>
           ))}
         </nav>
-        <a className="navCta" href="#studio">
-          Start a fork
-        </a>
+        <div className="navActions">
+          <a className="navCta secondary" href="/#studio">
+            Start a fork
+          </a>
+          <UserMenu />
+        </div>
       </div>
     </header>
   );
