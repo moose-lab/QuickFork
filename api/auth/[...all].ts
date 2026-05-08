@@ -1,6 +1,4 @@
-import { toNodeHandler } from "better-auth/node";
-
-import { auth } from "../../src/server/auth";
+import { createAuthRouteHandler } from "../../src/server/auth-node-handler.js";
 
 export const config = {
   api: {
@@ -8,4 +6,4 @@ export const config = {
   },
 };
 
-export default toNodeHandler(auth.handler);
+export default createAuthRouteHandler("/api/auth");

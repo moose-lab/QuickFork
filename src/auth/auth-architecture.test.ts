@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { extname, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
@@ -12,6 +12,11 @@ const packageJson = JSON.parse(readProjectFile("package.json"));
 const serverAuth = readProjectFile("src/server/auth.ts");
 const authClient = readProjectFile("src/lib/auth-client.ts");
 const authApi = readProjectFile("api/auth/[...all].ts");
+const authSignInApi = readProjectFile("api/auth/sign-in/[all].ts");
+const authEmailOtpApi = readProjectFile("api/auth/email-otp/[all].ts");
+const authCallbackApi = readProjectFile("api/auth/callback/[all].ts");
+const authNodeHandler = readProjectFile("src/server/auth-node-handler.ts");
+const serverDb = readProjectFile("src/server/db/index.ts");
 const dbSchema = readProjectFile("src/server/db/schema.ts");
 const drizzleConfig = readProjectFile("drizzle.config.ts");
 const vercelConfig = readProjectFile("vercel.json");
@@ -59,8 +64,35 @@ describe("auth architecture", () => {
   });
 
   it("mounts Better Auth under Vercel /api/auth/* functions", () => {
-    expect(authApi).toContain("toNodeHandler(auth.handler)");
+    expect(authNodeHandler).toContain("toNodeHandler(auth.handler)");
+    expect(authNodeHandler).toContain("createAuthRouteHandler");
+    expect(authNodeHandler).toContain("withAuthBasePath");
+    expect(authApi).toContain('createAuthRouteHandler("/api/auth")');
+    expect(authSignInApi).toContain('createAuthRouteHandler("/api/auth/sign-in")');
+    expect(authEmailOtpApi).toContain('createAuthRouteHandler("/api/auth/email-otp")');
+    expect(authCallbackApi).toContain('createAuthRouteHandler("/api/auth/callback")');
     expect(authApi).toContain("bodyParser: false");
+  });
+
+  it("uses Node ESM-compatible extensions for server runtime imports", () => {
+    const runtimeFiles = {
+      "api/auth/[...all].ts": authApi,
+      "api/auth/sign-in/[all].ts": authSignInApi,
+      "api/auth/email-otp/[all].ts": authEmailOtpApi,
+      "api/auth/callback/[all].ts": authCallbackApi,
+      "src/server/auth-node-handler.ts": authNodeHandler,
+      "src/server/auth.ts": serverAuth,
+      "src/server/db/index.ts": serverDb,
+    };
+
+    for (const [filePath, source] of Object.entries(runtimeFiles)) {
+      const imports = [...source.matchAll(/from\s+["'](\.{1,2}\/[^"']+)["']/g)].map(
+        ([, specifier]) => specifier,
+      );
+      const extensionlessImports = imports.filter((specifier) => !extname(specifier));
+
+      expect(extensionlessImports, `${filePath} has extensionless imports`).toEqual([]);
+    }
   });
 
   it("exposes a React auth client with email OTP support", () => {

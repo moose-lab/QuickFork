@@ -2,9 +2,9 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { betterAuth } from "better-auth";
 import { emailOTP } from "better-auth/plugins";
 
-import { db } from "./db";
-import * as schema from "./db/schema";
-import { sendOtpEmail } from "./email";
+import { db } from "./db/index.js";
+import * as schema from "./db/schema.js";
+import { sendOtpEmail } from "./email.js";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
