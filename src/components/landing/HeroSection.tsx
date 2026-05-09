@@ -1,8 +1,14 @@
 import { useState } from "react";
-import { ArrowRight, FileText, Link2, Wand2 } from "lucide-react";
+import { ArrowRight, FileText, Link2, PlayCircle, Wand2 } from "lucide-react";
 import { heroKickers, referenceOutputChips, referenceTabs } from "../../content/landing";
 
 type OutputChipState = Record<string, boolean>;
+
+const heroCapabilities = [
+  ["Analyze", "Reference URL"],
+  ["Structure", "Section map"],
+  ["Package", "Prompt handoff"],
+] as const;
 
 function ReferenceInputPanel() {
   const [activeTab, setActiveTab] = useState(referenceTabs[0]?.label ?? "Reference URL");
@@ -75,52 +81,40 @@ function ReferenceInputPanel() {
   );
 }
 
-function CoverPreview() {
+function ProductAnimationPanel() {
   return (
-    <div className="heroVisual" aria-label="Landing page cover preview">
-      <div className="coverStage">
-        <div className="coverCard back" aria-hidden="true" />
-        <div className="coverCard mid" aria-hidden="true" />
-        <article className="coverCard front">
-          <div className="coverToolbar">
-            <div className="coverDots" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </div>
-            <span>quickfork studio</span>
+    <div className="heroVisual" aria-label="QuickFork product preview">
+      <aside className="productPlayback">
+        <div className="playbackHeader">
+          <span>
+            <PlayCircle aria-hidden="true" size={15} />
+            Live product playback
+          </span>
+          <strong>16:9 demo</strong>
+        </div>
+        <div className="videoFrame">
+          <video
+            aria-label="Product animation playback"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            src="/media/quickfork-hero-16x9-black.mp4"
+          />
+        </div>
+        <div className="playbackMeta">
+          <div>
+            <span>Output path</span>
+            <strong>Reference URL to launch page spine</strong>
           </div>
-          <div className="coverArt">
-            <div className="coverKicker">
-              <span>landing overview</span>
-              <span>v0.1</span>
-            </div>
-            <div className="coverLines" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-              <span />
-            </div>
-            <div className="coverMap" aria-hidden="true">
-              <b />
-              <b />
-              <b />
-              <b />
-            </div>
+          <div aria-hidden="true" className="playbackMeter">
+            <i />
+            <i />
+            <i />
           </div>
-          <div className="coverCaption">
-            <div>
-              <strong>Reference logic, original surface.</strong>
-              <p>Section map, hero copy, prompt bundle, and responsive HTML handoff.</p>
-            </div>
-            <div className="downloadBadge">Download package</div>
-          </div>
-        </article>
-        <aside className="floatNote">
-          <span>Prompt bundle</span>
-          <p>Fast overview, landing copy, section map, hero prompt, feature prompt, and social poster prompt.</p>
-        </aside>
-      </div>
+        </div>
+      </aside>
     </div>
   );
 }
@@ -150,9 +144,17 @@ export function HeroSection() {
               Preview prompts
             </a>
           </div>
+          <div className="heroCapabilityGrid" aria-label="QuickFork workflow">
+            {heroCapabilities.map(([label, value]) => (
+              <div key={label}>
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </div>
+            ))}
+          </div>
           <ReferenceInputPanel />
         </div>
-        <CoverPreview />
+        <ProductAnimationPanel />
       </div>
     </section>
   );
