@@ -1,8 +1,3 @@
-type NavLink = {
-  label: string;
-  href: string;
-};
-
 type ReferenceTab = {
   label: string;
   active?: boolean;
@@ -76,14 +71,6 @@ type FaqItem = {
   answer: string;
   defaultOpen?: boolean;
 };
-
-export const navLinks = [
-  { label: "Overview", href: "#hero" },
-  { label: "Features", href: "#features" },
-  { label: "How to", href: "#how-to" },
-  { label: "Proof", href: "#proof" },
-  { label: "FAQ", href: "#faq" },
-] satisfies Array<NavLink>;
 
 export const heroKickers = [
   "Reference page URL",

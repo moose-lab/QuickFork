@@ -203,7 +203,7 @@ export function FAQSection() {
 
 export function ClosingCTA() {
   return (
-    <section className="closing" id="closing" aria-labelledby="closing-title">
+    <section className="closing" id="pricing" aria-labelledby="closing-title">
       <div>
         <span className="monoLabel">Final CTA</span>
         <h2 id="closing-title">Start with the page that works. Ship the page that belongs to you.</h2>

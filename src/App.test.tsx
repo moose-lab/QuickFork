@@ -19,10 +19,9 @@ describe("App", () => {
     expect(appStyles).toMatch(/\.nav\s*{[^}]*position:\s*sticky;/s);
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /features/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /how to/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /proof/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /faq/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
+    expect(screen.getByRole("link", { name: /pricing/i })).toHaveAttribute("href", "#pricing");
+    expect(screen.queryByRole("link", { name: /start a fork/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         name: /turn a reference page into a launch-ready story/i,
