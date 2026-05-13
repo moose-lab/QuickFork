@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import { render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
 const appStyles = readFileSync("src/styles/app.css", "utf8");
@@ -10,6 +10,7 @@ describe("App", () => {
 
   afterEach(() => {
     window.history.replaceState({}, "", originalPath);
+    vi.unstubAllGlobals();
   });
 
   it("renders the landing architecture from the reference page", () => {
@@ -24,12 +25,10 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /start a fork/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: /turn a reference page into a launch-ready story/i,
+        name: /turn a github repository into a launch-ready story/i,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: /reference input/i })).toHaveValue(
-      "https://www.design.com/s/logo-maker",
-    );
+    expect(screen.getByRole("textbox", { name: /github repository url/i })).toHaveValue("https://github.com/QwenLM/FlashQLA");
     const heroVideo = document.querySelector('video[aria-label="Product animation playback"]');
     expect(heroVideo).toBeInTheDocument();
     expect(heroVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
@@ -51,6 +50,60 @@ describe("App", () => {
     expect(screen.getAllByText(/README/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/PPT/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Social/i).length).toBeGreaterThan(0);
+  });
+
+  it("submits the Hero generator form to the backend generation API", async () => {
+    const fetchMock = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          id: "gen_qwenlm_flashqla_test",
+          status: "completed",
+          repo: {
+            owner: "QwenLM",
+            repo: "FlashQLA",
+            full_name: "QwenLM/FlashQLA",
+            repo_url: "https://github.com/QwenLM/FlashQLA",
+          },
+          artifactRoot: "output/project-launch/qwenlm-flashqla",
+          manifestPath: "output/project-launch/qwenlm-flashqla/manifest.json",
+          outputs: {
+            en: {
+              promptPath: "output/project-launch/qwenlm-flashqla/en/marketing_card_prompt.txt",
+              imagePath: "output/project-launch/qwenlm-flashqla/en/marketing-card.png",
+              qualityReportPath: "output/project-launch/qwenlm-flashqla/en/quality-report.json",
+            },
+          },
+        }),
+        { headers: { "Content-Type": "application/json" }, status: 201 },
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+
+    const form = screen.getByRole("form", { name: /project launch generator/i });
+    fireEvent.change(within(form).getByRole("textbox", { name: /github repository url/i }), {
+      target: { value: "https://github.com/QwenLM/FlashQLA" },
+    });
+    fireEvent.click(within(form).getByRole("button", { name: /generate launch package/i }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/generations",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    const requestBody = JSON.parse((fetchMock.mock.calls[0]?.[1] as RequestInit).body as string);
+    expect(requestBody).toEqual({
+      repoUrl: "https://github.com/QwenLM/FlashQLA",
+      locales: ["en", "zh", "ja"],
+      preset: "github-readme",
+      provider: "mock",
+      imageQuality: "high",
+    });
+    expect(await screen.findByText(/generated gen_qwenlm_flashqla_test/i)).toBeInTheDocument();
   });
 
   it("uses native FAQ disclosure items", () => {

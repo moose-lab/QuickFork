@@ -1,4 +1,5 @@
 import type { ImagePromptResult, ImageQuality, LocalizedCardCopy, MarketingCardLayoutSpec, ProjectBrief, StoredReferenceAsset, VisualDirection } from "./types.js";
+import { DEFAULT_GENERATION_MODELS } from "./llm.js";
 
 const PRESET_SIZES = {
   "github-readme": "1536x1024",
@@ -19,6 +20,7 @@ export function buildImagePrompt(input: {
   primaryAsset: StoredReferenceAsset;
   quality: ImageQuality;
   preset: keyof typeof PRESET_SIZES;
+  model?: string;
 }): ImagePromptResult {
   const { visualDirection, layout, copy, primaryAsset } = input;
   const prompt = [
@@ -78,7 +80,7 @@ export function buildImagePrompt(input: {
   ].join("\n");
 
   return {
-    model: "gpt-image-2",
+    model: input.model?.trim() || DEFAULT_GENERATION_MODELS.image,
     size: imageSizeForPreset(input.preset),
     quality: input.quality,
     prompt,

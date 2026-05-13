@@ -1,83 +1,174 @@
-import { useState } from "react";
-import { ArrowRight, FileText, Link2, Wand2 } from "lucide-react";
-import { referenceOutputChips, referenceTabs } from "../../content/landing";
+import { useState, type FormEvent } from "react";
+import { ArrowRight, FileText, Github, Image, Languages, Loader2, Wand2 } from "lucide-react";
 
-type OutputChipState = Record<string, boolean>;
+type LocaleCode = "en" | "zh" | "ja";
+type OutputPreset = "github-readme" | "ppt-wide" | "x-linkedin-landscape" | "square-social";
+type ImageQuality = "low" | "medium" | "high" | "auto";
 
 const heroCapabilities = [
-  ["Analyze", "Reference URL"],
-  ["Structure", "Section map"],
-  ["Package", "Prompt handoff"],
+  ["Analyze", "GitHub repo"],
+  ["Structure", "Project brief"],
+  ["Package", "Cards + prompts"],
 ] as const;
 
-function ReferenceInputPanel() {
-  const [activeTab, setActiveTab] = useState(referenceTabs[0]?.label ?? "Reference URL");
-  const [referenceUrl, setReferenceUrl] = useState("https://www.design.com/s/logo-maker");
-  const [status, setStatus] = useState("Ready to analyze");
-  const [outputs, setOutputs] = useState<OutputChipState>(() =>
-    Object.fromEntries(referenceOutputChips.map((chip) => [chip.label, chip.defaultActive])),
-  );
+const presetOptions: Array<{ id: OutputPreset; label: string }> = [
+  { id: "github-readme", label: "README" },
+  { id: "ppt-wide", label: "PPT" },
+  { id: "x-linkedin-landscape", label: "Social" },
+  { id: "square-social", label: "Square" },
+];
+
+const localeOptions: Array<{ id: LocaleCode; label: string }> = [
+  { id: "en", label: "EN" },
+  { id: "zh", label: "ZH" },
+  { id: "ja", label: "JA" },
+];
+
+interface GenerationSummary {
+  id: string;
+  artifactRoot?: string;
+  manifestPath?: string;
+}
+
+async function createGeneration(input: {
+  repoUrl: string;
+  locales: LocaleCode[];
+  preset: OutputPreset;
+  imageQuality: ImageQuality;
+}) {
+  const response = await fetch("/api/generations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      repoUrl: input.repoUrl,
+      locales: input.locales,
+      preset: input.preset,
+      provider: "mock",
+      imageQuality: input.imageQuality,
+    }),
+  });
+  const body = (await response.json()) as GenerationSummary | { error?: { message?: string } };
+  if (!response.ok) {
+    throw new Error("error" in body && body.error?.message ? body.error.message : "Generation request failed.");
+  }
+  return body as GenerationSummary;
+}
+
+function ProjectLaunchInputPanel() {
+  const [repoUrl, setRepoUrl] = useState("https://github.com/QwenLM/FlashQLA");
+  const [preset, setPreset] = useState<OutputPreset>("github-readme");
+  const [imageQuality, setImageQuality] = useState<ImageQuality>("high");
+  const [locales, setLocales] = useState<LocaleCode[]>(["en", "zh", "ja"]);
+  const [status, setStatus] = useState("Ready to generate");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [generation, setGeneration] = useState<GenerationSummary | null>(null);
+
+  const toggleLocale = (locale: LocaleCode) => {
+    setLocales((current) => {
+      if (current.includes(locale)) {
+        return current.length === 1 ? current : current.filter((item) => item !== locale);
+      }
+      return [...current, locale].sort((a, b) => localeOptions.findIndex((item) => item.id === a) - localeOptions.findIndex((item) => item.id === b));
+    });
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedRepoUrl = repoUrl.trim();
+    if (!trimmedRepoUrl) {
+      setStatus("Add a GitHub repository URL to continue");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setGeneration(null);
+    setStatus("Generating project launch package");
+    try {
+      const result = await createGeneration({
+        repoUrl: trimmedRepoUrl,
+        locales,
+        preset,
+        imageQuality,
+      });
+      setGeneration(result);
+      setStatus(`Generated ${result.id}`);
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Generation request failed.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className="referencePanel" aria-label="Reference input panel">
+    <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
       <div className="referenceTabs" aria-label="Reference source">
-        {referenceTabs.map((tab) => (
+        {presetOptions.map((option) => (
           <button
-            aria-pressed={activeTab === tab.label}
-            className={activeTab === tab.label ? "referenceTab active" : "referenceTab"}
-            key={tab.label}
-            onClick={() => setActiveTab(tab.label)}
+            aria-pressed={preset === option.id}
+            className={preset === option.id ? "referenceTab active" : "referenceTab"}
+            key={option.id}
+            onClick={() => setPreset(option.id)}
             type="button"
           >
-            {tab.label}
+            {option.label}
           </button>
         ))}
       </div>
       <div className="referenceForm">
         <label className="referenceField">
-          <Link2 aria-hidden="true" size={17} />
-          <span className="srOnly">Reference input</span>
+          <Github aria-hidden="true" size={17} />
+          <span className="srOnly">GitHub repository URL</span>
           <input
-            aria-label="Reference input"
+            aria-label="GitHub repository URL"
             onChange={(event) => {
-              setReferenceUrl(event.target.value);
-              setStatus(event.target.value.trim() ? "Ready to analyze" : "Add a URL to continue");
+              setRepoUrl(event.target.value);
+              setStatus(event.target.value.trim() ? "Ready to generate" : "Add a GitHub repository URL to continue");
             }}
-            value={referenceUrl}
+            value={repoUrl}
           />
         </label>
-        <button
-          className="primaryButton"
-          onClick={() => setStatus(referenceUrl.trim() ? "Reference structure queued" : "Add a URL to continue")}
-          type="button"
-        >
-          <Wand2 aria-hidden="true" size={17} />
-          Analyze reference
+        <button className="primaryButton" disabled={isSubmitting} type="submit">
+          {isSubmitting ? <Loader2 aria-hidden="true" className="spinIcon" size={17} /> : <Wand2 aria-hidden="true" size={17} />}
+          Generate launch package
         </button>
       </div>
       <div className="referenceOptions">
         <div className="referenceSelect">
-          <span>Language</span>
-          <strong>SaaS English</strong>
+          <span>
+            <Image aria-hidden="true" size={13} /> Quality
+          </span>
+          <select
+            aria-label="Hero image quality"
+            onChange={(event) => setImageQuality(event.target.value as ImageQuality)}
+            value={imageQuality}
+          >
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+            <option value="auto">Auto</option>
+          </select>
         </div>
-        <div className="referencePlatforms" aria-label="Output platforms">
-          {referenceOutputChips.map((chip) => (
+        <div className="referencePlatforms" aria-label="Output languages">
+          <span className="referenceInlineLabel">
+            <Languages aria-hidden="true" size={13} /> Languages
+          </span>
+          {localeOptions.map((locale) => (
             <button
-              aria-pressed={outputs[chip.label]}
-              className={outputs[chip.label] ? "active" : ""}
-              key={chip.label}
-              onClick={() => setOutputs((current) => ({ ...current, [chip.label]: !current[chip.label] }))}
+              aria-pressed={locales.includes(locale.id)}
+              className={locales.includes(locale.id) ? "active" : ""}
+              key={locale.id}
+              onClick={() => toggleLocale(locale.id)}
               type="button"
             >
-              {chip.label}
+              {locale.label}
             </button>
           ))}
         </div>
       </div>
       <p className="referenceStatus" aria-live="polite">
-        {status}
+        {generation?.artifactRoot ? `${status} · ${generation.artifactRoot}` : status}
       </p>
-    </div>
+    </form>
   );
 }
 
@@ -106,10 +197,10 @@ export function HeroSection() {
     <section className="hero" id="hero" aria-labelledby="hero-title">
       <div className="heroGrid">
         <div className="heroContent">
-          <h1 id="hero-title">Turn a reference page into a launch-ready story.</h1>
+          <h1 id="hero-title">Turn a GitHub repository into a launch-ready story.</h1>
           <p className="heroCopy">
-            Analyze a proven landing page, structure the product overview, generate native SaaS copy, and produce
-            share-ready visual prompts for hero, sections, social posts, and designer handoff.
+            Paste a GitHub repository, extract its README and identity signals, then generate a multilingual launch
+            package with traceable prompts, quality reports, and model-ready card artifacts.
           </p>
           <div className="heroActions">
             <a className="primaryButton" href="#how-to">
@@ -129,7 +220,7 @@ export function HeroSection() {
               </div>
             ))}
           </div>
-          <ReferenceInputPanel />
+          <ProjectLaunchInputPanel />
         </div>
         <ProductAnimationPanel />
       </div>

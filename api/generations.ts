@@ -5,6 +5,10 @@ import type { CreateGenerationInput } from "../src/server/generation/types.js";
 import { GenerationError } from "../src/server/generation/types.js";
 
 type ApiErrorCode = "VALIDATION_ERROR" | "METHOD_NOT_ALLOWED" | "GENERATION_FAILED";
+const localeValues = ["en", "zh", "ja"] as const;
+const presetValues = ["github-readme", "ppt-wide", "x-linkedin-landscape", "square-social"] as const;
+const providerValues = ["mock"] as const;
+const qualityValues = ["low", "medium", "high", "auto"] as const;
 
 function sendJson(res: ServerResponse, statusCode: number, body: unknown) {
   res.statusCode = statusCode;
@@ -36,7 +40,19 @@ async function readJsonBody(req: IncomingMessage): Promise<unknown> {
   }
 }
 
-function normalizeCreateGenerationInput(body: unknown): CreateGenerationInput {
+function isOneOf<T extends readonly string[]>(value: unknown, allowed: T): value is T[number] {
+  return typeof value === "string" && allowed.includes(value);
+}
+
+function normalizeOptionalStringField(value: unknown, fieldName: string) {
+  if (value === undefined) return undefined;
+  if (typeof value !== "string" || !value.trim()) {
+    throw new GenerationError("VALIDATION_ERROR", `${fieldName} must be a non-empty string.`);
+  }
+  return value.trim();
+}
+
+export function normalizeCreateGenerationInput(body: unknown): CreateGenerationInput {
   if (!body || typeof body !== "object") {
     throw new GenerationError("VALIDATION_ERROR", "Request body must be a JSON object.");
   }
@@ -44,7 +60,31 @@ function normalizeCreateGenerationInput(body: unknown): CreateGenerationInput {
   if (typeof value.repoUrl !== "string" || !value.repoUrl.trim()) {
     throw new GenerationError("VALIDATION_ERROR", "repoUrl is required.");
   }
-  return value as CreateGenerationInput;
+  if (value.locales !== undefined) {
+    if (!Array.isArray(value.locales) || value.locales.length === 0 || !value.locales.every((locale) => isOneOf(locale, localeValues))) {
+      throw new GenerationError("VALIDATION_ERROR", "locales must contain only en, zh, or ja.");
+    }
+  }
+  if (value.preset !== undefined && !isOneOf(value.preset, presetValues)) {
+    throw new GenerationError("VALIDATION_ERROR", "preset is not supported.");
+  }
+  if (value.provider !== undefined && !isOneOf(value.provider, providerValues)) {
+    throw new GenerationError("VALIDATION_ERROR", "provider must be mock.");
+  }
+  if (value.imageQuality !== undefined && !isOneOf(value.imageQuality, qualityValues)) {
+    throw new GenerationError("VALIDATION_ERROR", "imageQuality is not supported.");
+  }
+
+  return {
+    ...value,
+    repoUrl: value.repoUrl.trim(),
+    models: value.models
+      ? {
+          llm: normalizeOptionalStringField(value.models.llm, "models.llm"),
+          image: normalizeOptionalStringField(value.models.image, "models.image"),
+        }
+      : undefined,
+  } as CreateGenerationInput;
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {

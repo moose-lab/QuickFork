@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 
 import { describe, expect, it } from "vitest";
 
+import { createMockLlmAdapter, DEFAULT_GENERATION_MODELS } from "./llm";
 import { runProjectLaunchGeneration } from "./orchestrator";
 import { parseGitHubRepositoryUrl } from "./repo";
 
@@ -37,6 +38,48 @@ Design with the agent already on your laptop.
 `;
 
 describe("project launch generation backend", () => {
+  it("defines a mock LLM adapter boundary with GPT5.5 as the default model", async () => {
+    const repo = parseGitHubRepositoryUrl("https://github.com/nexu-io/open-design");
+    const adapter = createMockLlmAdapter({ model: DEFAULT_GENERATION_MODELS.llm });
+    const result = await adapter.buildProjectLaunchPlan({
+      repo,
+      metadata: {
+        name: "open-design",
+        fullName: "nexu-io/open-design",
+        description: "Open-source Claude Design alternative for local-first agentic design",
+        homepage: "https://open-design.ai",
+        language: "TypeScript",
+        topics: ["design", "agents", "local-first"],
+        defaultBranch: "main",
+        stars: 1200,
+        owner: {
+          login: "nexu-io",
+          avatarUrl: "https://github.com/nexu-io.png",
+          htmlUrl: "https://github.com/nexu-io",
+          type: "Organization",
+        },
+        readmeDownloadUrl: "https://raw.githubusercontent.com/nexu-io/open-design/main/README.md",
+      },
+      readmeMarkdown: openDesignReadme,
+      primaryIdentityAsset: {
+        type: "avatar",
+        url: "https://github.com/nexu-io.png",
+        source: "github_avatar",
+        confidence: "fallback",
+        reason: "test fixture",
+        localPath: "output/project-launch/nexu-io-open-design/assets/nexu-io-github-avatar.png",
+        fileName: "nexu-io-github-avatar.png",
+        mimeType: "image/png",
+        sizeBytes: 12,
+      },
+    });
+
+    expect(result.model).toBe("gpt-5.5");
+    expect(result.brief.title).toBe("Open Design");
+    expect(result.visualDirection.category).toBe("design_tool");
+    expect(result.localizedCopy.en.ctaOrStripText).toBe("github.com/nexu-io/open-design");
+  });
+
   it("normalizes GitHub repository URLs", () => {
     expect(parseGitHubRepositoryUrl("https://github.com/nexu-io/open-design")).toEqual({
       owner: "nexu-io",
@@ -95,6 +138,10 @@ describe("project launch generation backend", () => {
 
       const manifest = JSON.parse(await readFile(result.manifestPath, "utf8")) as { status: string };
       expect(manifest.status).toBe("completed");
+      expect(result.modelConfig).toEqual({
+        llm: "gpt-5.5",
+        image: "gpt-image-2",
+      });
 
       const englishPrompt = await readFile(result.outputs.en.promptPath, "utf8");
       expect(englishPrompt).toContain("Asset type:");

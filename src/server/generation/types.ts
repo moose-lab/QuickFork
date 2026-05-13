@@ -3,6 +3,11 @@ export type GenerationProvider = "mock";
 export type OutputPreset = "github-readme" | "ppt-wide" | "x-linkedin-landscape" | "square-social";
 export type ImageQuality = "low" | "medium" | "high" | "auto";
 
+export interface GenerationModelConfig {
+  llm: string;
+  image: string;
+}
+
 export interface RepoReference {
   owner: string;
   repo: string;
@@ -127,7 +132,7 @@ export interface LocalizedCardCopy {
 }
 
 export interface ImagePromptResult {
-  model: "gpt-image-2";
+  model: string;
   size: string;
   quality: ImageQuality;
   prompt: string;
@@ -136,7 +141,7 @@ export interface ImagePromptResult {
 
 export interface GeneratedImageResult {
   provider: GenerationProvider;
-  model: "gpt-image-2";
+  model: string;
   status: "completed" | "failed";
   imagePath: string;
   promptPath: string;
@@ -163,6 +168,7 @@ export interface CreateGenerationInput {
   preset?: OutputPreset;
   provider?: GenerationProvider;
   imageQuality?: ImageQuality;
+  models?: Partial<GenerationModelConfig>;
   outputRoot?: string;
   mock?: {
     repoMetadata?: Partial<GitHubRepoMetadata>;
@@ -189,6 +195,7 @@ export interface GenerationResponse {
   briefPath: string;
   manifestPath: string;
   primaryIdentityAsset: StoredReferenceAsset;
+  modelConfig: GenerationModelConfig;
   brief: ProjectBrief;
   visualDirection: VisualDirection;
   localizedCopy: Record<LocaleCode, LocalizedCardCopy>;

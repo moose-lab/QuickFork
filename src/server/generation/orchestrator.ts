@@ -2,14 +2,12 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { resolveBrandAssets, storeReferenceAsset } from "./assets.js";
-import { buildProjectBrief } from "./brief.js";
-import { buildLayoutSpec, buildLocalizedCopies } from "./copy.js";
 import { generateMockImage } from "./image-generator.js";
+import { createMockLlmAdapter, resolveGenerationModelConfig } from "./llm.js";
 import { buildImagePrompt } from "./prompt.js";
 import { inspectMarketingCard } from "./quality.js";
-import { buildDefaultMetadata, parseGitHubRepositoryUrl } from "./repo.js";
-import { extractReadmeContext } from "./readme.js";
-import { selectVisualDirection } from "./visual.js";
+import { parseGitHubRepositoryUrl } from "./repo.js";
+import { resolveRepositorySource } from "./repository-source.js";
 import type { CreateGenerationInput, GenerationResponse, LocaleCode } from "./types.js";
 import { GenerationError } from "./types.js";
 
@@ -38,24 +36,16 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
   const provider = input.provider ?? "mock";
   const preset = input.preset ?? "github-readme";
   const imageQuality = input.imageQuality ?? "high";
+  const modelConfig = resolveGenerationModelConfig(input.models);
+  const llm = createMockLlmAdapter({ model: modelConfig.llm });
 
   if (provider !== "mock") {
     throw new GenerationError("VALIDATION_ERROR", "Only the mock image generation provider is supported in this backend MVP.");
   }
 
-  const metadata = buildDefaultMetadata(repo, input.mock?.repoMetadata);
-  const readmeMarkdown =
-    input.mock?.readmeMarkdown ??
-    [
-      `# ${metadata.name}`,
-      "",
-      metadata.description ?? `${metadata.name} is an open-source project.`,
-      "",
-      "- Source-backed benchmark callout",
-      "- Architecture-level differentiator",
-      "- Repeatable open-source workflow",
-    ].join("\n");
-  const readme = extractReadmeContext(readmeMarkdown, repo, metadata);
+  const repositorySource = await resolveRepositorySource(repo, input);
+  const { metadata, readmeMarkdown } = repositorySource;
+  const readme = await llm.readRepositoryContext({ repo, metadata, readmeMarkdown });
   const { primaryAsset } = resolveBrandAssets(repo, metadata, readme);
 
   const artifactRoot = join(input.outputRoot ?? "output/project-launch", projectSlug(repo.owner, repo.repo));
@@ -63,10 +53,14 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
   await mkdir(artifactRoot, { recursive: true });
   const storedPrimaryAsset = await storeReferenceAsset(assetsDir, repo, primaryAsset);
 
-  const brief = buildProjectBrief(metadata, readme);
-  const visualDirection = selectVisualDirection(metadata, brief);
-  const layout = buildLayoutSpec(metadata, brief, storedPrimaryAsset);
-  const localizedCopy = buildLocalizedCopies(metadata, brief);
+  const plan = await llm.buildProjectLaunchPlan({
+    repo,
+    metadata,
+    readmeMarkdown,
+    primaryIdentityAsset: storedPrimaryAsset,
+    readme,
+  });
+  const { brief, visualDirection, layout, localizedCopy } = plan;
 
   const briefPath = join(artifactRoot, "project_brief_curated.json");
   await writeJson(briefPath, brief);
@@ -85,6 +79,7 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
       primaryAsset: storedPrimaryAsset,
       quality: imageQuality,
       preset,
+      model: modelConfig.image,
     });
     const generated = await generateMockImage(localeDir, locale, prompt);
     const quality = inspectMarketingCard({
@@ -115,10 +110,15 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
     primaryIdentityAsset: storedPrimaryAsset.localPath,
     visualDirection: visualDirection.category,
     model: {
-      image: "gpt-image-2",
+      llm: modelConfig.llm,
+      image: modelConfig.image,
       provider,
       quality: imageQuality,
       preset,
+    },
+    source: {
+      repository: repositorySource.source,
+      warnings: repositorySource.warnings,
     },
     locales,
     outputs,
@@ -141,6 +141,7 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
     briefPath,
     manifestPath,
     primaryIdentityAsset: storedPrimaryAsset,
+    modelConfig,
     brief,
     visualDirection,
     localizedCopy,
