@@ -27,11 +27,14 @@ describe("App", () => {
         name: /turn a reference page into a launch-ready story/i,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText(/reference page url/i)).toHaveValue("https://www.design.com/s/logo-maker");
+    expect(screen.getByRole("textbox", { name: /reference input/i })).toHaveValue(
+      "https://www.design.com/s/logo-maker",
+    );
     const heroVideo = document.querySelector('video[aria-label="Product animation playback"]');
     expect(heroVideo).toBeInTheDocument();
     expect(heroVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
-    expect(screen.getByText(/Live product playback/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/QuickFork product preview/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Live product playback/i)).not.toBeInTheDocument();
     expect(screen.getByText(/Fork the anatomy of a high-converting page/i)).toBeInTheDocument();
     expect(screen.getByText(/From reference URL to launchable SaaS page/i)).toBeInTheDocument();
   }, 10000);

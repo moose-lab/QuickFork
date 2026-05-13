@@ -72,12 +72,6 @@ type FaqItem = {
   defaultOpen?: boolean;
 };
 
-export const heroKickers = [
-  "Reference page URL",
-  "Landing structure",
-  "Prompt bundle",
-] satisfies Array<string>;
-
 export const referenceTabs = [
   { label: "Reference URL", active: true },
   { label: "Screenshot" },

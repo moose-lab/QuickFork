@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowRight, FileText, Link2, PlayCircle, Wand2 } from "lucide-react";
-import { heroKickers, referenceOutputChips, referenceTabs } from "../../content/landing";
+import { ArrowRight, FileText, Link2, Wand2 } from "lucide-react";
+import { referenceOutputChips, referenceTabs } from "../../content/landing";
 
 type OutputChipState = Record<string, boolean>;
 
@@ -36,9 +36,9 @@ function ReferenceInputPanel() {
       <div className="referenceForm">
         <label className="referenceField">
           <Link2 aria-hidden="true" size={17} />
-          <span className="srOnly">Reference page URL</span>
+          <span className="srOnly">Reference input</span>
           <input
-            aria-label="Reference page URL"
+            aria-label="Reference input"
             onChange={(event) => {
               setReferenceUrl(event.target.value);
               setStatus(event.target.value.trim() ? "Ready to analyze" : "Add a URL to continue");
@@ -85,13 +85,6 @@ function ProductAnimationPanel() {
   return (
     <div className="heroVisual" aria-label="QuickFork product preview">
       <aside className="productPlayback">
-        <div className="playbackHeader">
-          <span>
-            <PlayCircle aria-hidden="true" size={15} />
-            Live product playback
-          </span>
-          <strong>16:9 demo</strong>
-        </div>
         <div className="videoFrame">
           <video
             aria-label="Product animation playback"
@@ -103,17 +96,6 @@ function ProductAnimationPanel() {
             src="/media/quickfork-hero-16x9-black.mp4"
           />
         </div>
-        <div className="playbackMeta">
-          <div>
-            <span>Output path</span>
-            <strong>Reference URL to launch page spine</strong>
-          </div>
-          <div aria-hidden="true" className="playbackMeter">
-            <i />
-            <i />
-            <i />
-          </div>
-        </div>
       </aside>
     </div>
   );
@@ -124,11 +106,6 @@ export function HeroSection() {
     <section className="hero" id="hero" aria-labelledby="hero-title">
       <div className="heroGrid">
         <div className="heroContent">
-          <div className="heroKicker" aria-label="QuickFork positioning">
-            {heroKickers.map((kicker) => (
-              <span key={kicker}>{kicker}</span>
-            ))}
-          </div>
           <h1 id="hero-title">Turn a reference page into a launch-ready story.</h1>
           <p className="heroCopy">
             Analyze a proven landing page, structure the product overview, generate native SaaS copy, and produce
