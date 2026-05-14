@@ -18,6 +18,7 @@ describe("App", () => {
 
     expect(screen.getByRole("banner")).toHaveClass("nav");
     expect(appStyles).toMatch(/\.nav\s*{[^}]*position:\s*sticky;/s);
+    expect(appStyles).toMatch(/\.heroGrid\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*3fr\)\s+minmax\(0,\s*7fr\);/s);
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
