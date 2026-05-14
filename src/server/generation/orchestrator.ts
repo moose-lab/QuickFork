@@ -2,13 +2,13 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { resolveBrandAssets, storeReferenceAsset } from "./assets.js";
-import { generateMockImage } from "./image-generator.js";
-import { createMockLlmAdapter, resolveGenerationModelConfig } from "./llm.js";
-import { buildImagePrompt } from "./prompt.js";
+import { generateMockImage, generateWavespeedImage } from "./image-generator.js";
+import { WAVESPEED_CHAT_COMPLETIONS_URL, createMockLlmAdapter, createWavespeedLlmAdapter, resolveGenerationModelConfig } from "./llm.js";
+import { WAVESPEED_IMAGE_ENDPOINT, buildImagePrompt } from "./prompt.js";
 import { inspectMarketingCard } from "./quality.js";
 import { parseGitHubRepositoryUrl } from "./repo.js";
 import { resolveRepositorySource } from "./repository-source.js";
-import type { CreateGenerationInput, GenerationResponse, LocaleCode } from "./types.js";
+import type { CreateGenerationInput, GenerationModelCall, GenerationResponse, GenerationStage, LocaleCode } from "./types.js";
 import { GenerationError } from "./types.js";
 
 const DEFAULT_LOCALES: LocaleCode[] = ["en", "zh", "ja"];
@@ -34,18 +34,39 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
   const repo = parseGitHubRepositoryUrl(input.repoUrl);
   const locales = input.locales?.length ? input.locales : DEFAULT_LOCALES;
   const provider = input.provider ?? "mock";
-  const preset = input.preset ?? "ratio-4-3";
-  const imageQuality = input.imageQuality ?? "high";
+  const preset = input.preset ?? "4:3";
+  const imageQuality = input.imageQuality ?? "low";
   const modelConfig = resolveGenerationModelConfig(input.models);
-  const llm = createMockLlmAdapter({ model: modelConfig.llm });
+  const llm = provider === "wavespeed" ? createWavespeedLlmAdapter({ model: modelConfig.llm }) : createMockLlmAdapter({ model: modelConfig.llm });
+  const stages: GenerationStage[] = [];
+  const modelCalls: GenerationModelCall[] = [];
 
-  if (provider !== "mock") {
-    throw new GenerationError("VALIDATION_ERROR", "Only the mock image generation provider is supported in this backend MVP.");
+  if (provider !== "mock" && provider !== "wavespeed") {
+    throw new GenerationError("VALIDATION_ERROR", "provider must be wavespeed.");
   }
 
   const repositorySource = await resolveRepositorySource(repo, input);
+  stages.push({
+    id: "repo",
+    label: "Repository source",
+    status: "completed",
+    detail: repositorySource.source,
+  });
   const { metadata, readmeMarkdown } = repositorySource;
   const readme = await llm.readRepositoryContext({ repo, metadata, readmeMarkdown });
+  stages.push({
+    id: "readme",
+    label: provider === "wavespeed" ? "GPT5.5 README analysis" : "README analysis",
+    status: "completed",
+    model: modelConfig.llm,
+  });
+  modelCalls.push({
+    provider,
+    model: modelConfig.llm,
+    endpoint: provider === "wavespeed" ? WAVESPEED_CHAT_COMPLETIONS_URL : undefined,
+    purpose: "readme_analysis",
+    status: provider === "wavespeed" ? "completed" : "skipped",
+  });
   const { primaryAsset } = resolveBrandAssets(repo, metadata, readme);
 
   const artifactRoot = join(input.outputRoot ?? "output/project-launch", projectSlug(repo.owner, repo.repo));
@@ -60,6 +81,19 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
     primaryIdentityAsset: storedPrimaryAsset,
     readme,
   });
+  stages.push({
+    id: "brief",
+    label: provider === "wavespeed" ? "GPT5.5 launch plan" : "Launch plan",
+    status: "completed",
+    model: modelConfig.llm,
+  });
+  modelCalls.push({
+    provider,
+    model: modelConfig.llm,
+    endpoint: provider === "wavespeed" ? WAVESPEED_CHAT_COMPLETIONS_URL : undefined,
+    purpose: "launch_plan",
+    status: provider === "wavespeed" ? "completed" : "skipped",
+  });
   const { brief, visualDirection, layout, localizedCopy } = plan;
 
   const briefPath = join(artifactRoot, "project_brief_curated.json");
@@ -67,6 +101,7 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
 
   const outputs = {} as GenerationResponse["outputs"];
   const qualityReports: Record<string, unknown> = {};
+  let hasImageFailure = false;
 
   for (const locale of locales) {
     const copy = localizedCopy[locale];
@@ -81,7 +116,21 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
       preset,
       model: modelConfig.image,
     });
-    const generated = await generateMockImage(localeDir, locale, prompt);
+    if (!stages.some((stage) => stage.id === "prompt")) {
+      stages.push({
+        id: "prompt",
+        label: "gpt-image-2 prompt",
+        status: "completed",
+        model: modelConfig.image,
+      });
+    }
+    const generated =
+      provider === "wavespeed"
+        ? await generateWavespeedImage(localeDir, locale, prompt, { preset })
+        : await generateMockImage(localeDir, locale, prompt);
+    if (generated.status === "failed") {
+      hasImageFailure = true;
+    }
     const quality = inspectMarketingCard({
       copy,
       englishCopy: localizedCopy.en,
@@ -95,15 +144,42 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
     outputs[locale] = {
       promptPath: generated.promptPath,
       imagePath: generated.imagePath,
+      ...(generated.imageUrl ? { imageUrl: generated.imageUrl } : {}),
+      status: generated.status,
+      warnings: generated.warnings,
       qualityReportPath,
     };
   }
+  const generationStatus = hasImageFailure ? "failed" : "completed";
+  stages.push({
+    id: "image",
+    label: provider === "wavespeed" ? "gpt-image-2 render" : "Mock image render",
+    status: generationStatus,
+    model: modelConfig.image,
+  });
+  modelCalls.push({
+    provider,
+    model: modelConfig.image,
+    endpoint: provider === "wavespeed" ? WAVESPEED_IMAGE_ENDPOINT : undefined,
+    purpose: "image_generation",
+    status: provider === "wavespeed" ? generationStatus : "skipped",
+  });
+  stages.push({
+    id: "quality",
+    label: "Quality report",
+    status: "completed",
+  });
+  stages.push({
+    id: "manifest",
+    label: "Manifest",
+    status: "completed",
+  });
 
   const generationId = `gen_${repo.owner}_${repo.repo}_${Date.now()}`.replace(/[^a-zA-Z0-9_]/g, "_");
   const manifestPath = join(artifactRoot, "manifest.json");
   const manifest = {
     id: generationId,
-    status: "completed",
+    status: generationStatus,
     repo: responseRepo(repo.owner, repo.repo),
     artifactRoot,
     projectBrief: "project_brief_curated.json",
@@ -121,6 +197,8 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
       warnings: repositorySource.warnings,
     },
     locales,
+    stages,
+    modelCalls,
     outputs,
     qualityReports,
     safety: {
@@ -135,13 +213,15 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
 
   return {
     id: generationId,
-    status: "completed",
+    status: generationStatus,
     repo: responseRepo(repo.owner, repo.repo),
     artifactRoot,
     briefPath,
     manifestPath,
     primaryIdentityAsset: storedPrimaryAsset,
     modelConfig,
+    stages,
+    modelCalls,
     brief,
     visualDirection,
     localizedCopy,

@@ -26,12 +26,12 @@ function listItems(markdown: string) {
 
 function classifyImage(src: string, alt: string | null): ReadmeImageAsset["kind"] {
   const signal = `${src} ${alt ?? ""}`.toLowerCase();
+  if (signal.includes("shields.io") || signal.includes("badge")) return "badge";
   if (signal.includes("logo")) return "logo";
   if (signal.includes("banner") || signal.includes("cover")) return "banner";
   if (signal.includes("hero")) return "hero";
   if (signal.includes("screenshot")) return "screenshot";
   if (signal.includes("diagram") || signal.includes("architecture")) return "diagram";
-  if (signal.includes("badge")) return "badge";
   if (signal.includes("demo")) return "demo";
   return "unknown";
 }

@@ -1,16 +1,17 @@
 export type LocaleCode = "en" | "zh" | "ja";
-export type GenerationProvider = "mock";
+export type GenerationProvider = "mock" | "wavespeed";
 export type OutputPreset =
-  | "github-readme"
-  | "ppt-wide"
-  | "x-linkedin-landscape"
-  | "square-social"
-  | "ratio-16-9"
-  | "ratio-1-1"
-  | "ratio-4-3"
-  | "ratio-3-4"
-  | "ratio-9-16";
-export type ImageQuality = "low" | "medium" | "high" | "auto";
+  | "1:1"
+  | "3:2"
+  | "2:3"
+  | "3:4"
+  | "4:3"
+  | "4:5"
+  | "5:4"
+  | "9:16"
+  | "16:9"
+  | "21:9";
+export type ImageQuality = "low";
 
 export interface GenerationModelConfig {
   llm: string;
@@ -98,7 +99,15 @@ export interface ProjectBrief {
 }
 
 export interface VisualDirection {
-  category: "ai_kernel_infra" | "model_benchmark" | "design_tool" | "devtool" | "creative_tool" | "generic_open_source";
+  category:
+    | "ai_kernel_infra"
+    | "model_benchmark"
+    | "design_tool"
+    | "devtool"
+    | "creative_tool"
+    | "agent_tool"
+    | "open_source_alternative"
+    | "generic_open_source";
   mood: string[];
   palette: {
     background: string;
@@ -153,6 +162,7 @@ export interface GeneratedImageResult {
   model: string;
   status: "completed" | "failed";
   imagePath: string;
+  imageUrl?: string;
   promptPath: string;
   assetPaths: string[];
   warnings: string[];
@@ -188,7 +198,26 @@ export interface CreateGenerationInput {
 export interface GenerationOutputItem {
   promptPath: string;
   imagePath: string;
+  imageUrl?: string;
   qualityReportPath: string;
+  status?: "completed" | "failed";
+  warnings?: string[];
+}
+
+export interface GenerationStage {
+  id: "repo" | "readme" | "brief" | "prompt" | "image" | "quality" | "manifest";
+  label: string;
+  status: "completed" | "failed";
+  model?: string;
+  detail?: string;
+}
+
+export interface GenerationModelCall {
+  provider: GenerationProvider | "github";
+  model: string;
+  endpoint?: string;
+  purpose: "repository_source" | "readme_analysis" | "launch_plan" | "image_generation";
+  status: "completed" | "failed" | "skipped";
 }
 
 export interface GenerationResponse {
@@ -205,6 +234,8 @@ export interface GenerationResponse {
   manifestPath: string;
   primaryIdentityAsset: StoredReferenceAsset;
   modelConfig: GenerationModelConfig;
+  stages: GenerationStage[];
+  modelCalls: GenerationModelCall[];
   brief: ProjectBrief;
   visualDirection: VisualDirection;
   localizedCopy: Record<LocaleCode, LocalizedCardCopy>;

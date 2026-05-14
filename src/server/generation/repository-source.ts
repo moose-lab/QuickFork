@@ -93,16 +93,40 @@ async function fetchText(url: string): Promise<string> {
   return response.text();
 }
 
+function readmeCandidateUrls(metadata: GitHubRepoMetadata) {
+  const [owner, repo] = metadata.fullName.split("/");
+  const candidates = [
+    metadata.readmeDownloadUrl,
+    owner && repo ? `https://raw.githubusercontent.com/${owner}/${repo}/main/README.md` : null,
+    owner && repo ? `https://raw.githubusercontent.com/${owner}/${repo}/master/README.md` : null,
+    owner && repo ? `https://r.jina.ai/https://github.com/${owner}/${repo}` : null,
+  ].filter((url): url is string => Boolean(url));
+
+  return [...new Set(candidates)];
+}
+
 export async function fetchGitHubRepoMetadata(repo: RepoReference): Promise<GitHubRepoMetadata> {
   const value = await fetchJson(`https://api.github.com/repos/${repo.owner}/${repo.repo}`);
   return normalizeGitHubMetadata(repo, value);
 }
 
 export async function fetchRepositoryReadme(metadata: GitHubRepoMetadata): Promise<string> {
-  if (!metadata.readmeDownloadUrl) {
+  const candidates = readmeCandidateUrls(metadata);
+  if (!candidates.length) {
     return fallbackReadme(metadata);
   }
-  return fetchText(metadata.readmeDownloadUrl);
+
+  let lastError: unknown;
+  for (const candidate of candidates) {
+    try {
+      return await fetchText(candidate);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (lastError instanceof GenerationError) throw lastError;
+  throw new GenerationError("GENERATION_FAILED", "README request failed.");
 }
 
 export async function resolveRepositorySource(repo: RepoReference, input: CreateGenerationInput): Promise<RepositorySourceResult> {

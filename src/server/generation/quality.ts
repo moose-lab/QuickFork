@@ -62,6 +62,23 @@ export function inspectMarketingCard(input: {
   return {
     status: hasFailed ? "needs_revision" : "passed",
     checks,
-    revisionPrompt: hasFailed ? "Regenerate with exact identity asset, exact URL, and master layout preserved." : undefined,
+    revisionPrompt: hasFailed ? buildRevisionPrompt(input) : undefined,
   };
+}
+
+function buildRevisionPrompt(input: {
+  copy: LocalizedCardCopy;
+  brief: ProjectBrief;
+  layout: MarketingCardLayoutSpec;
+  primaryAsset: StoredReferenceAsset;
+}) {
+  return [
+    "Regenerate with the same layout.",
+    `Use the exact identity asset: ${input.primaryAsset.localPath}`,
+    "Do not add new logos, badges, mascots, or unrelated symbols.",
+    `GitHub strip URL: ${input.layout.githubStrip.repoUrl}`,
+    `Metrics: ${input.brief.metrics.join("; ")}`,
+    `Features: ${input.copy.featureBullets.join("; ")}`,
+    `Workflow: ${input.copy.workflowLabels.join("; ")}`,
+  ].join(" ");
 }

@@ -6,9 +6,20 @@ import { GenerationError } from "../src/server/generation/types.js";
 
 type ApiErrorCode = "VALIDATION_ERROR" | "METHOD_NOT_ALLOWED" | "GENERATION_FAILED";
 const localeValues = ["en", "zh", "ja"] as const;
-const presetValues = ["github-readme", "ppt-wide", "x-linkedin-landscape", "square-social"] as const;
-const providerValues = ["mock"] as const;
-const qualityValues = ["low", "medium", "high", "auto"] as const;
+const presetValues = [
+  "1:1",
+  "3:2",
+  "2:3",
+  "3:4",
+  "4:3",
+  "4:5",
+  "5:4",
+  "9:16",
+  "16:9",
+  "21:9",
+] as const;
+const providerValues = ["mock", "wavespeed"] as const;
+const qualityValues = ["low"] as const;
 
 function sendJson(res: ServerResponse, statusCode: number, body: unknown) {
   res.statusCode = statusCode;
@@ -69,10 +80,10 @@ export function normalizeCreateGenerationInput(body: unknown): CreateGenerationI
     throw new GenerationError("VALIDATION_ERROR", "preset is not supported.");
   }
   if (value.provider !== undefined && !isOneOf(value.provider, providerValues)) {
-    throw new GenerationError("VALIDATION_ERROR", "provider must be mock.");
+    throw new GenerationError("VALIDATION_ERROR", "provider must be wavespeed.");
   }
   if (value.imageQuality !== undefined && !isOneOf(value.imageQuality, qualityValues)) {
-    throw new GenerationError("VALIDATION_ERROR", "imageQuality is not supported.");
+    throw new GenerationError("VALIDATION_ERROR", "imageQuality must be low.");
   }
 
   return {
@@ -105,6 +116,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       sendError(res, statusCode, error.code, error.message, error.details);
       return;
     }
-    sendError(res, 500, "GENERATION_FAILED", "Failed to generate QuickFork marketing card package.");
+    sendError(
+      res,
+      500,
+      "GENERATION_FAILED",
+      error instanceof Error ? error.message : "Failed to generate QuickFork marketing card package.",
+    );
   }
 }

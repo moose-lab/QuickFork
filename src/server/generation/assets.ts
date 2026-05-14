@@ -33,9 +33,14 @@ function safeName(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function isGitHubBrandAsset(path: string, alt: string | null) {
+  return `${path} ${alt ?? ""}`.toLowerCase().includes("github");
+}
+
 export function resolveBrandAssets(repo: RepoReference, metadata: GitHubRepoMetadata, readme: ReadmeContext): { primaryAsset: BrandAsset; candidates: BrandAsset[] } {
   const imageCandidates: BrandAsset[] = readme.extracted.referencedImages
     .filter((image) => image.kind === "logo" || image.kind === "banner" || image.kind === "hero")
+    .filter((image) => !isGitHubBrandAsset(image.src, image.alt))
     .map((image) => {
       const type: BrandAsset["type"] = image.kind === "logo" ? "logo" : image.kind === "banner" ? "banner" : "hero";
       return {

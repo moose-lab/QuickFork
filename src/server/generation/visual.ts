@@ -19,6 +19,30 @@ export function selectVisualDirection(metadata: GitHubRepoMetadata, brief: Proje
     };
   }
 
+  if (/open[-\s]?source alternative|alternative to|lock[-\s]?in|byok|self[-\s]?host|selfhost|local[-\s]?first/.test(text)) {
+    return {
+      category: "open_source_alternative",
+      mood: ["independent", "trustworthy", "operator-owned", "portable"],
+      palette: { background: "white", text: "charcoal", accent: "green" },
+      typography: ["clear product headline", "compact ownership labels"],
+      layout: ["identity top", "lock-in comparison", "local-first workflow", "GitHub strip bottom"],
+      visualMotifs: ["ownership blocks", "provider choice chips", "self-hosted deployment panel"],
+      avoid: ["fake benchmarks", "random badges", "closed-platform logos"],
+    };
+  }
+
+  if (/agent|tool[-\s]?calling|context routing|context|scheduler|orchestration|dispatch/.test(text)) {
+    return {
+      category: "agent_tool",
+      mood: ["controlled", "systematic", "workflow-native", "operator-friendly"],
+      palette: { background: "near black", text: "soft white", accent: "cyan" },
+      typography: ["compact interface labels", "monospace state chips"],
+      layout: ["agent flow diagram", "context panel", "tool call lane", "review strip"],
+      visualMotifs: ["tool nodes", "context windows", "dispatch arrows", "state timeline"],
+      avoid: ["uncontrolled magic framing", "random agent mascots", "unrelated logos"],
+    };
+  }
+
   if (/kernel|cuda|inference|kv-cache|runtime|performance/.test(text)) {
     return {
       category: "ai_kernel_infra",
