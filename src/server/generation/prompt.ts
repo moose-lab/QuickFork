@@ -6,6 +6,11 @@ const PRESET_SIZES = {
   "ppt-wide": "1920x1080",
   "x-linkedin-landscape": "1600x900",
   "square-social": "1200x1200",
+  "ratio-16-9": "1920x1080",
+  "ratio-1-1": "1200x1200",
+  "ratio-4-3": "1600x1200",
+  "ratio-3-4": "1200x1600",
+  "ratio-9-16": "1080x1920",
 } as const;
 
 export function imageSizeForPreset(preset: keyof typeof PRESET_SIZES) {

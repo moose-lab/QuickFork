@@ -25,12 +25,13 @@ describe("App", () => {
     expect(appStyles).not.toMatch(/drop::first-letter/);
     expect(appStyles).toMatch(/\.productPlayback\s*{[^}]*border:\s*0;[^}]*padding:\s*0;[^}]*box-shadow:\s*none;/s);
     expect(appStyles).toMatch(/\.referenceForm\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+116px;/s);
-    expect(appStyles).toMatch(/\.referenceControls\s*{[^}]*grid-template-columns:\s*minmax\(180px,\s*0\.34fr\)\s+minmax\(0,\s*1fr\);/s);
+    expect(appStyles).toMatch(/\.referenceControls\s*{[^}]*grid-template-columns:\s*minmax\(220px,\s*0\.55fr\)\s+minmax\(140px,\s*0\.45fr\);/s);
     expect(designSpec).toContain("Desktop ratio is 4:6.");
     expect(designSpec).toContain("All visible H1 and H2 headings use the same body sans stack");
     expect(designSpec).toContain("The right animation area is unframed.");
     expect(designSpec).toContain("Hero generation quality is fixed to low by default");
     expect(designSpec).toContain("English is selected by default and Chinese/Japanese are optional");
+    expect(designSpec).toContain("a ratio dropdown aligned on the same row as language controls");
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
@@ -44,17 +45,20 @@ describe("App", () => {
     const form = screen.getByRole("form", { name: /project launch generator/i });
     expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveValue("https://github.com/QwenLM/FlashQLA");
     expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveAttribute("placeholder", "https://github.com/owner/repo");
-    expect(within(form).getByText(/Generate README, PPT, and social media launch assets from one repo URL\./i)).toBeInTheDocument();
+    expect(within(form).getByText(/Can be used to generate README, PPT, or social media launch assets\./i)).toBeInTheDocument();
     expect(within(form).getByRole("button", { name: /^generate$/i })).toBeInTheDocument();
     expect(within(form).queryByLabelText(/hero image quality/i)).not.toBeInTheDocument();
     const languageGroup = within(form).getByRole("group", { name: /preset languages/i });
-    const ratioGroup = within(form).getByRole("group", { name: /card ratio by platform/i });
+    const ratioSelect = within(form).getByRole("combobox", { name: /asset ratio/i });
     expect(within(languageGroup).getByRole("button", { name: /english/i })).toHaveAttribute("aria-pressed", "true");
     expect(within(languageGroup).getByRole("button", { name: /中文/i })).toHaveAttribute("aria-pressed", "false");
     expect(within(languageGroup).getByRole("button", { name: /日本語/i })).toHaveAttribute("aria-pressed", "false");
-    expect(within(ratioGroup).getByRole("button", { name: /github readme 16:9/i })).toBeInTheDocument();
-    expect(within(ratioGroup).getByRole("button", { name: /x \/ linkedin 1\.91:1/i })).toBeInTheDocument();
-    expect(within(ratioGroup).getByRole("button", { name: /instagram square 1:1/i })).toBeInTheDocument();
+    expect(ratioSelect).toHaveValue("ratio-4-3");
+    expect(within(form).getByRole("option", { name: "16:9" })).toBeInTheDocument();
+    expect(within(form).getByRole("option", { name: "1:1" })).toBeInTheDocument();
+    expect(within(form).getByRole("option", { name: "4:3" })).toBeInTheDocument();
+    expect(within(form).getByRole("option", { name: "3:4" })).toBeInTheDocument();
+    expect(within(form).getByRole("option", { name: "9:16" })).toBeInTheDocument();
     const heroVideo = document.querySelector('video[aria-label="Product animation playback"]');
     expect(heroVideo).toBeInTheDocument();
     expect(heroVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
@@ -134,7 +138,7 @@ describe("App", () => {
     expect(requestBody).toEqual({
       repoUrl: "https://github.com/QwenLM/FlashQLA",
       locales: ["en"],
-      preset: "github-readme",
+      preset: "ratio-4-3",
       provider: "mock",
       imageQuality: "low",
     });

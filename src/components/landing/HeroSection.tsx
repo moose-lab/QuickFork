@@ -1,15 +1,16 @@
 import { useState, type FormEvent } from "react";
-import { Github, Languages, Loader2, Wand2 } from "lucide-react";
+import { Github, Languages, Loader2 } from "lucide-react";
 
 type LocaleCode = "en" | "zh" | "ja";
-type OutputPreset = "github-readme" | "ppt-wide" | "x-linkedin-landscape" | "square-social";
+type OutputPreset = "ratio-16-9" | "ratio-1-1" | "ratio-4-3" | "ratio-3-4" | "ratio-9-16";
 type ImageQuality = "low" | "medium" | "high" | "auto";
 
-const ratioOptions: Array<{ id: OutputPreset; platform: string; ratio: string; useCase: string }> = [
-  { id: "github-readme", platform: "GitHub README", ratio: "16:9", useCase: "Cold start, README" },
-  { id: "ppt-wide", platform: "PPT deck", ratio: "16:9", useCase: "Pitch and sales decks" },
-  { id: "x-linkedin-landscape", platform: "X / LinkedIn", ratio: "1.91:1", useCase: "Feed launch posts" },
-  { id: "square-social", platform: "Instagram square", ratio: "1:1", useCase: "Social previews" },
+const ratioOptions: Array<{ id: OutputPreset; label: string }> = [
+  { id: "ratio-16-9", label: "16:9" },
+  { id: "ratio-1-1", label: "1:1" },
+  { id: "ratio-4-3", label: "4:3" },
+  { id: "ratio-3-4", label: "3:4" },
+  { id: "ratio-9-16", label: "9:16" },
 ];
 
 const localeOptions: Array<{ id: LocaleCode; label: string }> = [
@@ -59,7 +60,7 @@ async function createGeneration(input: {
 
 function ProjectLaunchInputPanel() {
   const [repoUrl, setRepoUrl] = useState("https://github.com/QwenLM/FlashQLA");
-  const [preset, setPreset] = useState<OutputPreset>("github-readme");
+  const [preset, setPreset] = useState<OutputPreset>("ratio-4-3");
   const [locales, setLocales] = useState<LocaleCode[]>(["en"]);
   const [status, setStatus] = useState("Ready to generate");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -108,7 +109,7 @@ function ProjectLaunchInputPanel() {
   return (
     <div className="generatorStack">
       <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
-        <p className="referencePrompt">Generate README, PPT, and social media launch assets from one repo URL.</p>
+        <p className="referencePrompt">Can be used to generate README, PPT, or social media launch assets.</p>
         <div className="referenceForm">
           <label className="referenceField">
             <Github aria-hidden="true" size={17} />
@@ -124,7 +125,7 @@ function ProjectLaunchInputPanel() {
             />
           </label>
           <button className="primaryButton" disabled={isSubmitting} type="submit">
-            {isSubmitting ? <Loader2 aria-hidden="true" className="spinIcon" size={17} /> : <Wand2 aria-hidden="true" size={17} />}
+            {isSubmitting ? <Loader2 aria-hidden="true" className="spinIcon" size={17} /> : null}
             Generate
           </button>
         </div>
@@ -145,22 +146,16 @@ function ProjectLaunchInputPanel() {
               </button>
             ))}
           </div>
-          <div className="ratioGrid" aria-label="Card ratio by platform" role="group">
-            {ratioOptions.map((option) => (
-              <button
-                aria-label={`${option.platform} ${option.ratio}, ${option.useCase}`}
-                aria-pressed={preset === option.id}
-                className={preset === option.id ? "ratioCard active" : "ratioCard"}
-                key={option.id}
-                onClick={() => setPreset(option.id)}
-                type="button"
-              >
-                <span className="ratioPlatform">{option.platform}</span>
-                <span className="ratioMeta">{option.ratio}</span>
-                <span className="ratioUse">{option.useCase}</span>
-              </button>
-            ))}
-          </div>
+          <label className="referenceRatioSelect">
+            <span>Ratio</span>
+            <select aria-label="Asset ratio" onChange={(event) => setPreset(event.target.value as OutputPreset)} value={preset}>
+              {ratioOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         <p className="referenceStatus" aria-live="polite">
           {generation?.artifactRoot ? `${status} · ${generation.artifactRoot}` : status}

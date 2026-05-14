@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import { createMockLlmAdapter, DEFAULT_GENERATION_MODELS } from "./llm";
 import { runProjectLaunchGeneration } from "./orchestrator";
+import { imageSizeForPreset } from "./prompt";
 import { parseGitHubRepositoryUrl } from "./repo";
 
 const openDesignReadme = `
@@ -91,6 +92,14 @@ describe("project launch generation backend", () => {
 
   it("rejects non-GitHub repository URLs", () => {
     expect(() => parseGitHubRepositoryUrl("https://example.com/nexu-io/open-design")).toThrow(/github\.com/i);
+  });
+
+  it("supports ratio presets for generated launch assets", () => {
+    expect(imageSizeForPreset("ratio-16-9")).toBe("1920x1080");
+    expect(imageSizeForPreset("ratio-1-1")).toBe("1200x1200");
+    expect(imageSizeForPreset("ratio-4-3")).toBe("1600x1200");
+    expect(imageSizeForPreset("ratio-3-4")).toBe("1200x1600");
+    expect(imageSizeForPreset("ratio-9-16")).toBe("1080x1920");
   });
 
   it("runs the mock orchestration and writes the final artifact tree", async () => {

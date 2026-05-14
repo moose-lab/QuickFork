@@ -1,6 +1,15 @@
 export type LocaleCode = "en" | "zh" | "ja";
 export type GenerationProvider = "mock";
-export type OutputPreset = "github-readme" | "ppt-wide" | "x-linkedin-landscape" | "square-social";
+export type OutputPreset =
+  | "github-readme"
+  | "ppt-wide"
+  | "x-linkedin-landscape"
+  | "square-social"
+  | "ratio-16-9"
+  | "ratio-1-1"
+  | "ratio-4-3"
+  | "ratio-3-4"
+  | "ratio-9-16";
 export type ImageQuality = "low" | "medium" | "high" | "auto";
 
 export interface GenerationModelConfig {

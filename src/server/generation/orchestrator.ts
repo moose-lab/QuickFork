@@ -34,7 +34,7 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
   const repo = parseGitHubRepositoryUrl(input.repoUrl);
   const locales = input.locales?.length ? input.locales : DEFAULT_LOCALES;
   const provider = input.provider ?? "mock";
-  const preset = input.preset ?? "github-readme";
+  const preset = input.preset ?? "ratio-4-3";
   const imageQuality = input.imageQuality ?? "high";
   const modelConfig = resolveGenerationModelConfig(input.models);
   const llm = createMockLlmAdapter({ model: modelConfig.llm });
