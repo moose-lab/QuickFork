@@ -26,8 +26,17 @@ const localeOptions: Array<{ id: LocaleCode; label: string }> = [
 
 interface GenerationSummary {
   id: string;
+  repo?: {
+    full_name: string;
+    repo_url: string;
+  };
   artifactRoot?: string;
   manifestPath?: string;
+  outputs?: Partial<Record<LocaleCode, {
+    promptPath: string;
+    imagePath: string;
+    qualityReportPath: string;
+  }>>;
 }
 
 async function createGeneration(input: {
@@ -99,76 +108,111 @@ function ProjectLaunchInputPanel() {
     }
   };
 
+  const firstOutput = generation?.outputs ? Object.entries(generation.outputs)[0] : undefined;
+  const outputLocale = firstOutput?.[0]?.toUpperCase();
+  const outputPaths = firstOutput?.[1];
+
   return (
-    <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
-      <div className="referenceTabs" aria-label="Reference source">
-        {presetOptions.map((option) => (
-          <button
-            aria-pressed={preset === option.id}
-            className={preset === option.id ? "referenceTab active" : "referenceTab"}
-            key={option.id}
-            onClick={() => setPreset(option.id)}
-            type="button"
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-      <div className="referenceForm">
-        <label className="referenceField">
-          <Github aria-hidden="true" size={17} />
-          <span className="srOnly">GitHub repository URL</span>
-          <input
-            aria-label="GitHub repository URL"
-            onChange={(event) => {
-              setRepoUrl(event.target.value);
-              setStatus(event.target.value.trim() ? "Ready to generate" : "Add a GitHub repository URL to continue");
-            }}
-            value={repoUrl}
-          />
-        </label>
-        <button className="primaryButton" disabled={isSubmitting} type="submit">
-          {isSubmitting ? <Loader2 aria-hidden="true" className="spinIcon" size={17} /> : <Wand2 aria-hidden="true" size={17} />}
-          Generate launch package
-        </button>
-      </div>
-      <div className="referenceOptions">
-        <div className="referenceSelect">
-          <span>
-            <Image aria-hidden="true" size={13} /> Quality
-          </span>
-          <select
-            aria-label="Hero image quality"
-            onChange={(event) => setImageQuality(event.target.value as ImageQuality)}
-            value={imageQuality}
-          >
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-            <option value="auto">Auto</option>
-          </select>
-        </div>
-        <div className="referencePlatforms" aria-label="Output languages">
-          <span className="referenceInlineLabel">
-            <Languages aria-hidden="true" size={13} /> Languages
-          </span>
-          {localeOptions.map((locale) => (
+    <div className="generatorStack">
+      <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
+        <div className="referenceTabs" aria-label="Reference source">
+          {presetOptions.map((option) => (
             <button
-              aria-pressed={locales.includes(locale.id)}
-              className={locales.includes(locale.id) ? "active" : ""}
-              key={locale.id}
-              onClick={() => toggleLocale(locale.id)}
+              aria-pressed={preset === option.id}
+              className={preset === option.id ? "referenceTab active" : "referenceTab"}
+              key={option.id}
+              onClick={() => setPreset(option.id)}
               type="button"
             >
-              {locale.label}
+              {option.label}
             </button>
           ))}
         </div>
-      </div>
-      <p className="referenceStatus" aria-live="polite">
-        {generation?.artifactRoot ? `${status} · ${generation.artifactRoot}` : status}
-      </p>
-    </form>
+        <div className="referenceForm">
+          <label className="referenceField">
+            <Github aria-hidden="true" size={17} />
+            <span className="srOnly">GitHub repository URL</span>
+            <input
+              aria-label="GitHub repository URL"
+              onChange={(event) => {
+                setRepoUrl(event.target.value);
+                setStatus(event.target.value.trim() ? "Ready to generate" : "Add a GitHub repository URL to continue");
+              }}
+              value={repoUrl}
+            />
+          </label>
+          <button className="primaryButton" disabled={isSubmitting} type="submit">
+            {isSubmitting ? <Loader2 aria-hidden="true" className="spinIcon" size={17} /> : <Wand2 aria-hidden="true" size={17} />}
+            Generate launch package
+          </button>
+        </div>
+        <div className="referenceOptions">
+          <div className="referenceSelect">
+            <span>
+              <Image aria-hidden="true" size={13} /> Quality
+            </span>
+            <select
+              aria-label="Hero image quality"
+              onChange={(event) => setImageQuality(event.target.value as ImageQuality)}
+              value={imageQuality}
+            >
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+              <option value="auto">Auto</option>
+            </select>
+          </div>
+          <div className="referencePlatforms" aria-label="Output languages">
+            <span className="referenceInlineLabel">
+              <Languages aria-hidden="true" size={13} /> Languages
+            </span>
+            {localeOptions.map((locale) => (
+              <button
+                aria-pressed={locales.includes(locale.id)}
+                className={locales.includes(locale.id) ? "active" : ""}
+                key={locale.id}
+                onClick={() => toggleLocale(locale.id)}
+                type="button"
+              >
+                {locale.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <p className="referenceStatus" aria-live="polite">
+          {generation?.artifactRoot ? `${status} · ${generation.artifactRoot}` : status}
+        </p>
+      </form>
+
+      {generation ? (
+        <section className="generationOutput" aria-label="Generated launch output">
+          <div className="generationOutputHead">
+            <span>Output package</span>
+            <strong>{generation.repo?.full_name ?? generation.id}</strong>
+          </div>
+          <dl className="generationOutputList">
+            <div>
+              <dt>Artifact root</dt>
+              <dd>{generation.artifactRoot ?? "Not returned"}</dd>
+            </div>
+            <div>
+              <dt>Manifest</dt>
+              <dd>{generation.manifestPath ?? "Not returned"}</dd>
+            </div>
+            {outputPaths ? (
+              <div>
+                <dt>{outputLocale} files</dt>
+                <dd>
+                  <span>{outputPaths.promptPath}</span>
+                  <span>{outputPaths.imagePath}</span>
+                  <span>{outputPaths.qualityReportPath}</span>
+                </dd>
+              </div>
+            ) : null}
+          </dl>
+        </section>
+      ) : null}
+    </div>
   );
 }
 

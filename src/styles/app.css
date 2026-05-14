@@ -627,6 +627,11 @@ blockquote {
   line-height: 1.18;
 }
 
+.generatorStack {
+  display: grid;
+  gap: 10px;
+}
+
 .referencePanel {
   margin-top: 4px;
   border: 1px solid var(--border);
@@ -798,6 +803,63 @@ blockquote {
   color: var(--muted);
   font-size: 10px;
   font-weight: 650;
+}
+
+.generationOutput {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.generationOutputHead {
+  min-height: 46px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.generationOutputHead span,
+.generationOutputList dt {
+  color: var(--muted);
+  font: 650 10px/1.2 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.generationOutputHead strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.generationOutputList {
+  margin: 0;
+  display: grid;
+}
+
+.generationOutputList div {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 6px;
+}
+
+.generationOutputList div:last-child {
+  border-bottom: 0;
+}
+
+.generationOutputList dd {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  overflow-wrap: anywhere;
+  color: var(--fg);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .primaryButton:disabled {

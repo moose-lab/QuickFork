@@ -34,15 +34,17 @@ describe("App", () => {
     expect(heroVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
     expect(screen.getByLabelText(/QuickFork product preview/i)).toBeInTheDocument();
     expect(screen.queryByText(/Live product playback/i)).not.toBeInTheDocument();
-    expect(screen.getByText(/Fork the anatomy of a high-converting page/i)).toBeInTheDocument();
-    expect(screen.getByText(/From reference URL to launchable SaaS page/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /Generate traceable launch assets from repository evidence/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /From GitHub URL to multilingual launch package/i })).toBeInTheDocument();
   }, 10000);
 
   it("keeps the generator studio inside the redesigned frontend", () => {
     render(<App />);
 
     expect(screen.getByText(/Product studio/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/GitHub URL/i)).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: /^GitHub URL$/i })).toBeInTheDocument();
     expect(screen.getByText(/Model settings/i)).toBeInTheDocument();
     expect(screen.getByText(/Narrative options/i)).toBeInTheDocument();
     expect(screen.getByText(/Localized launch package/i)).toBeInTheDocument();
@@ -104,6 +106,14 @@ describe("App", () => {
       imageQuality: "high",
     });
     expect(await screen.findByText(/generated gen_qwenlm_flashqla_test/i)).toBeInTheDocument();
+
+    const output = await screen.findByLabelText(/generated launch output/i);
+    expect(within(output).getByText(/QwenLM\/FlashQLA/i)).toBeInTheDocument();
+    expect(within(output).getByText("output/project-launch/qwenlm-flashqla")).toBeInTheDocument();
+    expect(within(output).getByText(/manifest\.json/i)).toBeInTheDocument();
+    expect(within(output).getByText(/marketing_card_prompt\.txt/i)).toBeInTheDocument();
+    expect(within(output).getByText(/marketing-card\.png/i)).toBeInTheDocument();
+    expect(within(output).getByText(/quality-report\.json/i)).toBeInTheDocument();
   });
 
   it("uses native FAQ disclosure items", () => {

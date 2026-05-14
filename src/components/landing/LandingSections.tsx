@@ -16,10 +16,10 @@ export function FeatureSection() {
     <section className="section" id="features" aria-labelledby="features-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="QuickFork is for teams who already know a landing page should be clear, credible, and shippable. Paste a reference URL, describe your SaaS, and get an editable section system instead of a blank canvas."
+          copy="QuickFork now exposes the backend generation contract in the page itself: repo URL in, curated brief, localized copy, prompts, mock cards, quality reports, and manifest paths out."
           eyebrow="01 / Features"
           id="features-title"
-          title="Fork the anatomy of a high-converting page."
+          title="Generate traceable launch assets from repository evidence."
         />
         <div className="featureBoard" aria-label="QuickFork feature set">
           {featureCards.map((feature) => (
@@ -87,10 +87,10 @@ export function WorkflowSection() {
       <div className="section">
         <div className="sectionGrid">
           <SectionIntro
-            copy="The reference page asks for a business name, generates options, lets users customize, then downloads assets. QuickFork asks for a product, generates section architecture, lets teams edit the page system, then exports a responsive landing draft."
+            copy="The frontend sends a small request, the server runs the mockable A-to-K pipeline, and the Hero page returns concrete paths for the files written under output/project-launch."
             eyebrow="02 / How to"
             id="how-title"
-            title="From reference URL to launchable SaaS page."
+            title="From GitHub URL to multilingual launch package."
           />
           <div className="stepGrid" aria-label="QuickFork workflow">
             {workflowSteps.map((step) => (
@@ -104,7 +104,7 @@ export function WorkflowSection() {
           <div className="productLab" aria-label="QuickFork product interface mockup">
             <div className="labTopbar">
               <span>QuickFork Studio</span>
-              <span>Reference to responsive draft</span>
+              <span>Repository to generated artifacts</span>
             </div>
             <div className="labBody">
               <div className="labSidebar">
@@ -116,16 +116,16 @@ export function WorkflowSection() {
                 ))}
               </div>
               <div className="labCanvas">
-                <div className="canvasTitle">Landing system draft, ready for critique.</div>
+                <div className="canvasTitle">Launch package, ready for review.</div>
                 <div className="canvasModules" aria-hidden="true">
                   {canvasModules.map((module) => (
                     <span key={module}>{module}</span>
                   ))}
                 </div>
                 <div className="canvasFoot">
-                  <span>Responsive HTML</span>
-                  <span>Copy deck</span>
-                  <span>Prompt set</span>
+                  <span>Manifest</span>
+                  <span>Cards</span>
+                  <span>Reports</span>
                 </div>
               </div>
             </div>

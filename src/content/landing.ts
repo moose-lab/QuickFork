@@ -88,64 +88,64 @@ export const referenceOutputChips = [
 
 export const featureCards = [
   {
-    code: "F-01 / Reference parser",
-    title: "Convert proven page flow into reusable structure.",
-    body: "QuickFork reads section order, message intent, CTA placement, and trust patterns from a reference page without copying its brand.",
+    code: "F-01 / Repo intake",
+    title: "Validate one GitHub URL into a canonical source.",
+    body: "QuickFork normalizes owner, repo, full name, and GitHub URL before any artifact is written.",
     description:
-      "QuickFork reads section order, message intent, CTA placement, and trust patterns from a reference page without copying its brand.",
-    artifact: { label: "Input", value: "URL" },
+      "QuickFork normalizes owner, repo, full name, and GitHub URL before any artifact is written.",
+    artifact: { label: "Input", value: "Repo URL" },
     artifactLabel: "Input",
-    artifactValue: "URL",
+    artifactValue: "Repo URL",
   },
   {
-    code: "F-02 / SaaS translation",
-    title: "Rewrite consumer patterns for mature B2B products.",
-    body: "A logo-maker flow becomes a SaaS onboarding story: features, how-to, proof, objections, and conversion prompts.",
+    code: "F-02 / README extraction",
+    title: "Generate traceable launch assets from repository evidence.",
+    body: "README text, GitHub metadata, topics, metrics, official links, and referenced images become the project evidence base.",
     description:
-      "A logo-maker flow becomes a SaaS onboarding story: features, how-to, proof, objections, and conversion prompts.",
-    artifact: { label: "Mapping", value: "8 blocks" },
-    artifactLabel: "Mapping",
-    artifactValue: "8 blocks",
+      "README text, GitHub metadata, topics, metrics, official links, and referenced images become the project evidence base.",
+    artifact: { label: "Signals", value: "README" },
+    artifactLabel: "Signals",
+    artifactValue: "README",
   },
   {
-    code: "F-03 / Editable grid",
-    title: "Design with section logic before decoration.",
-    body: "Swiss-grid controls expose density, proof weight, imagery slots, and CTA cadence so designers can tune the page intentionally.",
+    code: "F-03 / Identity assets",
+    title: "Resolve brand assets before drawing anything.",
+    body: "The pipeline prefers official repo or README assets and falls back to the GitHub avatar instead of inventing random logos.",
     description:
-      "Swiss-grid controls expose density, proof weight, imagery slots, and CTA cadence so designers can tune the page intentionally.",
-    artifact: { label: "Grid", value: "12 col" },
-    artifactLabel: "Grid",
-    artifactValue: "12 col",
+      "The pipeline prefers official repo or README assets and falls back to the GitHub avatar instead of inventing random logos.",
+    artifact: { label: "Asset", value: "Traceable" },
+    artifactLabel: "Asset",
+    artifactValue: "Traceable",
   },
   {
-    code: "F-04 / Asset planner",
-    title: "Place images where they add conviction.",
-    body: "QuickFork marks where a studio image, product crop, customer quote, or proof panel will improve trust instead of adding noise.",
+    code: "F-04 / Brief builder",
+    title: "Convert raw signals into a curated project brief.",
+    body: "Positioning, metrics, key insights, workflow steps, and source signals are saved to project_brief_curated.json.",
     description:
-      "QuickFork marks where a studio image, product crop, customer quote, or proof panel will improve trust instead of adding noise.",
-    artifact: { label: "Image slots", value: "3" },
-    artifactLabel: "Image slots",
-    artifactValue: "3",
+      "Positioning, metrics, key insights, workflow steps, and source signals are saved to project_brief_curated.json.",
+    artifact: { label: "Brief", value: "JSON" },
+    artifactLabel: "Brief",
+    artifactValue: "JSON",
   },
   {
-    code: "F-05 / Copy passes",
-    title: "Generate page copy that respects the product.",
-    body: "No invented traction numbers. The system separates real proof, inferred benefits, and honest placeholders before export.",
+    code: "F-05 / Localized copy",
+    title: "Keep every locale aligned to the same slots.",
+    body: "English, Chinese, and Japanese cards preserve metric order, feature order, workflow order, brand names, and GitHub URL.",
     description:
-      "No invented traction numbers. The system separates real proof, inferred benefits, and honest placeholders before export.",
-    artifact: { label: "Copy", value: "Specific" },
+      "English, Chinese, and Japanese cards preserve metric order, feature order, workflow order, brand names, and GitHub URL.",
+    artifact: { label: "Copy", value: "EN/ZH/JA" },
     artifactLabel: "Copy",
-    artifactValue: "Specific",
+    artifactValue: "EN/ZH/JA",
   },
   {
-    code: "F-06 / HTML handoff",
-    title: "Export a complete landing draft, not a moodboard.",
-    body: "Designers can hand off a responsive HTML prototype with section rhythm, content hierarchy, and image strategy intact.",
+    code: "F-06 / Output package",
+    title: "Write prompts, images, reports, and manifest files.",
+    body: "The mock backend saves model-ready prompts, placeholder cards, per-locale quality reports, assets, and manifest.json.",
     description:
-      "Designers can hand off a responsive HTML prototype with section rhythm, content hierarchy, and image strategy intact.",
-    artifact: { label: "Output", value: "HTML" },
+      "The mock backend saves model-ready prompts, placeholder cards, per-locale quality reports, assets, and manifest.json.",
+    artifact: { label: "Output", value: "Files" },
     artifactLabel: "Output",
-    artifactValue: "HTML",
+    artifactValue: "Files",
   },
 ] satisfies Array<FeatureCard>;
 
@@ -206,41 +206,41 @@ export const showcases = [
 export const workflowSteps = [
   {
     number: "01",
-    title: "Paste a reference landing page.",
-    body: "Use a page like Design.com's logo maker as an inspiration source for section order, proof density, and conversion rhythm.",
-    copy: "Use a page like Design.com's logo maker as an inspiration source for section order, proof density, and conversion rhythm.",
+    title: "Paste a GitHub repository URL.",
+    body: "The frontend sends repoUrl, locales, preset, provider, and image quality to POST /api/generations.",
+    copy: "The frontend sends repoUrl, locales, preset, provider, and image quality to POST /api/generations.",
   },
   {
     number: "02",
-    title: "Describe the SaaS product.",
-    body: "Add audience, product category, constraints, and sections to avoid. QuickFork keeps the output grounded in the product brief.",
-    copy: "Add audience, product category, constraints, and sections to avoid. QuickFork keeps the output grounded in the product brief.",
+    title: "Build the repository evidence package.",
+    body: "The server reads GitHub metadata, README content, official links, referenced images, and identity assets.",
+    copy: "The server reads GitHub metadata, README content, official links, referenced images, and identity assets.",
   },
   {
     number: "03",
-    title: "Review the section system.",
-    body: "Features, how-to, proof, FAQ, and image slots are presented as editable design decisions, not generic templates.",
-    copy: "Features, how-to, proof, FAQ, and image slots are presented as editable design decisions, not generic templates.",
+    title: "Create copy, prompt, and quality artifacts.",
+    body: "The pipeline writes fixed-slot localized copy, gpt-image-2 prompts, mock cards, and quality reports.",
+    copy: "The pipeline writes fixed-slot localized copy, gpt-image-2 prompts, mock cards, and quality reports.",
   },
   {
     number: "04",
-    title: "Export the landing prototype.",
-    body: "Ship a complete HTML page, share it with stakeholders, or hand it to engineering as a high-fidelity front-end brief.",
-    copy: "Ship a complete HTML page, share it with stakeholders, or hand it to engineering as a high-fidelity front-end brief.",
+    title: "Return output paths to the Hero page.",
+    body: "The UI shows artifactRoot, manifestPath, and the first locale's prompt, image, and quality report paths.",
+    copy: "The UI shows artifactRoot, manifestPath, and the first locale's prompt, image, and quality report paths.",
   },
 ] satisfies Array<WorkflowStep>;
 
 export const studioPills = [
-  { label: "Reference URL", value: "design.com/s/logo-maker" },
-  { label: "Product", value: "QuickFork SaaS" },
-  { label: "Sections", value: "Features - How to - Proof - FAQ" },
-  { label: "Style", value: "Swiss grid - serif - editorial imagery" },
+  { label: "Input", value: "github.com/owner/repo" },
+  { label: "Brief", value: "project_brief_curated.json" },
+  { label: "Locales", value: "EN - ZH - JA" },
+  { label: "Outputs", value: "Prompt - image - quality report" },
 ] satisfies Array<StudioPill>;
 
 export const canvasModules = [
-  "Feature matrix",
-  "Workflow section",
-  "FAQ proof",
+  "Brief JSON",
+  "Prompt file",
+  "Quality report",
 ] satisfies Array<string>;
 
 export const proofQuotes = [
@@ -308,4 +308,4 @@ export const faqItems = [
 ] satisfies Array<FaqItem>;
 
 export const pageNote =
-  "Full landing redesign - reference flow adapted from Design.com logo-maker page - QuickFork SaaS";
+  "Project launch generation - mock backend contract - GitHub repository to traceable card artifacts";

@@ -12,7 +12,7 @@ const productMenuItems = [
     href: "#how-to",
     icon: Layers3,
     title: "Launch Flow",
-    description: "From reference page to structured output",
+    description: "From GitHub repo to output package",
   },
   {
     href: "#features",
