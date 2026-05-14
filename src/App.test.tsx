@@ -27,6 +27,7 @@ describe("App", () => {
     expect(designSpec).toContain("Desktop ratio is 4:6.");
     expect(designSpec).toContain("All visible H1 and H2 headings use the same body sans stack");
     expect(designSpec).toContain("The right animation area is unframed.");
+    expect(designSpec).toContain("Hero generation quality is fixed to low by default");
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
@@ -37,7 +38,18 @@ describe("App", () => {
         name: /turn a github repository into a launch-ready story/i,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: /github repository url/i })).toHaveValue("https://github.com/QwenLM/FlashQLA");
+    const form = screen.getByRole("form", { name: /project launch generator/i });
+    expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveValue("https://github.com/QwenLM/FlashQLA");
+    expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveAttribute("placeholder", "https://github.com/owner/repo");
+    expect(within(form).queryByLabelText(/hero image quality/i)).not.toBeInTheDocument();
+    const languageGroup = within(form).getByRole("group", { name: /preset languages/i });
+    const ratioGroup = within(form).getByRole("group", { name: /card ratio by platform/i });
+    expect(within(languageGroup).getByRole("button", { name: /english/i })).toHaveAttribute("aria-pressed", "true");
+    expect(within(languageGroup).getByRole("button", { name: /中文/i })).toBeInTheDocument();
+    expect(within(languageGroup).getByRole("button", { name: /日本語/i })).toBeInTheDocument();
+    expect(within(ratioGroup).getByRole("button", { name: /github readme 16:9/i })).toBeInTheDocument();
+    expect(within(ratioGroup).getByRole("button", { name: /x \/ linkedin 1\.91:1/i })).toBeInTheDocument();
+    expect(within(ratioGroup).getByRole("button", { name: /instagram square 1:1/i })).toBeInTheDocument();
     const heroVideo = document.querySelector('video[aria-label="Product animation playback"]');
     expect(heroVideo).toBeInTheDocument();
     expect(heroVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
@@ -47,7 +59,7 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /preview prompts/i })).not.toBeInTheDocument();
     expect(
       screen.getByText(
-        /QuickFork turns a GitHub repository URL into multilingual launch assets with briefs, prompts, images, and quality reports\./i,
+        /Generate cold-start launch materials for README pages, social media, PPT decks, and product outreach from one repository URL\./i,
       ),
     ).toBeInTheDocument();
     expect(
@@ -119,7 +131,7 @@ describe("App", () => {
       locales: ["en", "zh", "ja"],
       preset: "github-readme",
       provider: "mock",
-      imageQuality: "high",
+      imageQuality: "low",
     });
     expect(await screen.findByText(/generated gen_qwenlm_flashqla_test/i)).toBeInTheDocument();
 

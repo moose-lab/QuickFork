@@ -606,16 +606,6 @@ blockquote {
   box-shadow: var(--shadow);
 }
 
-.referenceTabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  padding: 5px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.referenceTab,
 .referencePlatforms button,
 .tab {
   min-height: 28px;
@@ -629,13 +619,6 @@ blockquote {
   background: transparent;
   font: 650 11px/1 var(--font-mono);
   text-transform: uppercase;
-}
-
-.referenceTab.active,
-.referenceTab[aria-pressed="true"] {
-  color: var(--fg);
-  background: #ffffff;
-  border-color: var(--border);
 }
 
 .referenceForm {
@@ -668,24 +651,6 @@ blockquote {
   font-weight: 600;
 }
 
-.referenceOptions {
-  padding: 0 8px 6px;
-  display: grid;
-  grid-template-columns: minmax(160px, 0.46fr) 1fr;
-  gap: 8px;
-}
-
-.referenceSelect {
-  min-height: 38px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 8px 10px;
-  display: grid;
-  gap: 6px;
-  background: #ffffff;
-}
-
-.referenceSelect span,
 .referenceStatus,
 .referenceInlineLabel,
 .featureCode,
@@ -705,38 +670,17 @@ blockquote {
   text-transform: uppercase;
 }
 
-.referenceSelect span {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 650;
-}
-
-.referenceSelect span,
 .referenceInlineLabel {
   display: inline-flex;
   gap: 6px;
   align-items: center;
 }
 
-.referenceSelect strong {
-  font-size: 15px;
-  font-weight: 650;
-}
-
-.referenceSelect select {
-  width: 100%;
-  border: 0;
-  outline: 0;
-  color: var(--fg);
-  background: transparent;
-  font-size: 15px;
-  font-weight: 650;
-}
-
 .referencePlatforms {
   min-height: 38px;
   border: 1px solid var(--border);
   border-radius: 4px;
+  margin: 0 8px 8px;
   padding: 8px;
   display: flex;
   flex-wrap: wrap;
@@ -761,6 +705,54 @@ blockquote {
   color: #ffffff;
   background: var(--dark);
   border-color: var(--dark);
+}
+
+.ratioGrid {
+  padding: 0 8px 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ratioCard {
+  min-height: 72px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+  text-align: left;
+  color: var(--fg);
+  background: #ffffff;
+}
+
+.ratioCard.active,
+.ratioCard[aria-pressed="true"] {
+  border-color: var(--dark);
+  background: rgba(1, 1, 32, 0.04);
+}
+
+.ratioPlatform,
+.ratioMeta {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.ratioPlatform {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.ratioMeta {
+  font-size: 15px;
+  font-weight: 760;
+}
+
+.ratioUse {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 .referenceStatus {
@@ -1971,7 +1963,7 @@ blockquote {
   }
 
   .referenceForm,
-  .referenceOptions,
+  .ratioGrid,
   .settingGrid,
   .settingGrid label:last-child,
   .optionList,

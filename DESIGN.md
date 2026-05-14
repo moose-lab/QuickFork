@@ -106,11 +106,15 @@ Controls use 4px radius. Repeated cards can use up to 8px radius. Hero media use
 The Hero includes:
 
 - one H1
-- one functional subtitle sentence
+- one functional subtitle sentence about cold-start, README, social media, PPT, and product outreach outputs
 - the project launch input panel
+- preset language buttons for English, Chinese, and Japanese
+- ratio cards that map mainstream platforms to their usual launch-card ratios
 - one unframed product animation panel
 
-The Hero does not include secondary CTA links, capability cards, feature chips, decorative badges, or explanatory labels around the animation.
+Hero generation quality is fixed to low by default and should not be exposed as a user-facing preset in this surface.
+
+The Hero does not include secondary CTA links, capability cards, feature chips, decorative badges, quality selectors, or explanatory labels around the animation.
 
 ## Do's and Don'ts
 

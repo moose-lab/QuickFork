@@ -1,21 +1,21 @@
 import { useState, type FormEvent } from "react";
-import { Github, Image, Languages, Loader2, Wand2 } from "lucide-react";
+import { Github, Languages, Loader2, Wand2 } from "lucide-react";
 
 type LocaleCode = "en" | "zh" | "ja";
 type OutputPreset = "github-readme" | "ppt-wide" | "x-linkedin-landscape" | "square-social";
 type ImageQuality = "low" | "medium" | "high" | "auto";
 
-const presetOptions: Array<{ id: OutputPreset; label: string }> = [
-  { id: "github-readme", label: "README" },
-  { id: "ppt-wide", label: "PPT" },
-  { id: "x-linkedin-landscape", label: "Social" },
-  { id: "square-social", label: "Square" },
+const ratioOptions: Array<{ id: OutputPreset; platform: string; ratio: string; useCase: string }> = [
+  { id: "github-readme", platform: "GitHub README", ratio: "16:9", useCase: "Cold start, README" },
+  { id: "ppt-wide", platform: "PPT deck", ratio: "16:9", useCase: "Pitch and sales decks" },
+  { id: "x-linkedin-landscape", platform: "X / LinkedIn", ratio: "1.91:1", useCase: "Feed launch posts" },
+  { id: "square-social", platform: "Instagram square", ratio: "1:1", useCase: "Social previews" },
 ];
 
 const localeOptions: Array<{ id: LocaleCode; label: string }> = [
-  { id: "en", label: "EN" },
-  { id: "zh", label: "ZH" },
-  { id: "ja", label: "JA" },
+  { id: "en", label: "English" },
+  { id: "zh", label: "中文" },
+  { id: "ja", label: "日本語" },
 ];
 
 interface GenerationSummary {
@@ -60,7 +60,6 @@ async function createGeneration(input: {
 function ProjectLaunchInputPanel() {
   const [repoUrl, setRepoUrl] = useState("https://github.com/QwenLM/FlashQLA");
   const [preset, setPreset] = useState<OutputPreset>("github-readme");
-  const [imageQuality, setImageQuality] = useState<ImageQuality>("high");
   const [locales, setLocales] = useState<LocaleCode[]>(["en", "zh", "ja"]);
   const [status, setStatus] = useState("Ready to generate");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,7 +90,7 @@ function ProjectLaunchInputPanel() {
         repoUrl: trimmedRepoUrl,
         locales,
         preset,
-        imageQuality,
+        imageQuality: "low",
       });
       setGeneration(result);
       setStatus(`Generated ${result.id}`);
@@ -109,19 +108,6 @@ function ProjectLaunchInputPanel() {
   return (
     <div className="generatorStack">
       <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
-        <div className="referenceTabs" aria-label="Reference source">
-          {presetOptions.map((option) => (
-            <button
-              aria-pressed={preset === option.id}
-              className={preset === option.id ? "referenceTab active" : "referenceTab"}
-              key={option.id}
-              onClick={() => setPreset(option.id)}
-              type="button"
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
         <div className="referenceForm">
           <label className="referenceField">
             <Github aria-hidden="true" size={17} />
@@ -132,6 +118,7 @@ function ProjectLaunchInputPanel() {
                 setRepoUrl(event.target.value);
                 setStatus(event.target.value.trim() ? "Ready to generate" : "Add a GitHub repository URL to continue");
               }}
+              placeholder="https://github.com/owner/repo"
               value={repoUrl}
             />
           </label>
@@ -140,38 +127,37 @@ function ProjectLaunchInputPanel() {
             Generate launch package
           </button>
         </div>
-        <div className="referenceOptions">
-          <div className="referenceSelect">
-            <span>
-              <Image aria-hidden="true" size={13} /> Quality
-            </span>
-            <select
-              aria-label="Hero image quality"
-              onChange={(event) => setImageQuality(event.target.value as ImageQuality)}
-              value={imageQuality}
+        <div className="referencePlatforms" aria-label="Preset languages" role="group">
+          <span className="referenceInlineLabel">
+            <Languages aria-hidden="true" size={13} /> Languages
+          </span>
+          {localeOptions.map((locale) => (
+            <button
+              aria-pressed={locales.includes(locale.id)}
+              className={locales.includes(locale.id) ? "active" : ""}
+              key={locale.id}
+              onClick={() => toggleLocale(locale.id)}
+              type="button"
             >
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-              <option value="auto">Auto</option>
-            </select>
-          </div>
-          <div className="referencePlatforms" aria-label="Output languages">
-            <span className="referenceInlineLabel">
-              <Languages aria-hidden="true" size={13} /> Languages
-            </span>
-            {localeOptions.map((locale) => (
-              <button
-                aria-pressed={locales.includes(locale.id)}
-                className={locales.includes(locale.id) ? "active" : ""}
-                key={locale.id}
-                onClick={() => toggleLocale(locale.id)}
-                type="button"
-              >
-                {locale.label}
-              </button>
-            ))}
-          </div>
+              {locale.label}
+            </button>
+          ))}
+        </div>
+        <div className="ratioGrid" aria-label="Card ratio by platform" role="group">
+          {ratioOptions.map((option) => (
+            <button
+              aria-label={`${option.platform} ${option.ratio}, ${option.useCase}`}
+              aria-pressed={preset === option.id}
+              className={preset === option.id ? "ratioCard active" : "ratioCard"}
+              key={option.id}
+              onClick={() => setPreset(option.id)}
+              type="button"
+            >
+              <span className="ratioPlatform">{option.platform}</span>
+              <span className="ratioMeta">{option.ratio}</span>
+              <span className="ratioUse">{option.useCase}</span>
+            </button>
+          ))}
         </div>
         <p className="referenceStatus" aria-live="polite">
           {generation?.artifactRoot ? `${status} · ${generation.artifactRoot}` : status}
@@ -237,7 +223,7 @@ export function HeroSection() {
         <div className="heroContent">
           <h1 id="hero-title">Turn a GitHub repository into a launch-ready story.</h1>
           <p className="heroCopy">
-            QuickFork turns a GitHub repository URL into multilingual launch assets with briefs, prompts, images, and quality reports.
+            Generate cold-start launch materials for README pages, social media, PPT decks, and product outreach from one repository URL.
           </p>
           <ProjectLaunchInputPanel />
         </div>
