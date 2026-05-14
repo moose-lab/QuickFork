@@ -425,7 +425,7 @@ blockquote {
 
 .authCopy h1 {
   max-width: 720px;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(56px, 8vw, 112px);
   line-height: 0.91;
 }
@@ -576,9 +576,10 @@ blockquote {
 
 .hero h1 {
   max-width: 680px;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(44px, 4.6vw, 64px);
-  line-height: 0.9;
+  line-height: 0.96;
+  font-weight: 760;
   letter-spacing: 0;
   text-wrap: balance;
 }
@@ -589,41 +590,6 @@ blockquote {
   font-size: 16px;
   line-height: 1.36;
   text-wrap: pretty;
-}
-
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
-
-.heroCapabilityGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.heroCapabilityGrid div {
-  min-height: 56px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 9px 10px;
-  display: grid;
-  align-content: space-between;
-  background: rgba(255, 255, 255, 0.8);
-}
-
-.heroCapabilityGrid span {
-  color: var(--muted);
-  font: 650 10px/1 var(--font-mono);
-  text-transform: uppercase;
-}
-
-.heroCapabilityGrid strong {
-  color: var(--fg);
-  font-size: 14px;
-  line-height: 1.18;
 }
 
 .generatorStack {
@@ -885,20 +851,18 @@ blockquote {
 
 .productPlayback {
   width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 10px;
-  background:
-    linear-gradient(180deg, rgba(2, 2, 15, 0.98), rgba(2, 2, 15, 0.94)),
-    var(--dark);
-  box-shadow: 0 24px 60px rgba(1, 1, 32, 0.16);
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
   overflow: hidden;
 }
 
 .videoFrame {
   aspect-ratio: 16 / 9;
-  border: 1px solid var(--dark-border);
-  border-radius: 4px;
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
   background: #000000;
 }
@@ -955,22 +919,15 @@ blockquote {
 .showcaseCopy h3,
 .proofAside h3,
 .closing h2 {
-  font-family: var(--font-display);
-  line-height: 0.9;
+  font-family: var(--font-body);
+  line-height: 0.96;
+  font-weight: 760;
   letter-spacing: 0;
   text-wrap: balance;
 }
 
 .sectionTitle h2 {
   font-size: clamp(44px, 6vw, 88px);
-}
-
-.sectionTitle h2.drop::first-letter {
-  float: left;
-  margin: 0.05em 0.11em 0 0;
-  font-size: 2.2em;
-  line-height: 0.68;
-  font-weight: 700;
 }
 
 .sectionCopy {
@@ -1311,9 +1268,10 @@ blockquote {
 
 .canvasTitle {
   max-width: 440px;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 48px;
-  line-height: 0.9;
+  line-height: 0.96;
+  font-weight: 760;
 }
 
 .canvasModules {
@@ -1640,9 +1598,10 @@ figcaption {
 }
 
 blockquote {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(28px, 3vw, 46px);
-  line-height: 1;
+  line-height: 1.04;
+  font-weight: 760;
   text-wrap: balance;
 }
 
@@ -2013,7 +1972,6 @@ blockquote {
 
   .referenceForm,
   .referenceOptions,
-  .heroCapabilityGrid,
   .settingGrid,
   .settingGrid label:last-child,
   .optionList,
@@ -2033,7 +1991,7 @@ blockquote {
   }
 
   .productPlayback {
-    padding: 8px;
+    padding: 0;
   }
 
   .section,
@@ -2047,13 +2005,6 @@ blockquote {
 
   .sectionTitle h2 {
     font-size: clamp(40px, 15vw, 64px);
-  }
-
-  .sectionTitle h2.drop::first-letter {
-    float: none;
-    margin: 0;
-    font-size: 1em;
-    line-height: inherit;
   }
 
   .featureCard,

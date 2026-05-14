@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
 const appStyles = readFileSync("src/styles/app.css", "utf8");
+const designSpec = readFileSync("DESIGN.md", "utf8");
 
 describe("App", () => {
   const originalPath = window.location.pathname;
@@ -19,6 +20,13 @@ describe("App", () => {
     expect(screen.getByRole("banner")).toHaveClass("nav");
     expect(appStyles).toMatch(/\.nav\s*{[^}]*position:\s*sticky;/s);
     expect(appStyles).toMatch(/\.heroGrid\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*3fr\)\s+minmax\(0,\s*7fr\);/s);
+    expect(appStyles).toMatch(/\.hero h1\s*{[^}]*font-family:\s*var\(--font-body\);/s);
+    expect(appStyles).toMatch(/\.sectionTitle h2,\s*\.showcaseCopy h3,\s*\.proofAside h3,\s*\.closing h2\s*{[^}]*font-family:\s*var\(--font-body\);/s);
+    expect(appStyles).not.toMatch(/drop::first-letter/);
+    expect(appStyles).toMatch(/\.productPlayback\s*{[^}]*border:\s*0;[^}]*padding:\s*0;[^}]*box-shadow:\s*none;/s);
+    expect(designSpec).toContain("Desktop ratio is 3:7.");
+    expect(designSpec).toContain("All visible H1 and H2 headings use the same body sans stack");
+    expect(designSpec).toContain("The right animation area is unframed.");
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
@@ -35,6 +43,13 @@ describe("App", () => {
     expect(heroVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
     expect(screen.getByLabelText(/QuickFork product preview/i)).toBeInTheDocument();
     expect(screen.queryByText(/Live product playback/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /see the flow/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /preview prompts/i })).not.toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /QuickFork turns a GitHub repository URL into multilingual launch assets with briefs, prompts, images, and quality reports\./i,
+      ),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: /Generate traceable launch assets from repository evidence/i }),
     ).toBeInTheDocument();

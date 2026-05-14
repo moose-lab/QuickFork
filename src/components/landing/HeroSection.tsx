@@ -1,15 +1,9 @@
 import { useState, type FormEvent } from "react";
-import { ArrowRight, FileText, Github, Image, Languages, Loader2, Wand2 } from "lucide-react";
+import { Github, Image, Languages, Loader2, Wand2 } from "lucide-react";
 
 type LocaleCode = "en" | "zh" | "ja";
 type OutputPreset = "github-readme" | "ppt-wide" | "x-linkedin-landscape" | "square-social";
 type ImageQuality = "low" | "medium" | "high" | "auto";
-
-const heroCapabilities = [
-  ["Analyze", "GitHub repo"],
-  ["Structure", "Project brief"],
-  ["Package", "Cards + prompts"],
-] as const;
 
 const presetOptions: Array<{ id: OutputPreset; label: string }> = [
   { id: "github-readme", label: "README" },
@@ -243,27 +237,8 @@ export function HeroSection() {
         <div className="heroContent">
           <h1 id="hero-title">Turn a GitHub repository into a launch-ready story.</h1>
           <p className="heroCopy">
-            Paste a GitHub repository, extract its README and identity signals, then generate a multilingual launch
-            package with traceable prompts, quality reports, and model-ready card artifacts.
+            QuickFork turns a GitHub repository URL into multilingual launch assets with briefs, prompts, images, and quality reports.
           </p>
-          <div className="heroActions">
-            <a className="primaryButton" href="#how-to">
-              <ArrowRight aria-hidden="true" size={17} />
-              See the flow
-            </a>
-            <a className="secondaryButton" href="#studio">
-              <FileText aria-hidden="true" size={17} />
-              Preview prompts
-            </a>
-          </div>
-          <div className="heroCapabilityGrid" aria-label="QuickFork workflow">
-            {heroCapabilities.map(([label, value]) => (
-              <div key={label}>
-                <span>{label}</span>
-                <strong>{value}</strong>
-              </div>
-            ))}
-          </div>
           <ProjectLaunchInputPanel />
         </div>
         <ProductAnimationPanel />
