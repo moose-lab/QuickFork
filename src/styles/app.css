@@ -621,10 +621,17 @@ blockquote {
   text-transform: uppercase;
 }
 
+.referencePrompt {
+  padding: 10px 12px 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
 .referenceForm {
   padding: 8px;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) 116px;
   gap: 8px;
 }
 
@@ -676,11 +683,18 @@ blockquote {
   align-items: center;
 }
 
+.referenceControls {
+  padding: 0 8px 8px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.34fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
+}
+
 .referencePlatforms {
   min-height: 38px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  margin: 0 8px 8px;
   padding: 8px;
   display: flex;
   flex-wrap: wrap;
@@ -708,19 +722,18 @@ blockquote {
 }
 
 .ratioGrid {
-  padding: 0 8px 8px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
 .ratioCard {
-  min-height: 72px;
+  min-height: 62px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 10px;
+  padding: 8px;
   display: grid;
-  gap: 6px;
+  gap: 4px;
   text-align: left;
   color: var(--fg);
   background: #ffffff;
@@ -1963,6 +1976,7 @@ blockquote {
   }
 
   .referenceForm,
+  .referenceControls,
   .ratioGrid,
   .settingGrid,
   .settingGrid label:last-child,

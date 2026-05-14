@@ -60,7 +60,7 @@ async function createGeneration(input: {
 function ProjectLaunchInputPanel() {
   const [repoUrl, setRepoUrl] = useState("https://github.com/QwenLM/FlashQLA");
   const [preset, setPreset] = useState<OutputPreset>("github-readme");
-  const [locales, setLocales] = useState<LocaleCode[]>(["en", "zh", "ja"]);
+  const [locales, setLocales] = useState<LocaleCode[]>(["en"]);
   const [status, setStatus] = useState("Ready to generate");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generation, setGeneration] = useState<GenerationSummary | null>(null);
@@ -108,6 +108,7 @@ function ProjectLaunchInputPanel() {
   return (
     <div className="generatorStack">
       <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
+        <p className="referencePrompt">Generate README, PPT, and social media launch assets from one repo URL.</p>
         <div className="referenceForm">
           <label className="referenceField">
             <Github aria-hidden="true" size={17} />
@@ -124,40 +125,42 @@ function ProjectLaunchInputPanel() {
           </label>
           <button className="primaryButton" disabled={isSubmitting} type="submit">
             {isSubmitting ? <Loader2 aria-hidden="true" className="spinIcon" size={17} /> : <Wand2 aria-hidden="true" size={17} />}
-            Generate launch package
+            Generate
           </button>
         </div>
-        <div className="referencePlatforms" aria-label="Preset languages" role="group">
-          <span className="referenceInlineLabel">
-            <Languages aria-hidden="true" size={13} /> Languages
-          </span>
-          {localeOptions.map((locale) => (
-            <button
-              aria-pressed={locales.includes(locale.id)}
-              className={locales.includes(locale.id) ? "active" : ""}
-              key={locale.id}
-              onClick={() => toggleLocale(locale.id)}
-              type="button"
-            >
-              {locale.label}
-            </button>
-          ))}
-        </div>
-        <div className="ratioGrid" aria-label="Card ratio by platform" role="group">
-          {ratioOptions.map((option) => (
-            <button
-              aria-label={`${option.platform} ${option.ratio}, ${option.useCase}`}
-              aria-pressed={preset === option.id}
-              className={preset === option.id ? "ratioCard active" : "ratioCard"}
-              key={option.id}
-              onClick={() => setPreset(option.id)}
-              type="button"
-            >
-              <span className="ratioPlatform">{option.platform}</span>
-              <span className="ratioMeta">{option.ratio}</span>
-              <span className="ratioUse">{option.useCase}</span>
-            </button>
-          ))}
+        <div className="referenceControls">
+          <div className="referencePlatforms" aria-label="Preset languages" role="group">
+            <span className="referenceInlineLabel">
+              <Languages aria-hidden="true" size={13} /> Languages
+            </span>
+            {localeOptions.map((locale) => (
+              <button
+                aria-pressed={locales.includes(locale.id)}
+                className={locales.includes(locale.id) ? "active" : ""}
+                key={locale.id}
+                onClick={() => toggleLocale(locale.id)}
+                type="button"
+              >
+                {locale.label}
+              </button>
+            ))}
+          </div>
+          <div className="ratioGrid" aria-label="Card ratio by platform" role="group">
+            {ratioOptions.map((option) => (
+              <button
+                aria-label={`${option.platform} ${option.ratio}, ${option.useCase}`}
+                aria-pressed={preset === option.id}
+                className={preset === option.id ? "ratioCard active" : "ratioCard"}
+                key={option.id}
+                onClick={() => setPreset(option.id)}
+                type="button"
+              >
+                <span className="ratioPlatform">{option.platform}</span>
+                <span className="ratioMeta">{option.ratio}</span>
+                <span className="ratioUse">{option.useCase}</span>
+              </button>
+            ))}
+          </div>
         </div>
         <p className="referenceStatus" aria-live="polite">
           {generation?.artifactRoot ? `${status} · ${generation.artifactRoot}` : status}

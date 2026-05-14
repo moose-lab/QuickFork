@@ -24,10 +24,13 @@ describe("App", () => {
     expect(appStyles).toMatch(/\.sectionTitle h2,\s*\.showcaseCopy h3,\s*\.proofAside h3,\s*\.closing h2\s*{[^}]*font-family:\s*var\(--font-body\);/s);
     expect(appStyles).not.toMatch(/drop::first-letter/);
     expect(appStyles).toMatch(/\.productPlayback\s*{[^}]*border:\s*0;[^}]*padding:\s*0;[^}]*box-shadow:\s*none;/s);
+    expect(appStyles).toMatch(/\.referenceForm\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+116px;/s);
+    expect(appStyles).toMatch(/\.referenceControls\s*{[^}]*grid-template-columns:\s*minmax\(180px,\s*0\.34fr\)\s+minmax\(0,\s*1fr\);/s);
     expect(designSpec).toContain("Desktop ratio is 4:6.");
     expect(designSpec).toContain("All visible H1 and H2 headings use the same body sans stack");
     expect(designSpec).toContain("The right animation area is unframed.");
     expect(designSpec).toContain("Hero generation quality is fixed to low by default");
+    expect(designSpec).toContain("English is selected by default and Chinese/Japanese are optional");
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
@@ -41,12 +44,14 @@ describe("App", () => {
     const form = screen.getByRole("form", { name: /project launch generator/i });
     expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveValue("https://github.com/QwenLM/FlashQLA");
     expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveAttribute("placeholder", "https://github.com/owner/repo");
+    expect(within(form).getByText(/Generate README, PPT, and social media launch assets from one repo URL\./i)).toBeInTheDocument();
+    expect(within(form).getByRole("button", { name: /^generate$/i })).toBeInTheDocument();
     expect(within(form).queryByLabelText(/hero image quality/i)).not.toBeInTheDocument();
     const languageGroup = within(form).getByRole("group", { name: /preset languages/i });
     const ratioGroup = within(form).getByRole("group", { name: /card ratio by platform/i });
     expect(within(languageGroup).getByRole("button", { name: /english/i })).toHaveAttribute("aria-pressed", "true");
-    expect(within(languageGroup).getByRole("button", { name: /中文/i })).toBeInTheDocument();
-    expect(within(languageGroup).getByRole("button", { name: /日本語/i })).toBeInTheDocument();
+    expect(within(languageGroup).getByRole("button", { name: /中文/i })).toHaveAttribute("aria-pressed", "false");
+    expect(within(languageGroup).getByRole("button", { name: /日本語/i })).toHaveAttribute("aria-pressed", "false");
     expect(within(ratioGroup).getByRole("button", { name: /github readme 16:9/i })).toBeInTheDocument();
     expect(within(ratioGroup).getByRole("button", { name: /x \/ linkedin 1\.91:1/i })).toBeInTheDocument();
     expect(within(ratioGroup).getByRole("button", { name: /instagram square 1:1/i })).toBeInTheDocument();
@@ -115,7 +120,7 @@ describe("App", () => {
     fireEvent.change(within(form).getByRole("textbox", { name: /github repository url/i }), {
       target: { value: "https://github.com/QwenLM/FlashQLA" },
     });
-    fireEvent.click(within(form).getByRole("button", { name: /generate launch package/i }));
+    fireEvent.click(within(form).getByRole("button", { name: /^generate$/i }));
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     expect(fetchMock).toHaveBeenCalledWith(
@@ -128,7 +133,7 @@ describe("App", () => {
     const requestBody = JSON.parse((fetchMock.mock.calls[0]?.[1] as RequestInit).body as string);
     expect(requestBody).toEqual({
       repoUrl: "https://github.com/QwenLM/FlashQLA",
-      locales: ["en", "zh", "ja"],
+      locales: ["en"],
       preset: "github-readme",
       provider: "mock",
       imageQuality: "low",

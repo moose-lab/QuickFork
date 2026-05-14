@@ -108,8 +108,10 @@ The Hero includes:
 - one H1
 - one functional subtitle sentence about cold-start, README, social media, PPT, and product outreach outputs
 - the project launch input panel
-- preset language buttons for English, Chinese, and Japanese
-- ratio cards that map mainstream platforms to their usual launch-card ratios
+- one short placeholder line above the Generate button: README, PPT, and social media launch assets from one repo URL
+- a compact GitHub URL input paired with a short Generate button
+- preset language buttons where English is selected by default and Chinese/Japanese are optional
+- ratio cards that map mainstream platforms to their usual launch-card ratios, aligned on the same row as language controls
 - one unframed product animation panel
 
 Hero generation quality is fixed to low by default and should not be exposed as a user-facing preset in this surface.
