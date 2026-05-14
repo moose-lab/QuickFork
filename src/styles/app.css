@@ -686,12 +686,13 @@ blockquote {
 .referenceControls {
   padding: 0 8px 8px;
   display: grid;
-  grid-template-columns: minmax(220px, 0.55fr) minmax(140px, 0.45fr);
+  grid-template-columns: minmax(220px, 0.58fr) minmax(150px, 0.42fr);
   gap: 8px;
   align-items: stretch;
 }
 
 .referencePlatforms {
+  margin: 0;
   min-height: 38px;
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -704,6 +705,7 @@ blockquote {
 }
 
 .referenceInlineLabel {
+  padding: 0;
   color: var(--muted);
   font-size: 10px;
   font-weight: 650;
@@ -747,6 +749,146 @@ blockquote {
   color: var(--fg);
   background: transparent;
   font-weight: 650;
+}
+
+.generationPreview {
+  margin: 0 8px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.generationPreview img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #f6f3ee;
+}
+
+.generationPreviewButton {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  display: block;
+  cursor: zoom-in;
+  background: transparent;
+}
+
+.generationPreviewButton:focus-visible,
+.generationPreviewActions button:focus-visible,
+.generationPreviewActions a:focus-visible,
+.imageLightboxToolbar button:focus-visible,
+.imageLightboxToolbar a:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.generationPreview figcaption {
+  min-height: 34px;
+  padding: 0 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.generationPreview figcaption span {
+  color: var(--muted);
+  font: 650 10px/1.2 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.generationPreview figcaption strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.generationPreviewActions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.generationPreviewActions button,
+.generationPreviewActions a,
+.imageLightboxToolbar button,
+.imageLightboxToolbar a {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  background: #ffffff;
+}
+
+.imageLightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.imageLightboxBackdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  cursor: zoom-out;
+  background: rgba(16, 15, 13, 0.72);
+}
+
+.imageLightboxPanel {
+  position: relative;
+  z-index: 1;
+  width: min(980px, 100%);
+  max-height: min(86vh, 860px);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.imageLightboxToolbar {
+  min-height: 44px;
+  padding: 6px 8px 6px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.imageLightboxToolbar span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.imageLightboxToolbar div {
+  display: flex;
+  gap: 6px;
+}
+
+.imageLightboxPanel img {
+  display: block;
+  width: 100%;
+  max-height: calc(86vh - 46px);
+  object-fit: contain;
+  background: #f6f3ee;
 }
 
 .referenceStatus {

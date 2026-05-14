@@ -25,7 +25,7 @@ describe("App", () => {
     expect(appStyles).not.toMatch(/drop::first-letter/);
     expect(appStyles).toMatch(/\.productPlayback\s*{[^}]*border:\s*0;[^}]*padding:\s*0;[^}]*box-shadow:\s*none;/s);
     expect(appStyles).toMatch(/\.referenceForm\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+116px;/s);
-    expect(appStyles).toMatch(/\.referenceControls\s*{[^}]*grid-template-columns:\s*minmax\(220px,\s*0\.55fr\)\s+minmax\(140px,\s*0\.45fr\);/s);
+    expect(appStyles).toMatch(/\.referenceControls\s*{[^}]*grid-template-columns:\s*minmax\(220px,\s*0\.58fr\)\s+minmax\(150px,\s*0\.42fr\);/s);
     expect(designSpec).toContain("Desktop ratio is 4:6.");
     expect(designSpec).toContain("All visible H1 and H2 headings use the same body sans stack");
     expect(designSpec).toContain("The right animation area is unframed.");
@@ -48,12 +48,15 @@ describe("App", () => {
     expect(within(form).getByText(/Can be used to generate README, PPT, or social media launch assets\./i)).toBeInTheDocument();
     expect(within(form).getByRole("button", { name: /^generate$/i })).toBeInTheDocument();
     expect(within(form).queryByLabelText(/hero image quality/i)).not.toBeInTheDocument();
-    const languageGroup = within(form).getByRole("group", { name: /preset languages/i });
+    const languageGroup = within(form).getByRole("group", { name: /^languages$/i });
     const ratioSelect = within(form).getByRole("combobox", { name: /asset ratio/i });
+    expect(within(languageGroup).getByRole("button", { name: /english/i })).toHaveTextContent("EN");
     expect(within(languageGroup).getByRole("button", { name: /english/i })).toHaveAttribute("aria-pressed", "true");
-    expect(within(languageGroup).getByRole("button", { name: /中文/i })).toHaveAttribute("aria-pressed", "false");
-    expect(within(languageGroup).getByRole("button", { name: /日本語/i })).toHaveAttribute("aria-pressed", "false");
-    expect(ratioSelect).toHaveValue("ratio-4-3");
+    expect(within(languageGroup).getByRole("button", { name: /chinese/i })).toHaveTextContent("ZH");
+    expect(within(languageGroup).getByRole("button", { name: /chinese/i })).toHaveAttribute("aria-pressed", "false");
+    expect(within(languageGroup).getByRole("button", { name: /japanese/i })).toHaveTextContent("JA");
+    expect(within(languageGroup).getByRole("button", { name: /japanese/i })).toHaveAttribute("aria-pressed", "false");
+    expect(ratioSelect).toHaveValue("4:3");
     expect(within(form).getByRole("option", { name: "16:9" })).toBeInTheDocument();
     expect(within(form).getByRole("option", { name: "1:1" })).toBeInTheDocument();
     expect(within(form).getByRole("option", { name: "4:3" })).toBeInTheDocument();
@@ -62,6 +65,13 @@ describe("App", () => {
     const heroVideo = document.querySelector('video[aria-label="Product animation playback"]');
     expect(heroVideo).toBeInTheDocument();
     expect(heroVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
+    expect(heroVideo).toHaveAttribute("autoPlay");
+    expect(heroVideo).not.toHaveAttribute("controls");
+    expect(heroVideo).not.toHaveAttribute("controlsList");
+    expect(heroVideo).toHaveAttribute("disablePictureInPicture");
+    expect(heroVideo).toHaveAttribute("disableRemotePlayback");
+    expect(heroVideo).toHaveAttribute("data-audio-autoplay", "managed");
+    expect(heroVideo).not.toHaveAttribute("muted");
     expect(screen.getByLabelText(/QuickFork product preview/i)).toBeInTheDocument();
     expect(screen.queryByText(/Live product playback/i)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /see the flow/i })).not.toBeInTheDocument();
@@ -109,9 +119,19 @@ describe("App", () => {
             en: {
               promptPath: "output/project-launch/qwenlm-flashqla/en/marketing_card_prompt.txt",
               imagePath: "output/project-launch/qwenlm-flashqla/en/marketing-card.png",
+              imageUrl: "https://wavespeed.ai/generated/qwenlm-flashqla.png",
               qualityReportPath: "output/project-launch/qwenlm-flashqla/en/quality-report.json",
             },
           },
+          stages: [
+            { id: "repo", label: "Repository source", status: "completed" },
+            { id: "readme", label: "GPT5.5 README analysis", status: "completed", model: "openai/gpt-5.5" },
+            { id: "image", label: "gpt-image-2 render", status: "completed", model: "openai/gpt-image-2/text-to-image" },
+          ],
+          modelCalls: [
+            { provider: "wavespeed", model: "openai/gpt-5.5", purpose: "readme_analysis", status: "completed" },
+            { provider: "wavespeed", model: "openai/gpt-image-2/text-to-image", purpose: "image_generation", status: "completed" },
+          ],
         }),
         { headers: { "Content-Type": "application/json" }, status: 201 },
       ),
@@ -138,19 +158,42 @@ describe("App", () => {
     expect(requestBody).toEqual({
       repoUrl: "https://github.com/QwenLM/FlashQLA",
       locales: ["en"],
-      preset: "ratio-4-3",
-      provider: "mock",
+      preset: "4:3",
+      provider: "wavespeed",
       imageQuality: "low",
     });
     expect(await screen.findByText(/generated gen_qwenlm_flashqla_test/i)).toBeInTheDocument();
+    const previewImage = await within(form).findByRole("img", { name: /qwenlm\/flashqla launch card/i });
+    const controls = form.querySelector(".referenceControls");
+    expect(previewImage).toHaveAttribute("src", "https://wavespeed.ai/generated/qwenlm-flashqla.png");
+    expect(previewImage.closest(".generationPreview")).toHaveAccessibleName("Generated Wavespeed image result");
+    expect(controls).not.toBeNull();
+    expect((controls?.compareDocumentPosition(previewImage) ?? 0) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(within(form).getByRole("link", { name: /download generated image/i })).toHaveAttribute(
+      "href",
+      "https://wavespeed.ai/generated/qwenlm-flashqla.png",
+    );
 
-    const output = await screen.findByLabelText(/generated launch output/i);
-    expect(within(output).getByText(/QwenLM\/FlashQLA/i)).toBeInTheDocument();
-    expect(within(output).getByText("output/project-launch/qwenlm-flashqla")).toBeInTheDocument();
-    expect(within(output).getByText(/manifest\.json/i)).toBeInTheDocument();
-    expect(within(output).getByText(/marketing_card_prompt\.txt/i)).toBeInTheDocument();
-    expect(within(output).getByText(/marketing-card\.png/i)).toBeInTheDocument();
-    expect(within(output).getByText(/quality-report\.json/i)).toBeInTheDocument();
+    fireEvent.click(previewImage);
+    const previewDialog = await screen.findByRole("dialog", { name: /generated image preview/i });
+    expect(within(previewDialog).getByRole("img", { name: /qwenlm\/flashqla launch card/i })).toHaveAttribute(
+      "src",
+      "https://wavespeed.ai/generated/qwenlm-flashqla.png",
+    );
+    expect(within(previewDialog).getByRole("link", { name: /download generated image/i })).toHaveAttribute(
+      "download",
+      "qwenlm-flashqla.png",
+    );
+
+    expect(screen.queryByLabelText(/generated launch output/i)).not.toBeInTheDocument();
+    expect(within(form).queryByText(/output package/i)).not.toBeInTheDocument();
+    expect(within(form).queryByText("output/project-launch/qwenlm-flashqla")).not.toBeInTheDocument();
+    expect(within(form).queryByText(/manifest\.json/i)).not.toBeInTheDocument();
+    expect(within(form).queryByText(/GPT5\.5 README analysis/i)).not.toBeInTheDocument();
+    expect(within(form).queryByText(/gpt-image-2 render/i)).not.toBeInTheDocument();
+    expect(within(form).queryByText(/marketing_card_prompt\.txt/i)).not.toBeInTheDocument();
+    expect(within(form).queryByText(/marketing-card\.png/i)).not.toBeInTheDocument();
+    expect(within(form).queryByText(/quality-report\.json/i)).not.toBeInTheDocument();
   });
 
   it("uses native FAQ disclosure items", () => {
