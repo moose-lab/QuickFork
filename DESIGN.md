@@ -89,7 +89,7 @@ Subtitle copy must be one clear sentence that states the product function. Avoid
 
 ## Layout
 
-The Hero is a split two-panel layout. The left panel is copy and input. The right panel is product animation. Desktop ratio is 3:7.
+The Hero is a split two-panel layout. The left panel is copy and input. The right panel is product animation. Desktop ratio is 4:6.
 
 The right animation area is unframed. Do not add outer cards, padding, borders, shadows, rounded frames, badges, captions, or edge chrome around the media. Let the video itself define the visual boundary.
 
@@ -116,7 +116,7 @@ The Hero does not include secondary CTA links, capability cards, feature chips, 
 
 Do keep the generator visible in the first viewport.
 
-Do preserve the 3:7 Hero split on desktop.
+Do preserve the 4:6 Hero split on desktop.
 
 Do keep titles typographically consistent across H1 and H2.
 

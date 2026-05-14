@@ -19,12 +19,12 @@ describe("App", () => {
 
     expect(screen.getByRole("banner")).toHaveClass("nav");
     expect(appStyles).toMatch(/\.nav\s*{[^}]*position:\s*sticky;/s);
-    expect(appStyles).toMatch(/\.heroGrid\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*3fr\)\s+minmax\(0,\s*7fr\);/s);
+    expect(appStyles).toMatch(/\.heroGrid\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*4fr\)\s+minmax\(0,\s*6fr\);/s);
     expect(appStyles).toMatch(/\.hero h1\s*{[^}]*font-family:\s*var\(--font-body\);/s);
     expect(appStyles).toMatch(/\.sectionTitle h2,\s*\.showcaseCopy h3,\s*\.proofAside h3,\s*\.closing h2\s*{[^}]*font-family:\s*var\(--font-body\);/s);
     expect(appStyles).not.toMatch(/drop::first-letter/);
     expect(appStyles).toMatch(/\.productPlayback\s*{[^}]*border:\s*0;[^}]*padding:\s*0;[^}]*box-shadow:\s*none;/s);
-    expect(designSpec).toContain("Desktop ratio is 3:7.");
+    expect(designSpec).toContain("Desktop ratio is 4:6.");
     expect(designSpec).toContain("All visible H1 and H2 headings use the same body sans stack");
     expect(designSpec).toContain("The right animation area is unframed.");
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
