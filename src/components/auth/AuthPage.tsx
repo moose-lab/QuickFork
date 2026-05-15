@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { ArrowRight, Mail, ShieldCheck } from "lucide-react";
 
 import { authClient } from "../../lib/auth-client";
+import { trackEvent } from "../../lib/analytics";
 import { LandingNav } from "../landing/LandingNav";
 
 type AuthMode = "sign-in" | "sign-up";
@@ -30,6 +31,9 @@ export function AuthPage({ mode }: AuthPageProps) {
     setError("");
     setStatus("");
     setIsSubmitting(true);
+    trackEvent(isSignUp ? "signup_started" : "signin_started", {
+      method: "email_otp",
+    });
 
     try {
       const { error: otpError } = await authClient.emailOtp.sendVerificationOtp({
@@ -67,6 +71,9 @@ export function AuthPage({ mode }: AuthPageProps) {
         throw new Error(signInError.message || "The code could not be verified.");
       }
 
+      trackEvent(isSignUp ? "signup_completed" : "signin_completed", {
+        method: "email_otp",
+      });
       goHome();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "The code could not be verified.");
@@ -78,6 +85,9 @@ export function AuthPage({ mode }: AuthPageProps) {
   async function continueWithGoogle() {
     setError("");
     setIsSubmitting(true);
+    trackEvent(isSignUp ? "signup_started" : "signin_started", {
+      method: "google",
+    });
 
     try {
       const { error: googleError } = await authClient.signIn.social({

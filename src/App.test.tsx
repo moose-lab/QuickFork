@@ -11,6 +11,7 @@ describe("App", () => {
 
   afterEach(() => {
     window.history.replaceState({}, "", originalPath);
+    delete window.dataLayer;
     vi.unstubAllGlobals();
   });
 
@@ -102,6 +103,7 @@ describe("App", () => {
   });
 
   it("submits the Hero generator form to the backend generation API", async () => {
+    window.dataLayer = [];
     const fetchMock = vi.fn(async () =>
       new Response(
         JSON.stringify({
@@ -144,6 +146,7 @@ describe("App", () => {
     fireEvent.change(within(form).getByRole("textbox", { name: /github repository url/i }), {
       target: { value: "https://github.com/QwenLM/FlashQLA" },
     });
+    fireEvent.blur(within(form).getByRole("textbox", { name: /github repository url/i }));
     fireEvent.click(within(form).getByRole("button", { name: /^generate$/i }));
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
@@ -173,6 +176,38 @@ describe("App", () => {
       "href",
       "https://wavespeed.ai/generated/qwenlm-flashqla.png",
     );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/",
+        }),
+        expect.objectContaining({
+          event: "hero_repo_url_entered",
+          repo_host: "github.com",
+          repo_full_name: "QwenLM/FlashQLA",
+        }),
+        expect.objectContaining({
+          event: "generation_started",
+          repo_host: "github.com",
+          repo_full_name: "QwenLM/FlashQLA",
+          locales: "en",
+          locale_count: 1,
+          preset: "4:3",
+          image_quality: "low",
+        }),
+        expect.objectContaining({
+          event: "generation_completed",
+          repo_host: "github.com",
+          repo_full_name: "QwenLM/FlashQLA",
+          generation_id: "gen_qwenlm_flashqla_test",
+          locales: "en",
+          locale_count: 1,
+          preset: "4:3",
+          has_image_url: true,
+        }),
+      ]),
+    );
 
     fireEvent.click(previewImage);
     const previewDialog = await screen.findByRole("dialog", { name: /generated image preview/i });
@@ -184,6 +219,25 @@ describe("App", () => {
       "download",
       "qwenlm-flashqla.png",
     );
+    fireEvent.click(within(previewDialog).getByRole("link", { name: /download generated image/i }));
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "generated_image_preview_opened",
+          repo_full_name: "QwenLM/FlashQLA",
+          generation_id: "gen_qwenlm_flashqla_test",
+          output_locale: "EN",
+          preset: "4:3",
+        }),
+        expect.objectContaining({
+          event: "generated_image_downloaded",
+          repo_full_name: "QwenLM/FlashQLA",
+          generation_id: "gen_qwenlm_flashqla_test",
+          output_locale: "EN",
+          preset: "4:3",
+        }),
+      ]),
+    );
 
     expect(screen.queryByLabelText(/generated launch output/i)).not.toBeInTheDocument();
     expect(within(form).queryByText(/output package/i)).not.toBeInTheDocument();
@@ -194,6 +248,36 @@ describe("App", () => {
     expect(within(form).queryByText(/marketing_card_prompt\.txt/i)).not.toBeInTheDocument();
     expect(within(form).queryByText(/marketing-card\.png/i)).not.toBeInTheDocument();
     expect(within(form).queryByText(/quality-report\.json/i)).not.toBeInTheDocument();
+  });
+
+  it("tracks generation failures without sending raw backend error text", async () => {
+    window.dataLayer = [];
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ error: { message: "Provider failed for token=secret" } }), {
+          headers: { "Content-Type": "application/json" },
+          status: 500,
+        }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+
+    const form = screen.getByRole("form", { name: /project launch generator/i });
+    fireEvent.click(within(form).getByRole("button", { name: /^generate$/i }));
+
+    await screen.findByText(/provider failed for token=secret/i);
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "generation_failed",
+          repo_host: "github.com",
+          repo_full_name: "QwenLM/FlashQLA",
+          error_type: "request_failed",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toContain("token=secret");
   });
 
   it("uses native FAQ disclosure items", () => {

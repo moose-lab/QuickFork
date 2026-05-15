@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { AuthPage } from "./components/auth/AuthPage";
 import { LandingPage } from "./components/LandingPage";
+import { getPageAnalyticsProperties, trackEvent } from "./lib/analytics";
 
 function getRoute() {
   return window.location.pathname;
@@ -17,6 +18,10 @@ function App() {
     window.addEventListener("popstate", handleRouteChange);
     return () => window.removeEventListener("popstate", handleRouteChange);
   }, []);
+
+  useEffect(() => {
+    trackEvent("page_view", getPageAnalyticsProperties());
+  }, [route]);
 
   if (route === "/sign-in") {
     return <AuthPage mode="sign-in" />;

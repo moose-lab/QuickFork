@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Download, Github, Languages, Loader2, Maximize2, X } from "lucide-react";
+import { getRepoAnalyticsProperties, trackEvent } from "../../lib/analytics";
 
 type LocaleCode = "en" | "zh" | "ja";
 type OutputPreset = "16:9" | "1:1" | "4:3" | "3:4" | "9:16";
@@ -111,6 +112,7 @@ function ProjectLaunchInputPanel() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generation, setGeneration] = useState<GenerationSummary | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [lastTrackedRepoInput, setLastTrackedRepoInput] = useState("");
 
   const toggleLocale = (locale: LocaleCode) => {
     setLocales((current) => {
@@ -132,6 +134,13 @@ function ProjectLaunchInputPanel() {
     setIsSubmitting(true);
     setGeneration(null);
     setStatus("Generating project launch package");
+    trackEvent("generation_started", {
+      ...getRepoAnalyticsProperties(trimmedRepoUrl),
+      locales: locales.join(","),
+      locale_count: locales.length,
+      preset,
+      image_quality: "low",
+    });
     try {
       const result = await createGeneration({
         repoUrl: trimmedRepoUrl,
@@ -141,8 +150,23 @@ function ProjectLaunchInputPanel() {
       });
       setGeneration(result);
       setStatus(`Generated ${result.id}`);
+      trackEvent("generation_completed", {
+        ...getRepoAnalyticsProperties(result.repo?.repo_url ?? trimmedRepoUrl),
+        generation_id: result.id,
+        locales: locales.join(","),
+        locale_count: locales.length,
+        preset,
+        has_image_url: Boolean(Object.values(result.outputs ?? {}).some((output) => output?.imageUrl)),
+      });
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Generation request failed.");
+      trackEvent("generation_failed", {
+        ...getRepoAnalyticsProperties(trimmedRepoUrl),
+        locales: locales.join(","),
+        locale_count: locales.length,
+        preset,
+        error_type: error instanceof Error ? "request_failed" : "unknown",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -167,6 +191,33 @@ function ProjectLaunchInputPanel() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [previewImageUrl]);
 
+  const trackRepoInputIntent = () => {
+    const trimmedRepoUrl = repoUrl.trim();
+    if (!trimmedRepoUrl || trimmedRepoUrl === lastTrackedRepoInput) return;
+    setLastTrackedRepoInput(trimmedRepoUrl);
+    trackEvent("hero_repo_url_entered", getRepoAnalyticsProperties(trimmedRepoUrl));
+  };
+
+  const openGeneratedPreview = () => {
+    if (!generatedImageUrl) return;
+    setPreviewImageUrl(generatedImageUrl);
+    trackEvent("generated_image_preview_opened", {
+      ...getRepoAnalyticsProperties(generation?.repo?.repo_url ?? repoUrl),
+      generation_id: generation?.id,
+      output_locale: outputLocale,
+      preset,
+    });
+  };
+
+  const trackGeneratedDownload = () => {
+    trackEvent("generated_image_downloaded", {
+      ...getRepoAnalyticsProperties(generation?.repo?.repo_url ?? repoUrl),
+      generation_id: generation?.id,
+      output_locale: outputLocale,
+      preset,
+    });
+  };
+
   return (
     <div className="generatorStack">
       <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
@@ -177,6 +228,7 @@ function ProjectLaunchInputPanel() {
             <span className="srOnly">GitHub repository URL</span>
             <input
               aria-label="GitHub repository URL"
+              onBlur={trackRepoInputIntent}
               onChange={(event) => {
                 setRepoUrl(event.target.value);
                 setStatus(event.target.value.trim() ? "Ready to generate" : "Add a GitHub repository URL to continue");
@@ -224,7 +276,7 @@ function ProjectLaunchInputPanel() {
             <button
               aria-label="Open generated image preview"
               className="generationPreviewButton"
-              onClick={() => setPreviewImageUrl(generatedImageUrl)}
+              onClick={openGeneratedPreview}
               type="button"
             >
               <img alt={generatedImageAlt} src={generatedImageUrl} referrerPolicy="no-referrer" />
@@ -233,10 +285,10 @@ function ProjectLaunchInputPanel() {
               <span>{outputLocale ?? "EN"} result</span>
               <div className="generationPreviewActions">
                 <strong>{generation?.repo?.full_name ?? generation?.id ?? "Generated project"}</strong>
-                <button aria-label="Open generated image preview" onClick={() => setPreviewImageUrl(generatedImageUrl)} type="button">
+                <button aria-label="Open generated image preview" onClick={openGeneratedPreview} type="button">
                   <Maximize2 aria-hidden="true" size={14} />
                 </button>
-                <a aria-label="Download generated image" download={`${downloadFileName}.png`} href={generatedImageUrl}>
+                <a aria-label="Download generated image" download={`${downloadFileName}.png`} href={generatedImageUrl} onClick={trackGeneratedDownload}>
                   <Download aria-hidden="true" size={14} />
                 </a>
               </div>
@@ -260,7 +312,7 @@ function ProjectLaunchInputPanel() {
             <div className="imageLightboxToolbar">
               <span>{generation?.repo?.full_name ?? generation?.id ?? "Generated image"}</span>
               <div>
-                <a aria-label="Download generated image" download={`${downloadFileName}.png`} href={previewImageUrl}>
+                <a aria-label="Download generated image" download={`${downloadFileName}.png`} href={previewImageUrl} onClick={trackGeneratedDownload}>
                   <Download aria-hidden="true" size={16} />
                 </a>
                 <button aria-label="Close generated image preview" onClick={() => setPreviewImageUrl(null)} type="button">
