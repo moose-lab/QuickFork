@@ -542,6 +542,42 @@ describe("project launch generation backend", () => {
     expect(copies.zh.valueProposition).toContain("coding agents");
   });
 
+  it("uses repository-specific copy instead of generic launch-ready story headlines", () => {
+    const brief = {
+      title: "FlashQLA",
+      subtitle: "CUDA kernels for faster attention inference.",
+      metrics: ["CUDA primary language", "1,240 GitHub stars"],
+      keyInsights: ["Optimizes attention kernels for lower latency inference."],
+      workflowSteps: ["Install kernels", "Run benchmark", "Ship inference"],
+      sourceSignals: {
+        repoDescription: "CUDA kernels for faster attention inference.",
+        homepage: null,
+        primaryLanguage: "CUDA",
+        topics: ["cuda", "inference"],
+        readmeEvidence: ["README or repo metadata includes: CUDA kernels for faster attention inference."],
+      },
+    };
+
+    const copies = buildLocalizedCopies(
+      {
+        ...openDesignMetadata,
+        name: "FlashQLA",
+        fullName: "QwenLM/FlashQLA",
+        description: "CUDA kernels for faster attention inference.",
+        language: "CUDA",
+        topics: ["cuda", "inference"],
+      },
+      brief,
+    );
+
+    expect(copies.en.hook).toBe("CUDA kernels for faster attention inference");
+    expect(copies.en.hook).not.toContain("turns repo context into a launch-ready story");
+    expect(copies.zh.hook).toBe("CUDA kernels for faster attention inference");
+    expect(copies.zh.hook).not.toContain("仓库内容");
+    expect(copies.ja.hook).toBe("CUDA kernels for faster attention inference");
+    expect(copies.ja.hook).not.toContain("リポジトリの文脈");
+  });
+
   it("supports ratio presets for generated launch assets", () => {
     expect(imageSizeForPreset("16:9")).toBe("1920x1080");
     expect(imageSizeForPreset("1:1")).toBe("1200x1200");
@@ -612,6 +648,12 @@ describe("project launch generation backend", () => {
     expect(prompt).toContain("Never synthesize random logos, abstract brand marks, mascots, badges, or unrelated symbols.");
     expect(prompt).toContain(`Headline: "${copy.hook}"`);
     expect(prompt).toContain(`GitHub strip: "${copy.ctaOrStripText}"`);
+    expect(prompt).toContain("Text budget:");
+    expect(prompt).toContain("Render at most 2 metric chips and 2 short feature chips.");
+    expect(prompt).not.toContain(`Subtitle: "${copy.subtitle}"`);
+    expect(prompt).not.toContain(`3. "${copy.metricLabels[2]}"`);
+    expect(prompt).not.toContain(`3. "${copy.featureBullets[2]}"`);
+    expect(prompt).not.toContain("\nWorkflow:\n");
     expect(prompt).toContain("Do not hallucinate product screenshots not described in the visual panel.");
   });
 

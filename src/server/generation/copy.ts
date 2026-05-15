@@ -31,7 +31,7 @@ export function buildEnglishMasterCopy(metadata: GitHubRepoMetadata, brief: Proj
   const isDesign = [metadata.name, metadata.description ?? "", ...metadata.topics].join(" ").toLowerCase().includes("design");
   return {
     locale: "en",
-    hook: isDesign ? "Design with the agent already on your laptop." : `${brief.title} turns repo context into a launch-ready story.`,
+    hook: isDesign ? "Design with the agent already on your laptop." : firstSentence(brief.subtitle),
     subtitle: firstSentence(brief.subtitle),
     valueProposition: isDesign ? "Your existing coding agents become the design engine." : brief.keyInsights[0] ?? firstSentence(brief.subtitle),
     metricLabels: brief.metrics.slice(0, 4),
@@ -74,7 +74,7 @@ export function buildLocalizedCopies(metadata: GitHubRepoMetadata, brief: Projec
   const isDesign = en.hook.toLowerCase().includes("design");
   const zh: LocalizedCardCopy = {
     locale: "zh",
-    hook: isDesign ? zhStatic.designHook : zhStatic.genericHook,
+    hook: isDesign ? zhStatic.designHook : en.hook,
     subtitle: en.subtitle.includes("Claude Design") ? "开源 Claude Design 替代方案。" : `${brief.title} 项目营销名片。`,
     valueProposition: isDesign ? zhStatic.designValue : "压缩项目事实、真实素材和可传播文案。",
     metricLabels: en.metricLabels.map((metric) => localizeMetric(metric, "zh")),
@@ -87,7 +87,7 @@ export function buildLocalizedCopies(metadata: GitHubRepoMetadata, brief: Projec
   };
   const ja: LocalizedCardCopy = {
     locale: "ja",
-    hook: isDesign ? jaStatic.designHook : jaStatic.genericHook,
+    hook: isDesign ? jaStatic.designHook : en.hook,
     subtitle: en.subtitle.includes("Claude Design") ? "オープンソースの Claude Design 代替。" : `${brief.title} のマーケティングカード。`,
     valueProposition: isDesign ? jaStatic.designValue : "プロジェクト事実、実素材、伝わるコピーを圧縮する。",
     metricLabels: en.metricLabels.map((metric) => localizeMetric(metric, "ja")),
