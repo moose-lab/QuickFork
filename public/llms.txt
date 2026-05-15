@@ -1,0 +1,32 @@
+# QuickFork
+
+QuickFork turns a GitHub repository into a source-backed launch story and shareable marketing asset package.
+
+## Canonical URL
+
+https://seekersai.com/
+
+## What QuickFork Does
+
+- Accepts a public GitHub repository URL as the primary input.
+- Extracts repository metadata, README evidence, topics, metrics, and identity assets.
+- Builds a curated project brief for review before public publishing.
+- Generates launch copy, image prompts, marketing-card imagery, quality reports, and artifact manifests.
+- Supports English, Chinese, and Japanese launch-copy alignment.
+
+## Best-Fit Users
+
+- Open-source maintainers launching a project.
+- Developer advocates preparing README, slide, and social assets.
+- SaaS founders and indie hackers who need a credible public project story.
+- Product marketers who need traceable claims from technical source material.
+
+## Evidence Policy
+
+QuickFork should use repository evidence, official project assets, README content, public metadata, or explicit user input. It should not invent customer numbers, benchmark claims, logos, or unsupported proof points.
+
+## Public Resources
+
+- Website: https://seekersai.com/
+- Pricing context: https://seekersai.com/pricing.md
+- Sitemap: https://seekersai.com/sitemap.xml
