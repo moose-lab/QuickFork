@@ -73,6 +73,7 @@ describe("project launch generation backend", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     delete process.env.WAVESPEED_API_KEY;
+    delete process.env.VERCEL;
   });
 
   it("defines a mock LLM adapter boundary with Wavespeed GPT5.5 as the default model", async () => {
@@ -701,6 +702,30 @@ describe("project launch generation backend", () => {
       expect(result.localizedCopy.ja.ctaOrStripText).toBe("github.com/nexu-io/open-design");
     } finally {
       await rm(outputRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("uses a writable temporary artifact root in Vercel production when outputRoot is omitted", async () => {
+    process.env.VERCEL = "1";
+    let artifactRoot: string | undefined;
+
+    try {
+      const result = await runProjectLaunchGeneration({
+        repoUrl: "https://github.com/nexu-io/open-design",
+        locales: ["en"],
+        provider: "mock",
+        mock: {
+          repoMetadata: openDesignMetadata,
+          readmeMarkdown: openDesignReadme,
+        },
+      });
+      artifactRoot = result.artifactRoot;
+
+      expect(result.status).toBe("completed");
+      expect(result.artifactRoot).toContain(join(tmpdir(), "quickfork-output", "project-launch"));
+      expect(result.artifactRoot).not.toMatch(/^output[/\\]/);
+    } finally {
+      if (artifactRoot) await rm(artifactRoot, { recursive: true, force: true });
     }
   });
 

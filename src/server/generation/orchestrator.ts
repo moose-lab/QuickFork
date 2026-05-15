@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { resolveBrandAssets, storeReferenceAsset } from "./assets.js";
@@ -24,6 +25,12 @@ function responseRepo(owner: string, repo: string) {
     full_name: `${owner}/${repo}`,
     repo_url: `https://github.com/${owner}/${repo}`,
   };
+}
+
+function resolveOutputRoot(outputRoot?: string) {
+  if (outputRoot) return outputRoot;
+  if (process.env.VERCEL) return join(tmpdir(), "quickfork-output", "project-launch");
+  return "output/project-launch";
 }
 
 async function writeJson(path: string, value: unknown) {
@@ -69,7 +76,7 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
   });
   const { primaryAsset } = resolveBrandAssets(repo, metadata, readme);
 
-  const artifactRoot = join(input.outputRoot ?? "output/project-launch", projectSlug(repo.owner, repo.repo));
+  const artifactRoot = join(resolveOutputRoot(input.outputRoot), projectSlug(repo.owner, repo.repo));
   const assetsDir = join(artifactRoot, "assets");
   await mkdir(artifactRoot, { recursive: true });
   const storedPrimaryAsset = await storeReferenceAsset(assetsDir, repo, primaryAsset);
