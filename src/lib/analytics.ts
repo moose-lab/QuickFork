@@ -14,7 +14,11 @@ export type AnalyticsEventName =
 export type AnalyticsProperties = Record<string, string | number | boolean | undefined>;
 
 type DataLayerEntry = Record<string, unknown> | GtagArguments;
-type GtagArguments = ["js", Date] | ["config", string] | ["event", string, AnalyticsProperties?];
+type GtagArguments =
+  | ["js", Date]
+  | ["config", string]
+  | ["config", string, AnalyticsProperties]
+  | ["event", string, AnalyticsProperties?];
 
 declare global {
   interface Window {
@@ -43,24 +47,46 @@ export function initializeAnalytics(measurementId?: string) {
   document.head.append(script);
 
   window.gtag("js", new Date());
-  window.gtag("config", measurementId);
+  if (isAnalyticsDebugModeEnabled()) {
+    window.gtag("config", measurementId, { debug_mode: true });
+  } else {
+    window.gtag("config", measurementId);
+  }
 }
 
 export function trackEvent(event: AnalyticsEventName, properties: AnalyticsProperties = {}) {
   if (typeof window === "undefined") return;
 
-  const payload = { event, ...properties };
+  const eventProperties = isAnalyticsDebugModeEnabled() ? { ...properties, debug_mode: true } : properties;
+  const payload = { event, ...eventProperties };
   window.dataLayer = window.dataLayer ?? [];
   window.dataLayer.push(payload);
-  window.gtag?.("event", event, properties);
+  window.gtag?.("event", event, eventProperties);
   window.dispatchEvent(
     new CustomEvent("quickfork:analytics", {
       detail: {
         event,
-        properties,
+        properties: eventProperties,
       },
     }),
   );
+}
+
+function isAnalyticsDebugModeEnabled() {
+  if (typeof window === "undefined") return false;
+
+  const debugFlag = new URLSearchParams(window.location.search).get("ga_debug");
+  if (debugFlag === "1" || debugFlag === "true") {
+    window.localStorage.setItem("quickfork_ga_debug", "1");
+    return true;
+  }
+
+  if (debugFlag === "0" || debugFlag === "false") {
+    window.localStorage.removeItem("quickfork_ga_debug");
+    return false;
+  }
+
+  return window.localStorage.getItem("quickfork_ga_debug") === "1";
 }
 
 export function getRepoAnalyticsProperties(repoUrl: string): AnalyticsProperties {

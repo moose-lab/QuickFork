@@ -10,7 +10,11 @@ declare global {
 }
 
 describe("analytics", () => {
+  const originalLocation = window.location.href;
+
   afterEach(() => {
+    window.history.replaceState({}, "", originalLocation);
+    window.localStorage.clear();
     delete window.dataLayer;
     delete window.gtag;
     document.querySelectorAll("script[data-quickfork-analytics]").forEach((script) => script.remove());
@@ -100,5 +104,47 @@ describe("analytics", () => {
     expect(dataLayer[0]?.[0]).toBe("js");
     expect(dataLayer[0]?.[1]).toBeInstanceOf(Date);
     expect(dataLayer[1]).toEqual(["config", "G-QUICKFORK1"]);
+  });
+
+  it("enables GA4 debug mode from a URL flag for DebugView validation", () => {
+    window.history.replaceState({}, "", "/?ga_debug=1");
+
+    initializeAnalytics("G-QUICKFORK1");
+    trackEvent("generation_started", {
+      repo_host: "github.com",
+      repo_full_name: "QwenLM/FlashQLA",
+    });
+
+    const dataLayer = window.dataLayer as Array<Record<string, unknown> | unknown[]>;
+    expect(dataLayer[1]).toEqual(["config", "G-QUICKFORK1", { debug_mode: true }]);
+    expect(dataLayer).toContainEqual({
+      event: "generation_started",
+      repo_host: "github.com",
+      repo_full_name: "QwenLM/FlashQLA",
+      debug_mode: true,
+    });
+    expect(dataLayer).toContainEqual([
+      "event",
+      "generation_started",
+      {
+        repo_host: "github.com",
+        repo_full_name: "QwenLM/FlashQLA",
+        debug_mode: true,
+      },
+    ]);
+  });
+
+  it("keeps GA4 debug mode enabled after route changes in the same browser", () => {
+    window.history.replaceState({}, "", "/?ga_debug=1");
+
+    initializeAnalytics("G-QUICKFORK1");
+    window.history.replaceState({}, "", "/sign-up");
+    trackEvent("signup_started", { auth_method: "email" });
+
+    expect(window.dataLayer).toContainEqual({
+      event: "signup_started",
+      auth_method: "email",
+      debug_mode: true,
+    });
   });
 });
