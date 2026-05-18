@@ -16,6 +16,10 @@ export type AnalyticsProperties = Record<string, string | number | boolean | und
 type DataLayerEntry = Record<string, unknown> | GtagArguments;
 type GtagArguments = ["js", Date] | ["config", string] | ["event", string, AnalyticsProperties?];
 
+const CAMPAIGN_PARAM_NAMES = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
+const CAMPAIGN_STORAGE_KEY = "quickfork_campaign_context";
+type CampaignParamName = (typeof CAMPAIGN_PARAM_NAMES)[number];
+
 declare global {
   interface Window {
     dataLayer?: Array<DataLayerEntry>;
@@ -49,18 +53,31 @@ export function initializeAnalytics(measurementId?: string) {
 export function trackEvent(event: AnalyticsEventName, properties: AnalyticsProperties = {}) {
   if (typeof window === "undefined") return;
 
-  const payload = { event, ...properties };
+  const enrichedProperties = { ...getCampaignAnalyticsProperties(), ...properties };
+  const payload = { event, ...enrichedProperties };
   window.dataLayer = window.dataLayer ?? [];
   window.dataLayer.push(payload);
-  window.gtag?.("event", event, properties);
+  window.gtag?.("event", event, enrichedProperties);
   window.dispatchEvent(
     new CustomEvent("quickfork:analytics", {
       detail: {
         event,
-        properties,
+        properties: enrichedProperties,
       },
     }),
   );
+}
+
+export function getCampaignAnalyticsProperties(): AnalyticsProperties {
+  if (typeof window === "undefined") return {};
+
+  const currentCampaign = getCurrentCampaignProperties();
+  if (Object.keys(currentCampaign).length > 0) {
+    storeCampaignProperties(currentCampaign);
+    return currentCampaign;
+  }
+
+  return getStoredCampaignProperties();
 }
 
 export function getRepoAnalyticsProperties(repoUrl: string): AnalyticsProperties {
@@ -102,4 +119,56 @@ export function getPageAnalyticsProperties() {
     page_title: document.title,
     page_referrer: document.referrer,
   };
+}
+
+function getCurrentCampaignProperties(): AnalyticsProperties {
+  const properties: AnalyticsProperties = {};
+  const searchParams = new URLSearchParams(window.location.search);
+
+  for (const name of CAMPAIGN_PARAM_NAMES) {
+    const value = normalizeCampaignValue(searchParams.get(name));
+    if (value) properties[name] = value;
+  }
+
+  return properties;
+}
+
+function getStoredCampaignProperties(): AnalyticsProperties {
+  try {
+    const stored = window.sessionStorage.getItem(CAMPAIGN_STORAGE_KEY);
+    if (!stored) return {};
+    const parsed = JSON.parse(stored) as Partial<Record<CampaignParamName, unknown>>;
+    const properties: AnalyticsProperties = {};
+
+    for (const name of CAMPAIGN_PARAM_NAMES) {
+      const value = typeof parsed[name] === "string" ? normalizeCampaignValue(parsed[name]) : undefined;
+      if (value) properties[name] = value;
+    }
+
+    return properties;
+  } catch {
+    return {};
+  }
+}
+
+function storeCampaignProperties(properties: AnalyticsProperties) {
+  try {
+    const campaignProperties: Record<string, string> = {};
+
+    for (const name of CAMPAIGN_PARAM_NAMES) {
+      const value = typeof properties[name] === "string" ? normalizeCampaignValue(properties[name]) : undefined;
+      if (value) campaignProperties[name] = value;
+    }
+
+    if (Object.keys(campaignProperties).length > 0) {
+      window.sessionStorage.setItem(CAMPAIGN_STORAGE_KEY, JSON.stringify(campaignProperties));
+    }
+  } catch {
+    // Session storage can be unavailable in some privacy modes; analytics should still work.
+  }
+}
+
+function normalizeCampaignValue(value?: string | null) {
+  const normalized = value?.trim().replace(/[\x00-\x1F\x7F]/g, "").slice(0, 120);
+  return normalized || undefined;
 }

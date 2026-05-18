@@ -10,9 +10,13 @@ declare global {
 }
 
 describe("analytics", () => {
+  const originalPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
   afterEach(() => {
     delete window.dataLayer;
     delete window.gtag;
+    window.sessionStorage.clear();
+    window.history.replaceState({}, "", originalPath);
     document.querySelectorAll("script[data-quickfork-analytics]").forEach((script) => script.remove());
     vi.restoreAllMocks();
   });
@@ -63,6 +67,41 @@ describe("analytics", () => {
         page_path: "/",
       },
     ]);
+  });
+
+  it("attaches and persists UTM campaign parameters without preserving unrelated query strings", () => {
+    window.dataLayer = [];
+    window.history.pushState(
+      {},
+      "",
+      "/?utm_source=github&utm_medium=social&utm_campaign=launch&utm_content=hero%20cta&utm_term=repo%20card&token=secret",
+    );
+
+    trackEvent("page_view", { page_path: "/" });
+    window.history.pushState({}, "", "/sign-up");
+    trackEvent("signup_started", { method: "email_otp" });
+
+    expect(window.dataLayer).toEqual([
+      {
+        event: "page_view",
+        page_path: "/",
+        utm_source: "github",
+        utm_medium: "social",
+        utm_campaign: "launch",
+        utm_content: "hero cta",
+        utm_term: "repo card",
+      },
+      {
+        event: "signup_started",
+        method: "email_otp",
+        utm_source: "github",
+        utm_medium: "social",
+        utm_campaign: "launch",
+        utm_content: "hero cta",
+        utm_term: "repo card",
+      },
+    ]);
+    expect(JSON.stringify(window.dataLayer)).not.toContain("token=secret");
   });
 
   it("normalizes GitHub repository properties without preserving raw query strings", () => {

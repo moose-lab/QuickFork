@@ -27,6 +27,7 @@ vi.mock("../../lib/auth-client", () => ({
 describe("AuthPage analytics", () => {
   afterEach(() => {
     delete window.dataLayer;
+    window.sessionStorage.clear();
     vi.clearAllMocks();
   });
 

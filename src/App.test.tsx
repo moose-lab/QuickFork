@@ -12,6 +12,7 @@ describe("App", () => {
   afterEach(() => {
     window.history.replaceState({}, "", originalPath);
     delete window.dataLayer;
+    window.sessionStorage.clear();
     vi.unstubAllGlobals();
   });
 
