@@ -3,6 +3,13 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import {
+  getDistributedMarketingUrl,
+  getMarketingLinkBySlug,
+  marketingLinks,
+  sitemapMarketingLinks,
+} from "../marketing/link-catalog";
+
 const inventoryPath = "docs/marketing/data/semantic-link-inventory.csv";
 const requiredHeaders = [
   "status",
@@ -86,6 +93,77 @@ describe("semantic marketing link inventory", () => {
       } else {
         crmCampaignByUtmCampaign.set(row.utm_campaign, row.crm_campaign);
       }
+    }
+  });
+});
+
+describe("typed semantic marketing link catalog", () => {
+  it("mirrors the editable CSV inventory without duplicating derived UTM URLs", () => {
+    const { rows } = parseInventory();
+
+    expect(marketingLinks).toHaveLength(rows.length);
+
+    for (const row of rows) {
+      const link = getMarketingLinkBySlug(row.slug);
+
+      expect(link).toBeDefined();
+      expect(link).toEqual(
+        expect.objectContaining({
+          status: row.status,
+          funnelStage: row.funnel_stage,
+          buyerStage: row.buyer_stage,
+          persona: row.persona,
+          intentCluster: row.intent_cluster,
+          pageType: row.page_type,
+          slug: row.slug,
+          canonicalUrl: row.canonical_url,
+          primaryKeyword: row.primary_keyword,
+          primaryCta: row.primary_cta,
+          crmCampaign: row.crm_campaign,
+          utm: {
+            source: row.utm_source,
+            medium: row.utm_medium,
+            campaign: row.utm_campaign,
+            content: row.utm_content,
+          },
+        }),
+      );
+      expect(getDistributedMarketingUrl(link!)).toBe(row.distributed_url);
+    }
+  });
+
+  it("keeps sitemap output limited to published crawlable pages", () => {
+    const sitemapCanonicalUrls = new Set<string>();
+    const sitemapSlugs = new Set<string>();
+
+    for (const link of sitemapMarketingLinks) {
+      expect(link.status).toBe("published");
+      expect(link.pageType).not.toBe("contact");
+      expect(sitemapCanonicalUrls.has(link.canonicalUrl)).toBe(false);
+      expect(sitemapSlugs.has(link.slug)).toBe(false);
+      sitemapCanonicalUrls.add(link.canonicalUrl);
+      sitemapSlugs.add(link.slug);
+    }
+  });
+
+  it("has typed, valid catalog fields for page generation and CRM attribution", () => {
+    const slugs = new Set<string>();
+    const canonicalUrls = new Set<string>();
+
+    for (const link of marketingLinks) {
+      expect(["draft", "ready", "published"]).toContain(link.status);
+      expect(["top", "middle", "bottom"]).toContain(link.funnelStage);
+      expect(["awareness", "consideration", "decision", "implementation"]).toContain(link.buyerStage);
+      expect(["product", "use_case", "resource", "tool", "template", "example", "compare", "contact"]).toContain(
+        link.pageType,
+      );
+      expect(link.intentCluster).toMatch(/^[a-z0-9_]+$/);
+      expect(link.primaryCta).toMatch(/^[a-z0-9_]+$/);
+      expect(link.crmCampaign).toBe(`2026_q2_${link.utm.campaign}`);
+      expect(slugs.has(link.slug)).toBe(false);
+      expect(canonicalUrls.has(link.canonicalUrl)).toBe(false);
+      slugs.add(link.slug);
+      canonicalUrls.add(link.canonicalUrl);
     }
   });
 });
