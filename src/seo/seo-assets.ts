@@ -23,6 +23,24 @@ const staticSitemapEntries: readonly SitemapEntry[] = [
     priority: "1.0",
   },
   {
+    loc: "https://seekersai.com/help",
+    lastmod: seoAssetLastModified,
+    changefreq: "monthly",
+    priority: "0.5",
+  },
+  {
+    loc: "https://seekersai.com/privacy",
+    lastmod: seoAssetLastModified,
+    changefreq: "monthly",
+    priority: "0.3",
+  },
+  {
+    loc: "https://seekersai.com/terms",
+    lastmod: seoAssetLastModified,
+    changefreq: "monthly",
+    priority: "0.3",
+  },
+  {
     loc: "https://seekersai.com/llms.txt",
     lastmod: seoAssetLastModified,
     changefreq: "monthly",
@@ -105,6 +123,12 @@ QuickFork should use repository evidence, official project assets, README conten
 ## Public Route Inventory
 
 ${renderLlmsRouteGroups()}
+## Support And Legal
+
+- Help Center | QuickFork: https://seekersai.com/help - Support guidance for repository input, generated output review, and team follow-up.
+- Privacy Policy | QuickFork: https://seekersai.com/privacy - Data handling posture for public repository input, analytics, and contact forms.
+- Terms of Service | QuickFork: https://seekersai.com/terms - Responsible-use terms for source-backed launch assets and generated drafts.
+
 ## Public Resources
 
 - Website: https://seekersai.com/

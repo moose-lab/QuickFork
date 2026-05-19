@@ -23,10 +23,12 @@ const productMenuItems = [
 ];
 
 export function LandingNav() {
+  const studioHref = getLandingAnchorHref("#studio");
+
   return (
     <header className="nav">
       <div className="navInner">
-        <a className="brand" href="#hero" aria-label="QuickFork home">
+        <a className="brand" href={getLandingAnchorHref("#hero")} aria-label="QuickFork home">
           <span className="mark" aria-hidden="true">
             QF
           </span>
@@ -34,7 +36,7 @@ export function LandingNav() {
         </a>
         <nav className="navLinks" aria-label="Primary product navigation">
           <div className="productNavItem">
-            <a className="navLink productTrigger" href="#studio" aria-label="Product, open QuickFork product studio">
+            <a className="navLink productTrigger" href={studioHref} aria-label="Product, open QuickFork product studio">
               Product
               <ChevronDown className="productChevron" size={17} aria-hidden="true" />
             </a>
@@ -43,7 +45,7 @@ export function LandingNav() {
                 const Icon = item.icon;
 
                 return (
-                  <a className="productMenuItem" href={item.href} key={item.href}>
+                  <a className="productMenuItem" href={getLandingAnchorHref(item.href)} key={item.href}>
                     <span className="productMenuIcon" aria-hidden="true">
                       <Icon size={20} />
                     </span>
@@ -56,7 +58,7 @@ export function LandingNav() {
               })}
             </div>
           </div>
-          <a className="navLink pricingLink" href="#pricing" aria-label="Pricing, view subscription options">
+          <a className="navLink pricingLink" href={getLandingAnchorHref("#pricing")} aria-label="Pricing, view subscription options">
             Pricing
           </a>
         </nav>
@@ -66,4 +68,8 @@ export function LandingNav() {
       </div>
     </header>
   );
+}
+
+function getLandingAnchorHref(hash: string) {
+  return window.location.pathname === "/" ? hash : `/${hash}`;
 }

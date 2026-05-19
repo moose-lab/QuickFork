@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { AuthPage } from "./components/auth/AuthPage";
 import { LandingPage } from "./components/LandingPage";
+import { getSecondaryPage, SecondaryPage } from "./components/landing/SecondaryPage";
 import { MarketingPage } from "./components/marketing/MarketingPage";
 import { getPageAnalyticsProperties, trackEvent } from "./lib/analytics";
 import { getContactMarketingLinkByIntent, getMarketingLinkByPath } from "./marketing/link-catalog";
@@ -14,6 +15,7 @@ function App() {
   const [, setRouteVersion] = useState(0);
   const route = getRoute();
   const marketingLink = getMarketingLinkByPath(route);
+  const secondaryPage = getSecondaryPage(route);
   const contactLink =
     route === "/contact" ? getContactMarketingLinkByIntent(new URLSearchParams(window.location.search).get("intent")) : undefined;
 
@@ -42,6 +44,10 @@ function App() {
 
   if (contactLink) {
     return <MarketingPage link={contactLink} />;
+  }
+
+  if (secondaryPage) {
+    return <SecondaryPage page={secondaryPage} />;
   }
 
   return <LandingPage />;

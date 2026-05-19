@@ -23,6 +23,9 @@ describe("public growth infrastructure", () => {
     const sitemap = readProjectFile("public/sitemap.xml");
 
     expect(sitemap).toContain("<loc>https://seekersai.com/</loc>");
+    expect(sitemap).toContain("<loc>https://seekersai.com/help</loc>");
+    expect(sitemap).toContain("<loc>https://seekersai.com/privacy</loc>");
+    expect(sitemap).toContain("<loc>https://seekersai.com/terms</loc>");
     expect(sitemap).not.toContain("quickfork-oavdz7vn6");
     expect(sitemap).toBe(renderSitemapXml());
 
@@ -44,6 +47,9 @@ describe("public growth infrastructure", () => {
     expect(llms).toContain("https://seekersai.com/resources/github-project-marketing-card-guide");
     expect(llms).toContain("https://seekersai.com/compare/chatgpt-open-source-launch-copy");
     expect(llms).toContain("https://seekersai.com/examples/qwenlm-flashqla-launch-card");
+    expect(llms).toContain("https://seekersai.com/help");
+    expect(llms).toContain("https://seekersai.com/privacy");
+    expect(llms).toContain("https://seekersai.com/terms");
   });
 
   it("sets homepage metadata for canonical public discovery", () => {
@@ -71,6 +77,9 @@ describe("public growth infrastructure", () => {
       expect.arrayContaining([
         { source: "/product/:path*", destination: "/index.html" },
         { source: "/contact", destination: "/index.html" },
+        { source: "/help", destination: "/index.html" },
+        { source: "/privacy", destination: "/index.html" },
+        { source: "/terms", destination: "/index.html" },
         { source: "/use-cases/:path*", destination: "/index.html" },
         { source: "/resources/:path*", destination: "/index.html" },
         { source: "/compare/:path*", destination: "/index.html" },

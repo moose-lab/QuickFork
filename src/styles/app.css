@@ -1877,15 +1877,172 @@ blockquote {
 }
 
 .footer {
-  min-height: 84px;
+  min-height: 112px;
   border-top: 1px solid var(--border);
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 24px;
   color: var(--muted);
   font-size: 11px;
   font-weight: 650;
+}
+
+.footerBrand {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.footerBrand span {
+  color: var(--fg);
+}
+
+.footerBrand small {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.footerNav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.footerNav a {
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--muted);
+}
+
+.footerNav a:hover,
+.footerNav a:focus-visible {
+  border-color: var(--border);
+  color: var(--fg);
+  background: #ffffff;
+}
+
+.secondaryHero,
+.secondaryBody {
+  width: min(var(--container), calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.secondaryHero {
+  padding: 92px 0 56px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.secondaryHeroCopy {
+  min-height: 430px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 20px;
+}
+
+.secondaryHeroCopy h1,
+.secondaryArticle h2 {
+  font-family: var(--font-body);
+  line-height: 0.98;
+  font-weight: 760;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.secondaryHeroCopy h1 {
+  max-width: 840px;
+  font-size: clamp(54px, 7vw, 98px);
+}
+
+.secondaryHeroCopy p {
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 19px;
+  line-height: 1.52;
+  text-wrap: pretty;
+}
+
+.secondarySignalPanel {
+  min-height: 100%;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 22px;
+  display: grid;
+  align-content: space-between;
+  gap: 42px;
+  color: var(--fg);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.secondarySignalPanel svg {
+  color: var(--orange);
+}
+
+.secondarySignalPanel span {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font: 650 12px/1.4 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.secondaryBody {
+  padding: 0 0 82px;
+  display: grid;
+  gap: 14px;
+}
+
+.secondaryArticle {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 26px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.52fr) minmax(0, 0.48fr);
+  gap: 28px;
+  align-items: start;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.secondaryArticle h2 {
+  font-size: clamp(30px, 3.4vw, 48px);
+}
+
+.secondaryArticle p,
+.secondaryArticle li {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.secondaryArticle p {
+  margin-top: 14px;
+  max-width: 640px;
+}
+
+.secondaryArticle ul {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.secondaryArticle li::marker {
+  color: var(--orange);
 }
 
 .marketingHeroSection,
@@ -2174,6 +2331,8 @@ blockquote {
   .closing,
   .controlGrid,
   .outputGrid,
+  .secondaryHero,
+  .secondaryArticle,
   .marketingHeroGrid,
   .marketingBodyGrid,
   .leadCaptureForm,
@@ -2247,6 +2406,8 @@ blockquote {
   .marketingBodySection,
   .marketingCaptureSection,
   .marketingRelatedSection,
+  .secondaryHero,
+  .secondaryBody,
   .footer {
     width: min(100% - 28px, var(--container));
   }
@@ -2388,12 +2549,25 @@ blockquote {
     padding: 62px 0 48px;
   }
 
-  .marketingHeroCopy {
+  .secondaryHero {
+    padding: 62px 0 42px;
+  }
+
+  .marketingHeroCopy,
+  .secondaryHeroCopy {
     min-height: 0;
   }
 
   .marketingHeroCopy h1 {
     font-size: clamp(44px, 14vw, 68px);
+  }
+
+  .secondaryHeroCopy h1 {
+    font-size: clamp(48px, 15vw, 76px);
+  }
+
+  .secondaryArticle {
+    padding: 20px;
   }
 
   .marketingRelatedGrid {
@@ -2444,8 +2618,12 @@ blockquote {
   }
 
   .footer {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     align-items: flex-start;
     justify-content: center;
+  }
+
+  .footerNav {
+    justify-content: flex-start;
   }
 }
