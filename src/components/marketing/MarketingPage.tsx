@@ -15,6 +15,7 @@ import {
   getMarketingPrimaryCtaHref,
   getMarketingPrimaryCtaLabel,
 } from "../../marketing/page-content";
+import { LeadCaptureForm } from "./LeadCaptureForm";
 
 interface MarketingPageProps {
   link: MarketingLink;
@@ -138,6 +139,12 @@ export function MarketingPage({ link }: MarketingPageProps) {
             </div>
           </div>
         </section>
+
+        {link.pageType === "resource" || link.pageType === "contact" ? (
+          <section className="marketingCaptureSection">
+            <LeadCaptureForm link={link} />
+          </section>
+        ) : null}
 
         {relatedLinks.length > 0 ? (
           <section className="marketingRelatedSection" aria-labelledby="marketing-related-title">

@@ -372,6 +372,8 @@ export const publishedMarketingLinks = marketingLinks.filter((link) => link.stat
 
 export const marketingPageLinks = marketingLinks.filter((link) => crawlablePageTypes.has(link.pageType));
 
+export const contactMarketingLinks = marketingLinks.filter((link) => link.pageType === "contact");
+
 export const sitemapMarketingLinks = publishedMarketingLinks.filter((link) => crawlablePageTypes.has(link.pageType));
 
 export function getMarketingLinkBySlug(slug: string) {
@@ -382,6 +384,12 @@ export function getMarketingLinkByPath(pathname: string) {
   const normalizedPath = normalizePath(pathname);
 
   return marketingPageLinks.find((link) => getMarketingPath(link) === normalizedPath);
+}
+
+export function getContactMarketingLinkByIntent(intent: string | null) {
+  const normalizedIntent = intent?.trim() || "demo";
+
+  return contactMarketingLinks.find((link) => new URL(link.canonicalUrl).searchParams.get("intent") === normalizedIntent);
 }
 
 export function getMarketingPath(link: MarketingLink) {

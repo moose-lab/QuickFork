@@ -1890,6 +1890,7 @@ blockquote {
 
 .marketingHeroSection,
 .marketingBodySection,
+.marketingCaptureSection,
 .marketingRelatedSection {
   width: min(var(--container), calc(100% - 40px));
   margin: 0 auto;
@@ -2055,6 +2056,54 @@ blockquote {
   padding: 28px 0 82px;
 }
 
+.marketingCaptureSection {
+  padding: 4px 0 52px;
+}
+
+.leadCaptureForm {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(420px, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.leadCaptureIntro {
+  display: grid;
+  gap: 10px;
+}
+
+.leadCaptureIntro .monoLabel {
+  margin-bottom: 0;
+}
+
+.leadCaptureIntro h3 {
+  font-size: 28px;
+  line-height: 1.05;
+}
+
+.leadCaptureIntro p,
+.leadCaptureStatus {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.leadCaptureFields {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(150px, 0.8fr) minmax(150px, 0.8fr);
+  gap: 10px;
+}
+
+.leadCaptureStatus {
+  grid-column: 2 / -1;
+  min-height: 20px;
+}
+
 .marketingRelatedHead {
   margin-bottom: 22px;
 }
@@ -2126,8 +2175,14 @@ blockquote {
   .controlGrid,
   .outputGrid,
   .marketingHeroGrid,
-  .marketingBodyGrid {
+  .marketingBodyGrid,
+  .leadCaptureForm,
+  .leadCaptureFields {
     grid-template-columns: 1fr;
+  }
+
+  .leadCaptureStatus {
+    grid-column: auto;
   }
 
   .heroContent,
@@ -2190,6 +2245,7 @@ blockquote {
   .closing,
   .marketingHeroSection,
   .marketingBodySection,
+  .marketingCaptureSection,
   .marketingRelatedSection,
   .footer {
     width: min(100% - 28px, var(--container));

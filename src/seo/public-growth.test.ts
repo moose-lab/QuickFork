@@ -70,6 +70,7 @@ describe("public growth infrastructure", () => {
     expect(vercelConfig.rewrites).toEqual(
       expect.arrayContaining([
         { source: "/product/:path*", destination: "/index.html" },
+        { source: "/contact", destination: "/index.html" },
         { source: "/use-cases/:path*", destination: "/index.html" },
         { source: "/resources/:path*", destination: "/index.html" },
         { source: "/compare/:path*", destination: "/index.html" },

@@ -14,6 +14,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/contact",
+      "destination": "/index.html"
+    },
+    {
       "source": "/product/:path*",
       "destination": "/index.html"
     },

@@ -175,6 +175,118 @@ describe("App", () => {
     );
   });
 
+  it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ leadId: "lead_1", lifecycleStage: "lead", activityId: "activity_1" }), {
+          headers: { "Content-Type": "application/json" },
+          status: 201,
+        }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText(/work email/i), { target: { value: "maintainer@example.dev" } });
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: "Repo Maintainer" } });
+    fireEvent.click(screen.getByRole("button", { name: /request resource/i }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/lead-capture",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    const payload = JSON.parse((fetchMock.mock.calls[0]?.[1] as RequestInit).body as string);
+    expect(payload).toMatchObject({
+      intent: "resource",
+      email: "maintainer@example.dev",
+      name: "Repo Maintainer",
+      resourceSlug: "github-project-marketing-card-guide",
+      captureLocation: "marketing_page",
+      crmCampaign: "2026_q2_repo_to_card_demo",
+      firstTouch: expect.objectContaining({
+        source: "github",
+        landingPage: "http://localhost:3000/resources/github-project-marketing-card-guide",
+      }),
+    });
+    expect(await screen.findByText(/check your inbox for the resource/i)).toBeInTheDocument();
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "lead_magnet_requested",
+          resource_slug: "github-project-marketing-card-guide",
+          capture_location: "marketing_page",
+        }),
+        expect.objectContaining({
+          event: "lead_magnet_delivered",
+          resource_slug: "github-project-marketing-card-guide",
+          delivery_channel: "email",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toContain("maintainer@example.dev");
+  });
+
+  it("submits contact intent forms for bottom-funnel demo requests", async () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/contact?intent=demo&utm_source=linkedin");
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            leadId: "lead_1",
+            lifecycleStage: "sales_qualified_lead",
+            activityId: "activity_1",
+          }),
+          {
+            headers: { "Content-Type": "application/json" },
+            status: 201,
+          },
+        ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /quickfork demo for founder-led follow-up/i })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/work email/i), { target: { value: "founder@example.dev" } });
+    fireEvent.change(screen.getByLabelText(/company domain/i), { target: { value: "example.dev" } });
+    fireEvent.click(screen.getByRole("button", { name: /request demo/i }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    const payload = JSON.parse((fetchMock.mock.calls[0]?.[1] as RequestInit).body as string);
+    expect(payload).toMatchObject({
+      intent: "demo",
+      email: "founder@example.dev",
+      companyDomain: "example.dev",
+      requestType: "founder_demo",
+      contactReason: "quickfork_demo",
+      crmCampaign: "2026_q2_founder_led_sales",
+      firstTouch: expect.objectContaining({
+        source: "linkedin",
+        landingPage: "http://localhost:3000/contact",
+      }),
+    });
+    expect(await screen.findByText(/we will follow up with the next step/i)).toBeInTheDocument();
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "demo_requested",
+          request_type: "founder_demo",
+          company_domain: "example.dev",
+          role_segment: "founder",
+          utm_source: "linkedin",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toContain("founder@example.dev");
+  });
+
   it("submits the Hero generator form to the backend generation API", async () => {
     window.dataLayer = [];
     const fetchMock = vi.fn(async () =>

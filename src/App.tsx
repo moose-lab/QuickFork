@@ -4,7 +4,7 @@ import { AuthPage } from "./components/auth/AuthPage";
 import { LandingPage } from "./components/LandingPage";
 import { MarketingPage } from "./components/marketing/MarketingPage";
 import { getPageAnalyticsProperties, trackEvent } from "./lib/analytics";
-import { getMarketingLinkByPath } from "./marketing/link-catalog";
+import { getContactMarketingLinkByIntent, getMarketingLinkByPath } from "./marketing/link-catalog";
 
 function getRoute() {
   return window.location.pathname;
@@ -14,6 +14,8 @@ function App() {
   const [, setRouteVersion] = useState(0);
   const route = getRoute();
   const marketingLink = getMarketingLinkByPath(route);
+  const contactLink =
+    route === "/contact" ? getContactMarketingLinkByIntent(new URLSearchParams(window.location.search).get("intent")) : undefined;
 
   useEffect(() => {
     const handleRouteChange = () => setRouteVersion((version) => version + 1);
@@ -36,6 +38,10 @@ function App() {
 
   if (marketingLink) {
     return <MarketingPage link={marketingLink} />;
+  }
+
+  if (contactLink) {
+    return <MarketingPage link={contactLink} />;
   }
 
   return <LandingPage />;
