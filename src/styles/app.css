@@ -1888,6 +1888,201 @@ blockquote {
   font-weight: 650;
 }
 
+.marketingHeroSection,
+.marketingBodySection,
+.marketingRelatedSection {
+  width: min(var(--container), calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.marketingHeroSection {
+  padding: 92px 0 64px;
+}
+
+.marketingHeroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.5fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.marketingHeroCopy {
+  min-height: 480px;
+  display: grid;
+  align-content: center;
+  gap: 22px;
+}
+
+.marketingHeroCopy h1,
+.marketingNarrative h2,
+.marketingRelatedHead h2 {
+  font-family: var(--font-body);
+  line-height: 0.98;
+  font-weight: 760;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.marketingHeroCopy h1 {
+  max-width: 880px;
+  font-size: clamp(48px, 6vw, 86px);
+}
+
+.marketingHeroCopy p,
+.marketingNarrative p {
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.marketingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.marketingSignalPanel {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.marketingMetaList {
+  height: 100%;
+  margin: 0;
+  display: grid;
+}
+
+.marketingMetaList div {
+  min-height: 112px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+}
+
+.marketingMetaList div:last-child {
+  border-bottom: 0;
+}
+
+.marketingMetaList dt,
+.marketingStepRail span,
+.marketingRelatedLink span,
+.marketingRelatedLink small {
+  color: var(--muted);
+  font: 650 11px/1.35 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.marketingMetaList dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--fg);
+  font-size: 17px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.marketingBodySection {
+  padding: 72px 0;
+  border-top: 1px solid var(--border);
+}
+
+.marketingBodyGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(420px, 0.48fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.marketingNarrative h2,
+.marketingRelatedHead h2 {
+  max-width: 760px;
+  font-size: clamp(40px, 4.8vw, 72px);
+}
+
+.marketingNarrative p {
+  margin-top: 18px;
+}
+
+.marketingStepRail {
+  border: 1px solid var(--border);
+  display: grid;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.marketingStepRail article {
+  min-height: 132px;
+  padding: 18px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px 12px;
+  align-items: start;
+}
+
+.marketingStepRail article:last-child {
+  border-bottom: 0;
+}
+
+.marketingStepRail svg {
+  color: var(--orange);
+}
+
+.marketingStepRail strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 20px;
+  line-height: 1.12;
+}
+
+.marketingStepRail span {
+  grid-column: 2;
+  text-transform: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.marketingRelatedSection {
+  padding: 28px 0 82px;
+}
+
+.marketingRelatedHead {
+  margin-bottom: 22px;
+}
+
+.marketingRelatedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.marketingRelatedLink {
+  min-height: 180px;
+  padding: 18px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+}
+
+.marketingRelatedLink strong {
+  font-size: 22px;
+  line-height: 1.08;
+}
+
 @media (max-width: 960px) {
   .navInner {
     grid-template-columns: auto auto minmax(0, 1fr);
@@ -1929,7 +2124,9 @@ blockquote {
   .proofGrid,
   .closing,
   .controlGrid,
-  .outputGrid {
+  .outputGrid,
+  .marketingHeroGrid,
+  .marketingBodyGrid {
     grid-template-columns: 1fr;
   }
 
@@ -1991,6 +2188,9 @@ blockquote {
   .splitShowcase,
   .studioSection,
   .closing,
+  .marketingHeroSection,
+  .marketingBodySection,
+  .marketingRelatedSection,
   .footer {
     width: min(100% - 28px, var(--container));
   }
@@ -2123,8 +2323,25 @@ blockquote {
   }
 
   .section,
-  .studioSection {
+  .studioSection,
+  .marketingBodySection {
     padding: 68px 0;
+  }
+
+  .marketingHeroSection {
+    padding: 62px 0 48px;
+  }
+
+  .marketingHeroCopy {
+    min-height: 0;
+  }
+
+  .marketingHeroCopy h1 {
+    font-size: clamp(44px, 14vw, 68px);
+  }
+
+  .marketingRelatedGrid {
+    grid-template-columns: 1fr;
   }
 
   .sectionGrid {

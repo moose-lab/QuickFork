@@ -12,6 +12,34 @@
     {
       "source": "/sign-up",
       "destination": "/index.html"
+    },
+    {
+      "source": "/product/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/use-cases/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/resources/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/compare/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/examples/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tools/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/templates/:path*",
+      "destination": "/index.html"
     }
   ],
   "git": {

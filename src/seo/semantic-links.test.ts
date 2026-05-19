@@ -5,10 +5,13 @@ import { describe, expect, it } from "vitest";
 
 import {
   getDistributedMarketingUrl,
+  getMarketingLinkByPath,
   getMarketingLinkBySlug,
   marketingLinks,
+  marketingPageLinks,
   sitemapMarketingLinks,
 } from "../marketing/link-catalog";
+import { getMarketingPageDescription, getMarketingPageHeadline, getMarketingPageTitle } from "../marketing/page-content";
 
 const inventoryPath = "docs/marketing/data/semantic-link-inventory.csv";
 const requiredHeaders = [
@@ -166,4 +169,54 @@ describe("typed semantic marketing link catalog", () => {
       canonicalUrls.add(link.canonicalUrl);
     }
   });
+
+  it("provides unique page-shell metadata for every crawlable page family", () => {
+    const requiredPageTypes = new Set(["product", "use_case", "resource", "tool", "template", "example", "compare"]);
+    const actualPageTypes = new Set(marketingPageLinks.map((link) => link.pageType));
+    const titles = new Set<string>();
+    const descriptions = new Set<string>();
+    const headlines = new Set<string>();
+
+    for (const pageType of requiredPageTypes) {
+      expect(actualPageTypes.has(pageType)).toBe(true);
+    }
+
+    for (const link of marketingPageLinks) {
+      const title = getMarketingPageTitle(link);
+      const description = getMarketingPageDescription(link);
+      const headline = getMarketingPageHeadline(link);
+
+      expect(title).toContain("QuickFork");
+      expect(title).toContain(toTitleCase(link.primaryKeyword));
+      expect(description).toContain("QuickFork");
+      expect(description).toContain(link.primaryKeyword);
+      expect(headline).toContain(toTitleCase(link.primaryKeyword));
+      expect(`${title} ${description} ${headline}`).not.toMatch(/\b(#1|customers|revenue|cheapest|guaranteed)\b/i);
+      expect(titles.has(title)).toBe(false);
+      expect(descriptions.has(description)).toBe(false);
+      expect(headlines.has(headline)).toBe(false);
+      titles.add(title);
+      descriptions.add(description);
+      headlines.add(headline);
+    }
+  });
+
+  it("matches canonical page paths from the catalog", () => {
+    const link = getMarketingLinkByPath("/resources/github-project-marketing-card-guide");
+
+    expect(link?.slug).toBe("github-project-marketing-card-guide");
+    expect(getMarketingLinkByPath("/contact")).toBeUndefined();
+  });
 });
+
+function toTitleCase(value: string) {
+  return value
+    .replace(/\b\w/g, (character) => character.toUpperCase())
+    .replace(/\bGithub\b/g, "GitHub")
+    .replace(/\bChatgpt\b/g, "ChatGPT")
+    .replace(/\bDevrel\b/g, "DevRel")
+    .replace(/\bReadme\b/g, "README")
+    .replace(/\bQwenlm\b/g, "QwenLM")
+    .replace(/\bDeepseek\b/g, "DeepSeek")
+    .replace(/\bCanva\b/g, "Canva");
+}

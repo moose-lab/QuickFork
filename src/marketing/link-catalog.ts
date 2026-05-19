@@ -370,10 +370,18 @@ export const marketingLinks: readonly MarketingLink[] = [
 
 export const publishedMarketingLinks = marketingLinks.filter((link) => link.status === "published");
 
+export const marketingPageLinks = marketingLinks.filter((link) => crawlablePageTypes.has(link.pageType));
+
 export const sitemapMarketingLinks = publishedMarketingLinks.filter((link) => crawlablePageTypes.has(link.pageType));
 
 export function getMarketingLinkBySlug(slug: string) {
   return marketingLinks.find((link) => link.slug === slug);
+}
+
+export function getMarketingLinkByPath(pathname: string) {
+  const normalizedPath = normalizePath(pathname);
+
+  return marketingPageLinks.find((link) => getMarketingPath(link) === normalizedPath);
 }
 
 export function getMarketingPath(link: MarketingLink) {
@@ -388,4 +396,10 @@ export function getDistributedMarketingUrl(link: MarketingLink) {
   url.searchParams.set("utm_campaign", link.utm.campaign);
   url.searchParams.set("utm_content", link.utm.content);
   return url.toString();
+}
+
+function normalizePath(pathname: string) {
+  const path = pathname.split(/[?#]/)[0] || "/";
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return normalized.length > 1 ? normalized.replace(/\/+$/, "") : normalized;
 }

@@ -46,4 +46,22 @@ describe("public growth infrastructure", () => {
 
     expect(envExample).toContain("VITE_GA_MEASUREMENT_ID=");
   });
+
+  it("rewrites semantic marketing routes to the client shell for direct crawler visits", () => {
+    const vercelConfig = JSON.parse(readProjectFile("vercel.json")) as {
+      rewrites: Array<{ source: string; destination: string }>;
+    };
+
+    expect(vercelConfig.rewrites).toEqual(
+      expect.arrayContaining([
+        { source: "/product/:path*", destination: "/index.html" },
+        { source: "/use-cases/:path*", destination: "/index.html" },
+        { source: "/resources/:path*", destination: "/index.html" },
+        { source: "/compare/:path*", destination: "/index.html" },
+        { source: "/examples/:path*", destination: "/index.html" },
+        { source: "/tools/:path*", destination: "/index.html" },
+        { source: "/templates/:path*", destination: "/index.html" },
+      ]),
+    );
+  });
 });

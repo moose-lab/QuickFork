@@ -1,3 +1,5 @@
+import { getMarketingLinkByPath, type MarketingPageType } from "../marketing/link-catalog";
+
 export type AnalyticsEventName =
   | "page_view"
   | "cta_clicked"
@@ -141,8 +143,18 @@ export function getPageAnalyticsProperties() {
 
 export function getRouteAnalyticsProperties(pathname: string): AnalyticsProperties {
   const normalizedPath = normalizePathname(pathname);
+  const marketingLink = getMarketingLinkByPath(normalizedPath);
   const [family, slug] = normalizedPath.replace(/^\/+/, "").split("/");
   const intentCluster = slug ? slugToIntentCluster(slug) : undefined;
+
+  if (marketingLink) {
+    return {
+      page_type: marketingLink.pageType,
+      page_intent: getMarketingPageIntent(marketingLink.pageType),
+      buyer_stage: marketingLink.buyerStage,
+      intent_cluster: marketingLink.intentCluster,
+    };
+  }
 
   if (normalizedPath === "/") {
     return {
@@ -237,6 +249,27 @@ export function getRouteAnalyticsProperties(pathname: string): AnalyticsProperti
         buyer_stage: "unknown",
         intent_cluster: "unknown",
       };
+  }
+}
+
+function getMarketingPageIntent(pageType: MarketingPageType) {
+  switch (pageType) {
+    case "product":
+      return "category_or_feature_consideration";
+    case "use_case":
+      return "job_to_be_done";
+    case "resource":
+      return "education";
+    case "compare":
+      return "alternative_evaluation";
+    case "example":
+      return "proof";
+    case "tool":
+      return "utility";
+    case "template":
+      return "implementation";
+    case "contact":
+      return "sales_contact";
   }
 }
 

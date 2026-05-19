@@ -125,6 +125,56 @@ describe("App", () => {
     expect(JSON.stringify(window.dataLayer)).not.toContain("token=secret");
   });
 
+  it("renders catalog-backed marketing route shells with route metadata and CTAs", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: /github project marketing card for teams preparing a public project launch/i,
+      }),
+    ).toBeInTheDocument();
+    const routeDetails = screen.getByRole("complementary", { name: /marketing route details/i });
+    expect(screen.getByText("https://seekersai.com/resources/github-project-marketing-card-guide")).toBeInTheDocument();
+    expect(within(routeDetails).getByText("Resource")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate launch card/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("GitHub Project Marketing Card | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      expect.stringContaining("github project marketing card"),
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/resources/github-project-marketing-card-guide",
+    );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/resources/github-project-marketing-card-guide",
+          page_type: "resource",
+          page_intent: "education",
+          buyer_stage: "awareness",
+          intent_cluster: "github_project_marketing_card",
+          utm_source: "github",
+        }),
+        expect.objectContaining({
+          event: "resource_page_viewed",
+          resource_slug: "github-project-marketing-card-guide",
+          resource_type: "guide",
+          buyer_stage: "awareness",
+          page_type: "resource",
+          utm_source: "github",
+        }),
+      ]),
+    );
+  });
+
   it("submits the Hero generator form to the backend generation API", async () => {
     window.dataLayer = [];
     const fetchMock = vi.fn(async () =>
