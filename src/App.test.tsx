@@ -38,6 +38,11 @@ describe("App", () => {
     expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
     expect(screen.getByRole("link", { name: /pricing/i })).toHaveAttribute("href", "#pricing");
+    const footerNav = screen.getByRole("navigation", { name: /footer/i });
+    expect(within(footerNav).getByRole("link", { name: /^contact$/i })).toHaveAttribute("href", "/contact");
+    expect(within(footerNav).getByRole("link", { name: /^help$/i })).toHaveAttribute("href", "/help");
+    expect(within(footerNav).getByRole("link", { name: /^privacy$/i })).toHaveAttribute("href", "/privacy");
+    expect(within(footerNav).getByRole("link", { name: /^terms$/i })).toHaveAttribute("href", "/terms");
     expect(screen.queryByRole("link", { name: /start a fork/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
@@ -285,6 +290,35 @@ describe("App", () => {
       ]),
     );
     expect(JSON.stringify(window.dataLayer)).not.toContain("founder@example.dev");
+  });
+
+  it("renders help and legal footer routes with public metadata", () => {
+    window.history.replaceState({}, "", "/help");
+    const { rerender } = render(<App />);
+
+    expect(screen.getByRole("heading", { name: /help center/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /quickfork home/i })).toHaveAttribute("href", "/#hero");
+    expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "/#studio");
+    expect(screen.getByRole("link", { name: /pricing/i })).toHaveAttribute("href", "/#pricing");
+    expect(screen.getByRole("link", { name: /contact the team/i })).toHaveAttribute("href", "/contact");
+    expect(document.title).toBe("Help Center | QuickFork");
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute("href", "https://seekersai.com/help");
+
+    window.history.replaceState({}, "", "/privacy");
+    rerender(<App />);
+
+    expect(screen.getByRole("heading", { name: /privacy policy/i })).toBeInTheDocument();
+    expect(screen.getByText(/QuickFork should only use repository evidence/i)).toBeInTheDocument();
+    expect(document.title).toBe("Privacy Policy | QuickFork");
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute("href", "https://seekersai.com/privacy");
+
+    window.history.replaceState({}, "", "/terms");
+    rerender(<App />);
+
+    expect(screen.getByRole("heading", { name: /terms of service/i })).toBeInTheDocument();
+    expect(screen.getByText(/Do not use QuickFork to publish unsupported claims/i)).toBeInTheDocument();
+    expect(document.title).toBe("Terms of Service | QuickFork");
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute("href", "https://seekersai.com/terms");
   });
 
   it("submits the Hero generator form to the backend generation API", async () => {

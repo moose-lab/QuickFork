@@ -223,8 +223,16 @@ export function ClosingCTA() {
 export function LandingFooter() {
   return (
     <footer className="footer">
-      <span>QuickFork · SaaS landing-page system</span>
-      <span>Features · How to · Social proof · FAQ</span>
+      <div className="footerBrand">
+        <span>QuickFork</span>
+        <small>Source-backed launch assets for public repositories.</small>
+      </div>
+      <nav className="footerNav" aria-label="Footer navigation">
+        <a href="/contact">Contact</a>
+        <a href="/help">Help</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+      </nav>
     </footer>
   );
 }

@@ -56,6 +56,12 @@ QuickFork should use repository evidence, official project assets, README conten
 - QwenLM FlashQLA Launch Card | QuickFork: https://seekersai.com/examples/qwenlm-flashqla-launch-card - Example, Decision. QuickFork maps qwenlm flashqla launch card into a source-backed example path for Open Source Maintainer, with campaign attribution and a clear next action.
 - DeepSeek TWVP Launch Card | QuickFork: https://seekersai.com/examples/deepseek-twvp-launch-card - Example, Decision. QuickFork maps deepseek twvp launch card into a source-backed example path for Research Engineer, with campaign attribution and a clear next action.
 
+## Support And Legal
+
+- Help Center | QuickFork: https://seekersai.com/help - Support guidance for repository input, generated output review, and team follow-up.
+- Privacy Policy | QuickFork: https://seekersai.com/privacy - Data handling posture for public repository input, analytics, and contact forms.
+- Terms of Service | QuickFork: https://seekersai.com/terms - Responsible-use terms for source-backed launch assets and generated drafts.
+
 ## Public Resources
 
 - Website: https://seekersai.com/
