@@ -63,7 +63,7 @@ const crawlablePageTypes = new Set<MarketingPageType>([
 
 export const marketingLinks: readonly MarketingLink[] = [
   {
-    status: "draft",
+    status: "published",
     funnelStage: "top",
     buyerStage: "consideration",
     persona: "open_source_maintainer",
@@ -82,7 +82,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "top",
     buyerStage: "consideration",
     persona: "product_marketer",
@@ -101,7 +101,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "top",
     buyerStage: "consideration",
     persona: "design_lead",
@@ -120,7 +120,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "top",
     buyerStage: "consideration",
     persona: "open_source_maintainer",
@@ -139,7 +139,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "top",
     buyerStage: "consideration",
     persona: "developer_advocate",
@@ -158,7 +158,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "top",
     buyerStage: "awareness",
     persona: "open_source_maintainer",
@@ -177,7 +177,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "top",
     buyerStage: "awareness",
     persona: "open_source_maintainer",
@@ -196,7 +196,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "top",
     buyerStage: "implementation",
     persona: "design_lead",
@@ -215,7 +215,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "middle",
     buyerStage: "consideration",
     persona: "founder",
@@ -234,7 +234,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "middle",
     buyerStage: "implementation",
     persona: "founder",
@@ -253,7 +253,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "middle",
     buyerStage: "decision",
     persona: "open_source_maintainer",
@@ -272,7 +272,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "middle",
     buyerStage: "decision",
     persona: "research_engineer",
@@ -291,7 +291,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "bottom",
     buyerStage: "decision",
     persona: "founder",
@@ -310,7 +310,7 @@ export const marketingLinks: readonly MarketingLink[] = [
     },
   },
   {
-    status: "draft",
+    status: "published",
     funnelStage: "bottom",
     buyerStage: "decision",
     persona: "design_lead",

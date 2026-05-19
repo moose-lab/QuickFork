@@ -25,6 +25,37 @@ https://seekersai.com/
 
 QuickFork should use repository evidence, official project assets, README content, public metadata, or explicit user input. It should not invent customer numbers, benchmark claims, logos, or unsupported proof points.
 
+## Public Route Inventory
+
+### Product Pages
+
+- GitHub Repo To Launch Package | QuickFork: https://seekersai.com/product/github-repo-to-launch-package - Product, Consideration. QuickFork maps github repo to launch package into a source-backed product path for Open Source Maintainer, with campaign attribution and a clear next action.
+- Source Backed Launch Assets | QuickFork: https://seekersai.com/product/source-backed-launch-assets - Product, Consideration. QuickFork maps source backed launch assets into a source-backed product path for Product Marketer, with campaign attribution and a clear next action.
+- README Marketing Cards | QuickFork: https://seekersai.com/product/readme-marketing-cards - Product, Consideration. QuickFork maps readme marketing cards into a source-backed product path for Design Lead, with campaign attribution and a clear next action.
+
+### Use Cases
+
+- Open Source Launch | QuickFork: https://seekersai.com/use-cases/open-source-launch - Use case, Consideration. QuickFork maps open source launch into a source-backed use case path for Open Source Maintainer, with campaign attribution and a clear next action.
+- DevRel Launch Workflow | QuickFork: https://seekersai.com/use-cases/devrel-launch-workflow - Use case, Consideration. QuickFork maps devrel launch workflow into a source-backed use case path for Developer Advocate, with campaign attribution and a clear next action.
+
+### Resources
+
+- Open Source Launch Checklist | QuickFork: https://seekersai.com/resources/open-source-launch-checklist - Resource, Awareness. QuickFork maps open source launch checklist into a source-backed resource path for Open Source Maintainer, with campaign attribution and a clear next action.
+- GitHub Project Marketing Card | QuickFork: https://seekersai.com/resources/github-project-marketing-card-guide - Resource, Awareness. QuickFork maps github project marketing card into a source-backed resource path for Open Source Maintainer, with campaign attribution and a clear next action.
+- README Cover Prompt Guide | QuickFork: https://seekersai.com/resources/readme-cover-prompt-guide - Resource, Implementation. QuickFork maps readme cover prompt guide into a source-backed resource path for Design Lead, with campaign attribution and a clear next action.
+- GitHub Repo Launch Readiness Score | QuickFork: https://seekersai.com/tools/github-repo-launch-readiness-score - Tool, Consideration. QuickFork maps github repo launch readiness score into a source-backed tool path for Founder, with campaign attribution and a clear next action.
+- GitHub Launch Announcement Template | QuickFork: https://seekersai.com/templates/github-launch-announcement - Template, Implementation. QuickFork maps github launch announcement template into a source-backed template path for Founder, with campaign attribution and a clear next action.
+
+### Comparisons
+
+- ChatGPT Open Source Launch Copy | QuickFork: https://seekersai.com/compare/chatgpt-open-source-launch-copy - Comparison, Decision. QuickFork maps chatgpt open source launch copy into a source-backed comparison path for Founder, with campaign attribution and a clear next action.
+- Canva README Banner Generator | QuickFork: https://seekersai.com/compare/canva-readme-banner-generator - Comparison, Decision. QuickFork maps canva readme banner generator into a source-backed comparison path for Design Lead, with campaign attribution and a clear next action.
+
+### Examples
+
+- QwenLM FlashQLA Launch Card | QuickFork: https://seekersai.com/examples/qwenlm-flashqla-launch-card - Example, Decision. QuickFork maps qwenlm flashqla launch card into a source-backed example path for Open Source Maintainer, with campaign attribution and a clear next action.
+- DeepSeek TWVP Launch Card | QuickFork: https://seekersai.com/examples/deepseek-twvp-launch-card - Example, Decision. QuickFork maps deepseek twvp launch card into a source-backed example path for Research Engineer, with campaign attribution and a clear next action.
+
 ## Public Resources
 
 - Website: https://seekersai.com/

@@ -101,6 +101,8 @@ export function formatMarketingLabel(value: string) {
     .replace(/\bDevrel\b/g, "DevRel")
     .replace(/\bReadme\b/g, "README")
     .replace(/\bQwenlm\b/g, "QwenLM")
+    .replace(/\bFlashqla\b/g, "FlashQLA")
     .replace(/\bDeepseek\b/g, "DeepSeek")
+    .replace(/\bTwvp\b/g, "TWVP")
     .replace(/\bCanva\b/g, "Canva");
 }
