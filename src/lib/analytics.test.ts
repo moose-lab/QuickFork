@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { getRepoAnalyticsProperties, initializeAnalytics, trackEvent } from "./analytics";
+import { getPageAnalyticsProperties, getRepoAnalyticsProperties, initializeAnalytics, trackEvent } from "./analytics";
 
 declare global {
   interface Window {
@@ -11,12 +11,14 @@ declare global {
 
 describe("analytics", () => {
   const originalPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  const originalReferrer = document.referrer;
 
   afterEach(() => {
     delete window.dataLayer;
     delete window.gtag;
     window.sessionStorage.clear();
     window.history.replaceState({}, "", originalPath);
+    Object.defineProperty(document, "referrer", { configurable: true, value: originalReferrer });
     document.querySelectorAll("script[data-quickfork-analytics]").forEach((script) => script.remove());
     vi.restoreAllMocks();
   });
@@ -102,6 +104,71 @@ describe("analytics", () => {
       },
     ]);
     expect(JSON.stringify(window.dataLayer)).not.toContain("token=secret");
+  });
+
+  it("supports full-funnel marketing events while filtering PII and secret-like properties", () => {
+    window.dataLayer = [];
+    window.gtag = vi.fn();
+    window.history.pushState(
+      {},
+      "",
+      "/contact?intent=demo&utm_source=linkedin&utm_medium=organic_social&utm_campaign=founder_led_sales&utm_content=demo_cta",
+    );
+
+    trackEvent("demo_requested", {
+      request_type: "founder_demo",
+      company_domain: "example.dev",
+      role_segment: "founder",
+      email: "moose@example.dev",
+      auth_token: "token=secret",
+      raw_query: "intent=demo&token=secret",
+    });
+
+    expect(window.dataLayer).toEqual([
+      {
+        event: "demo_requested",
+        request_type: "founder_demo",
+        company_domain: "example.dev",
+        role_segment: "founder",
+        utm_source: "linkedin",
+        utm_medium: "organic_social",
+        utm_campaign: "founder_led_sales",
+        utm_content: "demo_cta",
+      },
+    ]);
+    expect(JSON.stringify(window.dataLayer)).not.toContain("moose@example.dev");
+    expect(JSON.stringify(window.dataLayer)).not.toContain("token=secret");
+    expect(window.gtag).toHaveBeenCalledWith("event", "demo_requested", {
+      request_type: "founder_demo",
+      company_domain: "example.dev",
+      role_segment: "founder",
+      utm_source: "linkedin",
+      utm_medium: "organic_social",
+      utm_campaign: "founder_led_sales",
+      utm_content: "demo_cta",
+    });
+  });
+
+  it("adds page intent metadata for current and future SEO routes without preserving raw query strings", () => {
+    Object.defineProperty(document, "referrer", {
+      configurable: true,
+      value: "https://example.com/source?token=secret#section",
+    });
+    window.history.pushState(
+      {},
+      "",
+      "/resources/open-source-launch-checklist?utm_source=x&token=secret",
+    );
+
+    expect(getPageAnalyticsProperties()).toEqual({
+      page_path: "/resources/open-source-launch-checklist",
+      page_title: document.title,
+      page_referrer: "https://example.com/source",
+      page_type: "resource",
+      page_intent: "education",
+      buyer_stage: "awareness",
+      intent_cluster: "open_source_launch_checklist",
+    });
   });
 
   it("normalizes GitHub repository properties without preserving raw query strings", () => {

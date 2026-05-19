@@ -103,6 +103,28 @@ describe("App", () => {
     expect(screen.getAllByText(/Social/i).length).toBeGreaterThan(0);
   });
 
+  it("tracks route-level page views with funnel intent metadata", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/sign-up?utm_source=github&token=secret");
+
+    render(<App />);
+
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/sign-up",
+          page_type: "auth",
+          page_intent: "account_creation",
+          buyer_stage: "decision",
+          intent_cluster: "signup",
+          utm_source: "github",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toContain("token=secret");
+  });
+
   it("submits the Hero generator form to the backend generation API", async () => {
     window.dataLayer = [];
     const fetchMock = vi.fn(async () =>

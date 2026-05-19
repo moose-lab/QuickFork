@@ -1,11 +1,23 @@
 export type AnalyticsEventName =
   | "page_view"
+  | "cta_clicked"
+  | "outbound_link_clicked"
+  | "resource_page_viewed"
+  | "example_page_viewed"
+  | "tool_started"
+  | "tool_result_viewed"
   | "hero_repo_url_entered"
   | "generation_started"
   | "generation_completed"
   | "generation_failed"
   | "generated_image_preview_opened"
   | "generated_image_downloaded"
+  | "lead_magnet_requested"
+  | "lead_magnet_delivered"
+  | "showcase_publish_started"
+  | "showcase_published"
+  | "demo_requested"
+  | "sales_contact_requested"
   | "signup_started"
   | "signup_completed"
   | "signin_started"
@@ -18,6 +30,10 @@ type GtagArguments = ["js", Date] | ["config", string] | ["event", string, Analy
 
 const CAMPAIGN_PARAM_NAMES = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
 const CAMPAIGN_STORAGE_KEY = "quickfork_campaign_context";
+const SENSITIVE_PROPERTY_KEY_PATTERN =
+  /(^|_)(email|token|secret|api[_-]?key|apikey|auth|otp|password|raw|readme|backend_error|error_message)($|_)/i;
+const EMAIL_VALUE_PATTERN = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+const SECRET_VALUE_PATTERN = /(token=|secret|api[_-]?key=|password=)/i;
 type CampaignParamName = (typeof CAMPAIGN_PARAM_NAMES)[number];
 
 declare global {
@@ -53,7 +69,7 @@ export function initializeAnalytics(measurementId?: string) {
 export function trackEvent(event: AnalyticsEventName, properties: AnalyticsProperties = {}) {
   if (typeof window === "undefined") return;
 
-  const enrichedProperties = { ...getCampaignAnalyticsProperties(), ...properties };
+  const enrichedProperties = sanitizeAnalyticsProperties({ ...getCampaignAnalyticsProperties(), ...properties });
   const payload = { event, ...enrichedProperties };
   window.dataLayer = window.dataLayer ?? [];
   window.dataLayer.push(payload);
@@ -111,14 +127,129 @@ export function getPageAnalyticsProperties() {
       page_path: "/",
       page_title: "",
       page_referrer: "",
+      ...getRouteAnalyticsProperties("/"),
     };
   }
 
   return {
     page_path: window.location.pathname,
     page_title: document.title,
-    page_referrer: document.referrer,
+    page_referrer: sanitizeUrlForAnalytics(document.referrer),
+    ...getRouteAnalyticsProperties(window.location.pathname),
   };
+}
+
+export function getRouteAnalyticsProperties(pathname: string): AnalyticsProperties {
+  const normalizedPath = normalizePathname(pathname);
+  const [family, slug] = normalizedPath.replace(/^\/+/, "").split("/");
+  const intentCluster = slug ? slugToIntentCluster(slug) : undefined;
+
+  if (normalizedPath === "/") {
+    return {
+      page_type: "homepage",
+      page_intent: "activation",
+      buyer_stage: "consideration",
+      intent_cluster: "repo_to_launch",
+    };
+  }
+
+  if (normalizedPath === "/sign-in") {
+    return {
+      page_type: "auth",
+      page_intent: "account_access",
+      buyer_stage: "decision",
+      intent_cluster: "account_access",
+    };
+  }
+
+  if (normalizedPath === "/sign-up") {
+    return {
+      page_type: "auth",
+      page_intent: "account_creation",
+      buyer_stage: "decision",
+      intent_cluster: "signup",
+    };
+  }
+
+  if (normalizedPath === "/contact") {
+    return {
+      page_type: "contact",
+      page_intent: "sales_contact",
+      buyer_stage: "decision",
+      intent_cluster: "founder_led_sales",
+    };
+  }
+
+  switch (family) {
+    case "product":
+      return {
+        page_type: "product",
+        page_intent: "category_or_feature_consideration",
+        buyer_stage: "consideration",
+        intent_cluster: intentCluster ?? "product",
+      };
+    case "use-cases":
+      return {
+        page_type: "use_case",
+        page_intent: "job_to_be_done",
+        buyer_stage: "consideration",
+        intent_cluster: intentCluster ?? "use_case",
+      };
+    case "resources":
+      return {
+        page_type: "resource",
+        page_intent: "education",
+        buyer_stage: "awareness",
+        intent_cluster: intentCluster ?? "resource",
+      };
+    case "compare":
+      return {
+        page_type: "compare",
+        page_intent: "alternative_evaluation",
+        buyer_stage: "decision",
+        intent_cluster: intentCluster ?? "compare",
+      };
+    case "examples":
+      return {
+        page_type: "example",
+        page_intent: "proof",
+        buyer_stage: "decision",
+        intent_cluster: intentCluster ?? "example",
+      };
+    case "tools":
+      return {
+        page_type: "tool",
+        page_intent: "utility",
+        buyer_stage: "consideration",
+        intent_cluster: intentCluster ?? "tool",
+      };
+    case "templates":
+      return {
+        page_type: "template",
+        page_intent: "implementation",
+        buyer_stage: "implementation",
+        intent_cluster: intentCluster ?? "template",
+      };
+    default:
+      return {
+        page_type: "unknown",
+        page_intent: "unknown",
+        buyer_stage: "unknown",
+        intent_cluster: "unknown",
+      };
+  }
+}
+
+function sanitizeAnalyticsProperties(properties: AnalyticsProperties): AnalyticsProperties {
+  const safeProperties: AnalyticsProperties = {};
+
+  for (const [key, value] of Object.entries(properties)) {
+    if (value === undefined || SENSITIVE_PROPERTY_KEY_PATTERN.test(key)) continue;
+    if (typeof value === "string" && (EMAIL_VALUE_PATTERN.test(value) || SECRET_VALUE_PATTERN.test(value))) continue;
+    safeProperties[key] = value;
+  }
+
+  return safeProperties;
 }
 
 function getCurrentCampaignProperties(): AnalyticsProperties {
@@ -171,4 +302,25 @@ function storeCampaignProperties(properties: AnalyticsProperties) {
 function normalizeCampaignValue(value?: string | null) {
   const normalized = value?.trim().replace(/[\x00-\x1F\x7F]/g, "").slice(0, 120);
   return normalized || undefined;
+}
+
+function normalizePathname(pathname: string) {
+  const path = pathname.split(/[?#]/)[0] || "/";
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return normalized.length > 1 ? normalized.replace(/\/+$/, "") : normalized;
+}
+
+function sanitizeUrlForAnalytics(url: string) {
+  if (!url) return "";
+
+  try {
+    const parsedUrl = new URL(url);
+    return `${parsedUrl.origin}${parsedUrl.pathname}`;
+  } catch {
+    return "";
+  }
+}
+
+function slugToIntentCluster(slug: string) {
+  return slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "unknown";
 }
