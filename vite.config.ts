@@ -2,6 +2,7 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { loadEnv, type Plugin } from "vite";
 import generationsHandler from "./api/generations";
+import leadCaptureHandler from "./api/lead-capture";
 
 export function localApiRoutesPlugin(): Plugin {
   return {
@@ -10,6 +11,13 @@ export function localApiRoutesPlugin(): Plugin {
       server.middlewares.use("/api/generations", async (req, res, next) => {
         try {
           await generationsHandler(req, res);
+        } catch (error) {
+          next(error);
+        }
+      });
+      server.middlewares.use("/api/lead-capture", async (req, res, next) => {
+        try {
+          await leadCaptureHandler(req, res);
         } catch (error) {
           next(error);
         }
