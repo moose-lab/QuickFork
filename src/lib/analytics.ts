@@ -12,6 +12,8 @@ export type AnalyticsEventName =
   | "generation_started"
   | "generation_completed"
   | "generation_failed"
+  | "launch_brief_viewed"
+  | "launch_brief_copied"
   | "generated_image_preview_opened"
   | "generated_image_downloaded"
   | "lead_magnet_requested"

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Download, Github, Languages, Loader2, Maximize2, X } from "lucide-react";
+import { Copy, Download, Github, Languages, Loader2, Maximize2, X } from "lucide-react";
 import { getRepoAnalyticsProperties, trackEvent } from "../../lib/analytics";
 
 type LocaleCode = "en" | "zh" | "ja";
@@ -78,6 +78,26 @@ interface GenerationSummary {
     purpose: string;
     status: string;
   }>;
+  launchBrief?: RepoLaunchBriefSummary;
+}
+
+interface RepoLaunchBriefSummary {
+  summary: string;
+  audienceHypothesis: string;
+  readmeChecklist: Array<{
+    item: string;
+    source: string;
+  }>;
+  launchAngles: Array<{
+    title: string;
+    body: string;
+    source: string;
+  }>;
+  socialPost: string;
+  deckOutline: string[];
+  outreachDraft: string;
+  visualExplainerPrompt: string;
+  sourceReferences: string[];
 }
 
 async function createGeneration(input: {
@@ -113,6 +133,7 @@ function ProjectLaunchInputPanel() {
   const [generation, setGeneration] = useState<GenerationSummary | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [lastTrackedRepoInput, setLastTrackedRepoInput] = useState("");
+  const trackedBriefId = useRef<string | null>(null);
 
   const toggleLocale = (locale: LocaleCode) => {
     setLocales((current) => {
@@ -190,6 +211,17 @@ function ProjectLaunchInputPanel() {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [previewImageUrl]);
+
+  useEffect(() => {
+    if (!generation?.launchBrief || trackedBriefId.current === generation.id) return;
+    trackedBriefId.current = generation.id;
+    trackEvent("launch_brief_viewed", {
+      ...getRepoAnalyticsProperties(generation.repo?.repo_url ?? repoUrl),
+      generation_id: generation.id,
+      brief_sections: getLaunchBriefSectionCount(generation.launchBrief),
+      source_reference_count: generation.launchBrief.sourceReferences.length,
+    });
+  }, [generation, repoUrl]);
 
   const trackRepoInputIntent = () => {
     const trimmedRepoUrl = repoUrl.trim();
@@ -300,6 +332,15 @@ function ProjectLaunchInputPanel() {
         </p>
       </form>
 
+      {generation?.launchBrief ? (
+        <LaunchBriefPanel
+          brief={generation.launchBrief}
+          generationId={generation.id}
+          repoFullName={generation.repo?.full_name ?? "Generated project"}
+          repoUrl={generation.repo?.repo_url ?? repoUrl}
+        />
+      ) : null}
+
       {generation ? (
         <span className="srOnly" aria-live="polite">
           Generated launch image for {generation.repo?.full_name ?? generation.id}
@@ -326,6 +367,139 @@ function ProjectLaunchInputPanel() {
       ) : null}
     </div>
   );
+}
+
+function LaunchBriefPanel({
+  brief,
+  generationId,
+  repoFullName,
+  repoUrl,
+}: {
+  brief: RepoLaunchBriefSummary;
+  generationId: string;
+  repoFullName: string;
+  repoUrl: string;
+}) {
+  const [copyStatus, setCopyStatus] = useState("Ready to copy");
+  const handleCopy = async () => {
+    const exportText = serializeLaunchBrief(brief, repoFullName);
+    await navigator.clipboard?.writeText(exportText);
+    setCopyStatus("Copied launch brief");
+    trackEvent("launch_brief_copied", {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      artifact_type: "free_repo_launch_brief",
+      brief_sections: getLaunchBriefSectionCount(brief),
+    });
+  };
+
+  return (
+    <section className="launchBriefPanel" role="region" aria-labelledby="launch-brief-title">
+      <div className="launchBriefHead">
+        <div>
+          <span className="monoLabel">Free repo launch brief</span>
+          <h3 id="launch-brief-title">Free repo launch brief</h3>
+          <p>{brief.summary}</p>
+        </div>
+        <button className="secondaryButton" onClick={handleCopy} type="button">
+          <Copy aria-hidden="true" size={16} />
+          Copy launch brief
+        </button>
+      </div>
+      <div className="launchBriefMeta">
+        <span>
+          Audience hypothesis
+          <b>{brief.audienceHypothesis}</b>
+        </span>
+        <span>
+          Source references
+          <b>{brief.sourceReferences.length}</b>
+        </span>
+        <span>
+          Status
+          <b>{copyStatus}</b>
+        </span>
+      </div>
+      <div className="launchBriefGrid">
+        <article>
+          <strong>README checklist</strong>
+          <ul>
+            {brief.readmeChecklist.map((item) => (
+              <li key={item.item}>
+                {item.item}
+                <small>{item.source}</small>
+              </li>
+            ))}
+          </ul>
+        </article>
+        <article>
+          <strong>Launch angles</strong>
+          <ul>
+            {brief.launchAngles.map((angle) => (
+              <li key={angle.title}>
+                {angle.title}: {angle.body}
+                <small>{angle.source}</small>
+              </li>
+            ))}
+          </ul>
+        </article>
+        <article>
+          <strong>Social post</strong>
+          <p>{brief.socialPost}</p>
+        </article>
+        <article>
+          <strong>Deck outline</strong>
+          <ol>
+            {brief.deckOutline.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ol>
+        </article>
+        <article>
+          <strong>Outreach draft</strong>
+          <p>{brief.outreachDraft}</p>
+        </article>
+        <article>
+          <strong>Visual explainer prompt</strong>
+          <p>{brief.visualExplainerPrompt}</p>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function getLaunchBriefSectionCount(_brief: RepoLaunchBriefSummary) {
+  return 6;
+}
+
+function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: string) {
+  return [
+    `Free repo launch brief: ${repoFullName}`,
+    "",
+    `Summary: ${brief.summary}`,
+    `Audience hypothesis: ${brief.audienceHypothesis}`,
+    "",
+    "README checklist:",
+    ...brief.readmeChecklist.map((item) => `- ${item.item} (${item.source})`),
+    "",
+    "Launch angles:",
+    ...brief.launchAngles.map((angle) => `- ${angle.title}: ${angle.body} (${angle.source})`),
+    "",
+    "Social post:",
+    brief.socialPost,
+    "",
+    "Deck outline:",
+    ...brief.deckOutline.map((item, index) => `${index + 1}. ${item}`),
+    "",
+    "Outreach draft:",
+    brief.outreachDraft,
+    "",
+    "Visual explainer prompt:",
+    brief.visualExplainerPrompt,
+    "",
+    "Source references:",
+    ...brief.sourceReferences.map((source) => `- ${source}`),
+  ].join("\n");
 }
 
 function ProductAnimationPanel() {

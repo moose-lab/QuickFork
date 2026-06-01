@@ -400,6 +400,41 @@ describe("App", () => {
             { provider: "wavespeed", model: "openai/gpt-5.5", purpose: "readme_analysis", status: "completed" },
             { provider: "wavespeed", model: "openai/gpt-image-2/text-to-image", purpose: "image_generation", status: "completed" },
           ],
+          launchBrief: {
+            summary: "CUDA kernels for faster attention inference.",
+            audienceHypothesis: "AI project builders, open-source maintainers, and technical founders evaluating launch readiness.",
+            readmeChecklist: [
+              {
+                item: "Lead with a one-sentence README value proposition.",
+                source: "Derived from repository evidence and README positioning.",
+              },
+              {
+                item: "Show source-backed features before implementation detail.",
+                source: "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+              },
+            ],
+            launchAngles: [
+              {
+                title: "Launch angle 1",
+                body: "Optimizes attention kernels for lower latency inference.",
+                source: "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+              },
+            ],
+            socialPost: "CUDA kernels for faster attention inference.\n\nOptimizes attention kernels for lower latency inference.\n\ngithub.com/QwenLM/FlashQLA",
+            deckOutline: [
+              "Problem: FlashQLA is hard to understand from raw repository context.",
+              "What it does: CUDA kernels for faster attention inference.",
+              "Why it matters: Optimizes attention kernels for lower latency inference.",
+              "Workflow: Install kernels -> Run benchmark -> Ship inference",
+            ],
+            outreachDraft:
+              "Hi, I found FlashQLA and put together a source-backed launch brief from github.com/QwenLM/FlashQLA.",
+            visualExplainerPrompt:
+              "Create a ai_kernel_infra visual explainer using workflow_diagram. Keep the GitHub strip as github.com/QwenLM/FlashQLA.",
+            sourceReferences: [
+              "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+            ],
+          },
         }),
         { headers: { "Content-Type": "application/json" }, status: 201 },
       ),
@@ -442,6 +477,11 @@ describe("App", () => {
       "href",
       "https://wavespeed.ai/generated/qwenlm-flashqla.png",
     );
+    const briefRegion = await screen.findByRole("region", { name: /free repo launch brief/i });
+    expect(within(briefRegion).getByText(/AI project builders, open-source maintainers/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByText(/Lead with a one-sentence README value proposition/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByText(/Launch angle 1/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByText(/Create a ai_kernel_infra visual explainer/i)).toBeInTheDocument();
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -472,7 +512,32 @@ describe("App", () => {
           preset: "4:3",
           has_image_url: true,
         }),
+        expect.objectContaining({
+          event: "launch_brief_viewed",
+          repo_full_name: "QwenLM/FlashQLA",
+          generation_id: "gen_qwenlm_flashqla_test",
+          brief_sections: 6,
+        }),
       ]),
+    );
+
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: vi.fn(async () => undefined) },
+    });
+    fireEvent.click(within(briefRegion).getByRole("button", { name: /copy launch brief/i }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Free repo launch brief"));
+    await waitFor(() =>
+      expect(window.dataLayer).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            event: "launch_brief_copied",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            artifact_type: "free_repo_launch_brief",
+          }),
+        ]),
+      ),
     );
 
     fireEvent.click(previewImage);

@@ -891,6 +891,102 @@ blockquote {
   background: #f6f3ee;
 }
 
+.launchBriefPanel {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.launchBriefHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.launchBriefHead h3 {
+  font-size: 22px;
+  line-height: 1.08;
+}
+
+.launchBriefHead p,
+.launchBriefGrid p,
+.launchBriefGrid li,
+.launchBriefMeta b {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.launchBriefMeta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px 150px;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+
+.launchBriefMeta span {
+  min-height: 86px;
+  padding: 12px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font: 650 11px/1.35 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.launchBriefMeta b {
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-weight: 650;
+  text-transform: none;
+}
+
+.launchBriefGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+
+.launchBriefGrid article {
+  min-height: 180px;
+  padding: 14px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.launchBriefGrid strong {
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.launchBriefGrid ul,
+.launchBriefGrid ol {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.launchBriefGrid small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .referenceStatus {
   padding: 0 8px 8px;
   color: var(--muted);
@@ -2642,6 +2738,9 @@ blockquote {
 
   .referenceForm,
   .referenceControls,
+  .launchBriefHead,
+  .launchBriefMeta,
+  .launchBriefGrid,
   .settingGrid,
   .settingGrid label:last-child,
   .optionList,

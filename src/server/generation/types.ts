@@ -181,6 +181,29 @@ export interface MarketingCardQualityReport {
   revisionPrompt?: string;
 }
 
+export interface RepoLaunchBriefChecklistItem {
+  item: string;
+  source: string;
+}
+
+export interface RepoLaunchBriefAngle {
+  title: string;
+  body: string;
+  source: string;
+}
+
+export interface RepoLaunchBrief {
+  summary: string;
+  audienceHypothesis: string;
+  readmeChecklist: RepoLaunchBriefChecklistItem[];
+  launchAngles: RepoLaunchBriefAngle[];
+  socialPost: string;
+  deckOutline: string[];
+  outreachDraft: string;
+  visualExplainerPrompt: string;
+  sourceReferences: string[];
+}
+
 export interface CreateGenerationInput {
   repoUrl: string;
   locales?: LocaleCode[];
@@ -237,6 +260,7 @@ export interface GenerationResponse {
   stages: GenerationStage[];
   modelCalls: GenerationModelCall[];
   brief: ProjectBrief;
+  launchBrief: RepoLaunchBrief;
   visualDirection: VisualDirection;
   localizedCopy: Record<LocaleCode, LocalizedCardCopy>;
   outputs: Record<LocaleCode, GenerationOutputItem>;

@@ -4,6 +4,7 @@ import { join } from "node:path";
 
 import { resolveBrandAssets, storeReferenceAsset } from "./assets.js";
 import { generateMockImage, generateWavespeedImage } from "./image-generator.js";
+import { buildRepoLaunchBrief } from "./launch-brief.js";
 import { WAVESPEED_CHAT_COMPLETIONS_URL, createMockLlmAdapter, createWavespeedLlmAdapter, resolveGenerationModelConfig } from "./llm.js";
 import { WAVESPEED_IMAGE_ENDPOINT, buildImagePrompt } from "./prompt.js";
 import { inspectMarketingCard } from "./quality.js";
@@ -102,6 +103,13 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
     status: provider === "wavespeed" ? "completed" : "skipped",
   });
   const { brief, visualDirection, layout, localizedCopy } = plan;
+  const launchBrief = buildRepoLaunchBrief({
+    metadata,
+    readme,
+    brief,
+    localizedCopy: localizedCopy.en,
+    visualDirection,
+  });
 
   const briefPath = join(artifactRoot, "project_brief_curated.json");
   await writeJson(briefPath, brief);
@@ -206,6 +214,7 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
     locales,
     stages,
     modelCalls,
+    launchBrief,
     outputs,
     qualityReports,
     safety: {
@@ -230,6 +239,7 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
     stages,
     modelCalls,
     brief,
+    launchBrief,
     visualDirection,
     localizedCopy,
     outputs,
