@@ -1,4 +1,14 @@
-import type { GitHubRepoMetadata, LocalizedCardCopy, ProjectBrief, ReadmeContext, RepoLaunchBrief, VisualDirection } from "./types.js";
+import type {
+  GitHubRepoMetadata,
+  LocalizedCardCopy,
+  ProjectBrief,
+  ReadmeContext,
+  RepoLaunchBrief,
+  RepoLaunchBriefAngle,
+  RepoLaunchBriefArtifact,
+  RepoLaunchBriefChecklistItem,
+  VisualDirection,
+} from "./types.js";
 
 export function buildRepoLaunchBrief(input: {
   metadata: GitHubRepoMetadata;
@@ -15,32 +25,132 @@ export function buildRepoLaunchBrief(input: {
     "The launch package can be reused across README, social, deck, and outreach surfaces.",
   ]).slice(0, 3);
   const workflow = padItems(input.brief.workflowSteps, ["Brief", "Generate", "Review"]).slice(0, 3);
+  const audience = audienceHypothesis(input.metadata);
+  const readmeChecklist = [
+    { item: "Lead with a one-sentence README value proposition.", source: "Derived from repository evidence and README positioning." },
+    { item: "Show the top source-backed features before implementation detail.", source: sourceReferences[0] ?? "Repository evidence is thin; review before publishing." },
+    { item: "Add a visual project explainer near the top of the README.", source: `${input.visualDirection.category} visual direction from repository signals.` },
+    { item: "Keep metrics and claims tied to README or repo metadata.", source: sourceReferences[1] ?? "No strong metric evidence found; avoid invented proof." },
+  ];
+  const launchAngles = insights.map((insight, index) => ({
+    title: `Launch angle ${index + 1}`,
+    body: insight,
+    source: sourceReferences[index] ?? "Source evidence is limited; validate this angle manually.",
+  }));
+  const socialPost = `${input.localizedCopy.hook}\n\n${input.localizedCopy.valueProposition}\n\n${repoUrl}`;
+  const deckOutline = [
+    `Problem: ${input.brief.title} is hard to understand from raw repository context.`,
+    `What it does: ${input.brief.subtitle}`,
+    `Why it matters: ${insights[0]}`,
+    `Workflow: ${workflow.join(" -> ")}`,
+  ];
+  const outreachDraft = `Hi, I found ${input.brief.title} and put together a source-backed launch brief from ${repoUrl}. The draft focuses on ${insights[0]}.`;
+  const visualExplainerPrompt = `Create a ${input.visualDirection.category} visual explainer as a workflow_diagram. Use ${input.visualDirection.layout.join(", ")} and keep the GitHub strip as ${repoUrl}.`;
 
   return {
     summary: input.brief.subtitle,
-    audienceHypothesis: audienceHypothesis(input.metadata),
-    readmeChecklist: [
-      { item: "Lead with a one-sentence README value proposition.", source: "Derived from repository evidence and README positioning." },
-      { item: "Show the top source-backed features before implementation detail.", source: sourceReferences[0] ?? "Repository evidence is thin; review before publishing." },
-      { item: "Add a visual project explainer near the top of the README.", source: `${input.visualDirection.category} visual direction from repository signals.` },
-      { item: "Keep metrics and claims tied to README or repo metadata.", source: sourceReferences[1] ?? "No strong metric evidence found; avoid invented proof." },
-    ],
-    launchAngles: insights.map((insight, index) => ({
-      title: `Launch angle ${index + 1}`,
-      body: insight,
-      source: sourceReferences[index] ?? "Source evidence is limited; validate this angle manually.",
-    })),
-    socialPost: `${input.localizedCopy.hook}\n\n${input.localizedCopy.valueProposition}\n\n${repoUrl}`,
-    deckOutline: [
-      `Problem: ${input.brief.title} is hard to understand from raw repository context.`,
-      `What it does: ${input.brief.subtitle}`,
-      `Why it matters: ${insights[0]}`,
-      `Workflow: ${workflow.join(" -> ")}`,
-    ],
-    outreachDraft: `Hi, I found ${input.brief.title} and put together a source-backed launch brief from ${repoUrl}. The draft focuses on ${insights[0]}.`,
-    visualExplainerPrompt: `Create a ${input.visualDirection.category} visual explainer as a workflow_diagram. Use ${input.visualDirection.layout.join(", ")} and keep the GitHub strip as ${repoUrl}.`,
+    audienceHypothesis: audience,
+    readmeChecklist,
+    launchAngles,
+    socialPost,
+    deckOutline,
+    outreachDraft,
+    visualExplainerPrompt,
     sourceReferences,
+    artifacts: buildLaunchBriefArtifacts({
+      repoFullName: input.metadata.fullName,
+      summary: input.brief.subtitle,
+      audienceHypothesis: audience,
+      readmeChecklist,
+      launchAngles,
+      socialPost,
+      deckOutline,
+      outreachDraft,
+      visualExplainerPrompt,
+      sourceReferences,
+    }),
   };
+}
+
+function buildLaunchBriefArtifacts(input: {
+  repoFullName: string;
+  summary: string;
+  audienceHypothesis: string;
+  readmeChecklist: RepoLaunchBriefChecklistItem[];
+  launchAngles: RepoLaunchBriefAngle[];
+  socialPost: string;
+  deckOutline: string[];
+  outreachDraft: string;
+  visualExplainerPrompt: string;
+  sourceReferences: string[];
+}): RepoLaunchBriefArtifact[] {
+  const slug = slugifyRepo(input.repoFullName);
+  const sourceBlock = formatSourceReferences(input.sourceReferences);
+
+  return [
+    {
+      type: "readme",
+      label: "README launch brief",
+      fileName: `${slug}-readme-launch-brief.md`,
+      body: [
+        `# README launch brief for ${input.repoFullName}`,
+        "",
+        `Summary: ${input.summary}`,
+        `Audience hypothesis: ${input.audienceHypothesis}`,
+        "",
+        "## README checklist",
+        ...input.readmeChecklist.map((item) => `- ${item.item}\n  Source: ${item.source}`),
+        "",
+        "## Launch angles",
+        ...input.launchAngles.map((angle) => `- ${angle.title}: ${angle.body}\n  Source: ${angle.source}`),
+        "",
+        sourceBlock,
+      ].join("\n"),
+      sourceReferences: input.sourceReferences,
+    },
+    {
+      type: "social",
+      label: "Social launch post",
+      fileName: `${slug}-social-launch-post.txt`,
+      body: [input.socialPost, "", sourceBlock].join("\n"),
+      sourceReferences: input.sourceReferences,
+    },
+    {
+      type: "deck",
+      label: "Pitch deck outline",
+      fileName: `${slug}-deck-outline.md`,
+      body: [
+        `# Pitch deck outline for ${input.repoFullName}`,
+        "",
+        ...input.deckOutline.map((item, index) => `${index + 1}. ${item}`),
+        "",
+        sourceBlock,
+      ].join("\n"),
+      sourceReferences: input.sourceReferences,
+    },
+    {
+      type: "outreach",
+      label: "Product outreach draft",
+      fileName: `${slug}-outreach-draft.txt`,
+      body: [input.outreachDraft, "", sourceBlock].join("\n"),
+      sourceReferences: input.sourceReferences,
+    },
+    {
+      type: "visual",
+      label: "Visual explainer prompt",
+      fileName: `${slug}-visual-explainer-prompt.txt`,
+      body: [input.visualExplainerPrompt, "", sourceBlock].join("\n"),
+      sourceReferences: input.sourceReferences,
+    },
+  ];
+}
+
+function formatSourceReferences(sourceReferences: string[]) {
+  return ["## Source references", ...sourceReferences.map((source) => `- ${source}`)].join("\n");
+}
+
+function slugifyRepo(repoFullName: string) {
+  return repoFullName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
 function buildSourceReferences(brief: ProjectBrief) {

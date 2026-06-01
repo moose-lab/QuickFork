@@ -236,4 +236,53 @@ Growth and retention:
 
 ## Next Action
 
-Validate the first build slice with tests and a local render, then move to the free repo launch brief feature with source-backed claims and artifact export tracking.
+Continue from artifact export tracking into paid-intent CTA tests after users copy or download README, social, deck, outreach, or visual prompt artifacts.
+
+## 2026-06-02 Evaluation Slice
+
+Hypothesis:
+
+- If users can copy or download channel-specific launch artifacts after the free repo brief, QuickFork can measure stronger product-value and paid-intent signals than a single copied summary.
+
+Lifecycle stage:
+
+- Activation to Evaluation.
+
+Target user:
+
+- AI project builders, open-source maintainers, indie technical founders, and DevRel operators preparing public repository launches.
+
+Changed surface:
+
+- `RepoLaunchBrief` now includes deterministic artifact exports for README, social, deck, outreach, and visual prompt use cases.
+- The Hero generator result panel now shows an `Export artifacts` section with per-artifact copy and text download actions.
+- Analytics now tracks `launch_artifact_copied` and `launch_artifact_downloaded` with artifact metadata only.
+
+Primary CTA:
+
+- Copy or download a launch artifact.
+
+Primary metric:
+
+- `launch_artifact_copied` and `launch_artifact_downloaded` by `artifact_type`.
+
+Guardrail:
+
+- Do not send raw artifact body, raw README text, emails, tokens, secrets, unsupported customer claims, ranking claims, or revenue claims to browser analytics.
+
+Evidence gap:
+
+- Repo tests can prove UI behavior and event hygiene, but production validation still requires GA4 event baselines and real artifact export rates.
+
+Evidence observed:
+
+- Backend RED test failed first because `launchBrief.artifacts` did not exist.
+- Frontend RED test failed first because the free brief panel did not render `Export artifacts`.
+- `npm test -- src/server/generation/generation.test.ts src/App.test.tsx src/lib/analytics.test.ts`: 3 files passed, 54 tests passed.
+- `npm test`: 16 files passed, 108 tests passed.
+- `npm run build`: production build completed.
+- `git diff --check`: no whitespace errors.
+
+Next action:
+
+- Add a paid-intent action after artifact review, such as requesting a full launch package or saving artifacts behind signup, once export behavior is observable.

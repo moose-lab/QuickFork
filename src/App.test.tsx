@@ -434,6 +434,22 @@ describe("App", () => {
             sourceReferences: [
               "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
             ],
+            artifacts: [
+              {
+                type: "readme",
+                label: "README launch brief",
+                fileName: "qwenlm-flashqla-readme-launch-brief.md",
+                body: "README checklist\n- Lead with source-backed value.",
+                sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
+              },
+              {
+                type: "social",
+                label: "Social launch post",
+                fileName: "qwenlm-flashqla-social-launch-post.txt",
+                body: "CUDA kernels for faster attention inference.",
+                sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
+              },
+            ],
           },
         }),
         { headers: { "Content-Type": "application/json" }, status: 201 },
@@ -482,6 +498,12 @@ describe("App", () => {
     expect(within(briefRegion).getByText(/Lead with a one-sentence README value proposition/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Launch angle 1/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Create a ai_kernel_infra visual explainer/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByText(/Export artifacts/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByRole("button", { name: /copy README launch brief/i })).toBeInTheDocument();
+    expect(within(briefRegion).getByRole("link", { name: /download README launch brief/i })).toHaveAttribute(
+      "download",
+      "qwenlm-flashqla-readme-launch-brief.md",
+    );
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -527,6 +549,9 @@ describe("App", () => {
     });
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy launch brief/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Free repo launch brief"));
+    fireEvent.click(within(briefRegion).getByRole("button", { name: /copy README launch brief/i }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("README checklist"));
+    fireEvent.click(within(briefRegion).getByRole("link", { name: /download README launch brief/i }));
     await waitFor(() =>
       expect(window.dataLayer).toEqual(
         expect.arrayContaining([
@@ -536,9 +561,26 @@ describe("App", () => {
             generation_id: "gen_qwenlm_flashqla_test",
             artifact_type: "free_repo_launch_brief",
           }),
+          expect.objectContaining({
+            event: "launch_artifact_copied",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            artifact_type: "readme",
+            artifact_label: "README launch brief",
+            artifact_format: "text",
+          }),
+          expect.objectContaining({
+            event: "launch_artifact_downloaded",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            artifact_type: "readme",
+            artifact_label: "README launch brief",
+            artifact_format: "text",
+          }),
         ]),
       ),
     );
+    expect(JSON.stringify(window.dataLayer)).not.toContain("README checklist");
 
     fireEvent.click(previewImage);
     const previewDialog = await screen.findByRole("dialog", { name: /generated image preview/i });

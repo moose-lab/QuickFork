@@ -98,6 +98,15 @@ interface RepoLaunchBriefSummary {
   outreachDraft: string;
   visualExplainerPrompt: string;
   sourceReferences: string[];
+  artifacts?: RepoLaunchBriefArtifactSummary[];
+}
+
+interface RepoLaunchBriefArtifactSummary {
+  type: "readme" | "social" | "deck" | "outreach" | "visual";
+  label: string;
+  fileName: string;
+  body: string;
+  sourceReferences: string[];
 }
 
 async function createGeneration(input: {
@@ -381,6 +390,18 @@ function LaunchBriefPanel({
   repoUrl: string;
 }) {
   const [copyStatus, setCopyStatus] = useState("Ready to copy");
+
+  const trackLaunchArtifact = (event: "launch_artifact_copied" | "launch_artifact_downloaded", artifact: RepoLaunchBriefArtifactSummary) => {
+    trackEvent(event, {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      artifact_type: artifact.type,
+      artifact_label: artifact.label,
+      artifact_format: "text",
+      source_reference_count: artifact.sourceReferences.length,
+    });
+  };
+
   const handleCopy = async () => {
     const exportText = serializeLaunchBrief(brief, repoFullName);
     await navigator.clipboard?.writeText(exportText);
@@ -391,6 +412,17 @@ function LaunchBriefPanel({
       artifact_type: "free_repo_launch_brief",
       brief_sections: getLaunchBriefSectionCount(brief),
     });
+  };
+
+  const handleCopyArtifact = async (artifact: RepoLaunchBriefArtifactSummary) => {
+    await navigator.clipboard?.writeText(artifact.body);
+    setCopyStatus(`Copied ${artifact.label}`);
+    trackLaunchArtifact("launch_artifact_copied", artifact);
+  };
+
+  const handleArtifactDownload = (artifact: RepoLaunchBriefArtifactSummary) => {
+    setCopyStatus(`Downloaded ${artifact.label}`);
+    trackLaunchArtifact("launch_artifact_downloaded", artifact);
   };
 
   return (
@@ -420,6 +452,37 @@ function LaunchBriefPanel({
           <b>{copyStatus}</b>
         </span>
       </div>
+      {brief.artifacts?.length ? (
+        <div className="launchArtifactList" aria-label="Launch artifact exports">
+          <div className="launchArtifactIntro">
+            <strong>Export artifacts</strong>
+            <small>Copy or download channel-ready text without sending raw content to analytics.</small>
+          </div>
+          {brief.artifacts.map((artifact) => (
+            <div className="launchArtifactRow" key={`${artifact.type}-${artifact.fileName}`}>
+              <div>
+                <strong>{artifact.label}</strong>
+                <small>{artifact.fileName}</small>
+              </div>
+              <div className="launchArtifactActions">
+                <button aria-label={`Copy ${artifact.label}`} onClick={() => void handleCopyArtifact(artifact)} type="button">
+                  <Copy aria-hidden="true" size={15} />
+                  Copy
+                </button>
+                <a
+                  aria-label={`Download ${artifact.label}`}
+                  download={artifact.fileName}
+                  href={getArtifactDownloadHref(artifact)}
+                  onClick={() => handleArtifactDownload(artifact)}
+                >
+                  <Download aria-hidden="true" size={15} />
+                  Download
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
       <div className="launchBriefGrid">
         <article>
           <strong>README checklist</strong>
@@ -470,6 +533,10 @@ function LaunchBriefPanel({
 
 function getLaunchBriefSectionCount(_brief: RepoLaunchBriefSummary) {
   return 6;
+}
+
+function getArtifactDownloadHref(artifact: RepoLaunchBriefArtifactSummary) {
+  return `data:text/plain;charset=utf-8,${encodeURIComponent(artifact.body)}`;
 }
 
 function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: string) {

@@ -192,6 +192,16 @@ export interface RepoLaunchBriefAngle {
   source: string;
 }
 
+export type RepoLaunchBriefArtifactType = "readme" | "social" | "deck" | "outreach" | "visual";
+
+export interface RepoLaunchBriefArtifact {
+  type: RepoLaunchBriefArtifactType;
+  label: string;
+  fileName: string;
+  body: string;
+  sourceReferences: string[];
+}
+
 export interface RepoLaunchBrief {
   summary: string;
   audienceHypothesis: string;
@@ -202,6 +212,7 @@ export interface RepoLaunchBrief {
   outreachDraft: string;
   visualExplainerPrompt: string;
   sourceReferences: string[];
+  artifacts: RepoLaunchBriefArtifact[];
 }
 
 export interface CreateGenerationInput {

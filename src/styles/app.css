@@ -949,6 +949,66 @@ blockquote {
   text-transform: none;
 }
 
+.launchArtifactList {
+  border: 1px solid var(--border);
+  display: grid;
+  background: #fbfaf7;
+}
+
+.launchArtifactIntro,
+.launchArtifactRow {
+  padding: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.launchArtifactRow:last-child {
+  border-bottom: 0;
+}
+
+.launchArtifactIntro strong,
+.launchArtifactRow strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.launchArtifactIntro small,
+.launchArtifactRow small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.launchArtifactActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.launchArtifactActions button,
+.launchArtifactActions a {
+  min-height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #ffffff;
+  color: var(--fg);
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
 .launchBriefGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2740,6 +2800,8 @@ blockquote {
   .referenceControls,
   .launchBriefHead,
   .launchBriefMeta,
+  .launchArtifactIntro,
+  .launchArtifactRow,
   .launchBriefGrid,
   .settingGrid,
   .settingGrid label:last-child,

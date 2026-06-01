@@ -510,7 +510,31 @@ describe("project launch generation backend", () => {
       expect(result.launchBrief.socialPost).toContain("github.com/nexu-io/open-design");
       expect(result.launchBrief.visualExplainerPrompt).toContain("workflow_diagram");
       expect(result.launchBrief.sourceReferences.join("\n")).toContain("README or repo metadata includes");
+      expect(result.launchBrief.artifacts.map((artifact) => artifact.type)).toEqual([
+        "readme",
+        "social",
+        "deck",
+        "outreach",
+        "visual",
+      ]);
+      expect(result.launchBrief.artifacts).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: "readme",
+            label: "README launch brief",
+            fileName: "nexu-io-open-design-readme-launch-brief.md",
+            body: expect.stringContaining("README checklist"),
+            sourceReferences: expect.arrayContaining([expect.stringContaining("README or repo metadata includes")]),
+          }),
+          expect.objectContaining({
+            type: "deck",
+            label: "Pitch deck outline",
+            body: expect.stringContaining("Problem:"),
+          }),
+        ]),
+      );
       expect(JSON.stringify(result.launchBrief)).not.toMatch(/best|guaranteed|customers|revenue/i);
+      expect(JSON.stringify(result.launchBrief.artifacts)).not.toMatch(/guaranteed|customers|revenue|ranking/i);
     } finally {
       await rm(outputRoot, { recursive: true, force: true });
     }
