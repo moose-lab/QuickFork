@@ -31,6 +31,7 @@ export function MarketingPage({ link }: MarketingPageProps) {
   const relatedLinks = getRelatedLinks(link);
 
   useEffect(() => applyRouteMetadata(link), [link]);
+  useEffect(() => applyMarketingSchema(link), [link]);
 
   useEffect(() => {
     if (link.pageType === "resource") {
@@ -267,6 +268,35 @@ function getOrCreateCanonicalLink() {
   link.rel = "canonical";
   document.head.appendChild(link);
   return link;
+}
+
+function applyMarketingSchema(link: MarketingLink) {
+  const narrative = getMarketingPageNarrative(link);
+  const existing = document.querySelector('script[data-quickfork-marketing-schema]');
+  existing?.remove();
+
+  const schema = document.createElement("script");
+  schema.type = "application/ld+json";
+  schema.setAttribute("data-quickfork-marketing-schema", "true");
+  schema.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    name: getMarketingPageTitle(link),
+    url: link.canonicalUrl,
+    mainEntity: narrative.faqs.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  });
+  document.head.append(schema);
+
+  return () => {
+    schema.remove();
+  };
 }
 
 function getRelatedLinks(currentLink: MarketingLink) {

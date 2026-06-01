@@ -36,6 +36,7 @@ QuickFork should use repository evidence, official project assets, README conten
 ### Use Cases
 
 - Open Source Launch | QuickFork: https://seekersai.com/use-cases/open-source-launch - Use case, Consideration. QuickFork maps open source launch into a source-backed use case path for Open Source Maintainer, with campaign attribution and a clear next action.
+- AI Project Launch | QuickFork: https://seekersai.com/use-cases/ai-project-launch - Use case, Consideration. QuickFork maps AI project launch demand into source-backed README, social, deck, outreach, and visual launch assets for cold-start AI repositories.
 - DevRel Launch Workflow | QuickFork: https://seekersai.com/use-cases/devrel-launch-workflow - Use case, Consideration. QuickFork maps devrel launch workflow into a source-backed use case path for Developer Advocate, with campaign attribution and a clear next action.
 
 ### Resources

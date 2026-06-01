@@ -227,6 +227,52 @@ describe("App", () => {
     );
   });
 
+  it("renders the AI project launch use case as an AI/GEO growth route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/use-cases/ai-project-launch?utm_source=perplexity");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /AI project launch/i })).toBeInTheDocument();
+    expect(screen.getByText(/source-backed launch package for an AI repository/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/AI project builders and open-source AI maintainers/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Turn repo evidence into a launch story/i)).toBeInTheDocument();
+    expect(screen.getByText(/What does an AI project launch page need to explain/i)).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    fireEvent.click(primaryCta!);
+    expect(document.title).toBe("AI Project Launch | QuickFork");
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/use-cases/ai-project-launch",
+    );
+    const schema = JSON.parse(document.querySelector('script[data-quickfork-marketing-schema]')?.textContent ?? "{}");
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity[0].name).toContain("What does an AI project launch page need to explain");
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/use-cases/ai-project-launch",
+          page_type: "use_case",
+          buyer_stage: "consideration",
+          intent_cluster: "ai_project_launch",
+          utm_source: "perplexity",
+        }),
+        expect.objectContaining({
+          event: "cta_clicked",
+          cta_id: "generate_launch_card",
+          cta_location: "marketing_page_hero",
+          page_type: "use_case",
+          intent_cluster: "ai_project_launch",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/ranking|revenue|customers|guaranteed/i);
+  });
+
   it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");

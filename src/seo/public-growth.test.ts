@@ -32,6 +32,7 @@ describe("public growth infrastructure", () => {
     for (const link of sitemapMarketingLinks) {
       expect(sitemap).toContain(`<loc>${link.canonicalUrl}</loc>`);
     }
+    expect(sitemap).toContain("<loc>https://seekersai.com/use-cases/ai-project-launch</loc>");
     expect(sitemap).not.toContain("utm_");
     expect(sitemap).not.toContain("/contact?intent=");
   });
@@ -44,6 +45,8 @@ describe("public growth infrastructure", () => {
     expect(llms).toContain("GitHub repository");
     expect(llms).toBe(renderLlmsTxt());
     expect(llms).toContain("https://seekersai.com/product/github-repo-to-launch-package");
+    expect(llms).toContain("https://seekersai.com/use-cases/ai-project-launch");
+    expect(llms).toContain("AI project launch");
     expect(llms).toContain("https://seekersai.com/resources/github-project-marketing-card-guide");
     expect(llms).toContain("https://seekersai.com/compare/chatgpt-open-source-launch-copy");
     expect(llms).toContain("https://seekersai.com/examples/qwenlm-flashqla-launch-card");

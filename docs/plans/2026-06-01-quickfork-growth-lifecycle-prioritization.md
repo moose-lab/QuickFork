@@ -392,3 +392,55 @@ Evidence observed:
 Next action:
 
 - Compare story-map copy/download behavior against README/social/deck/outreach exports, then decide whether the next activation slice should be a visual preview export, signup-gated saves, or a source-backed showcase example.
+
+## 2026-06-02 AI Project Launch Use Case Page Slice
+
+Hypothesis:
+
+- If AI project builders land on an AI-project-specific use-case page, they will understand QuickFork's cold-start launch package faster than from a generic open-source launch page.
+
+Lifecycle stage:
+
+- Discovery to Validation.
+
+Target user:
+
+- AI project builders, open-source AI maintainers, research engineers, technical founders, and DevRel teams preparing an AI repository for public launch.
+
+Changed surface:
+
+- Added the published `/use-cases/ai-project-launch` route to the semantic marketing link catalog and CSV inventory.
+- Added AI-project-specific page narrative, definition, target user, source boundary, benefits, workflow, and FAQ content.
+- Added route-level `FAQPage` JSON-LD for AI/GEO extraction on marketing pages.
+- Added the route to `public/sitemap.xml` and `public/llms.txt`.
+- Added route rendering, canonical metadata, schema, CTA tracking, public-growth asset, and semantic-link regression tests.
+
+Primary CTA:
+
+- Generate free repo brief.
+
+Primary metric:
+
+- `cta_clicked` on `/use-cases/ai-project-launch` with `intent_cluster=ai_project_launch`.
+- `page_view` on `/use-cases/ai-project-launch` with `buyer_stage=consideration`.
+
+Guardrail:
+
+- Do not publish rankings, revenue, customer-count, unsupported benchmark, exact pricing, guaranteed-launch, or guaranteed-growth claims.
+
+Evidence gap:
+
+- Repo tests prove the route, metadata, schema, crawl assets, and analytics payload contract. Production validation still needs search impressions, AI-search citation checks, CTA rate, repo submission rate, and qualified activation from this route.
+
+Evidence observed:
+
+- RED target test failed while the route, crawl assets, and schema were missing.
+- Targeted test later failed on `AI project launch` text casing in `llms.txt`; the route description and semantic-link test were adjusted to preserve readable `AI` acronym text while still matching the primary keyword case-insensitively.
+- `npm test -- src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts`: 3 files passed, 28 tests passed.
+- `npm test`: 16 files passed, 110 tests passed.
+- `npm run build`: TypeScript build and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Next action:
+
+- After PR checks and deploy, compare this use-case route's page-view and CTA behavior against `/product/github-repo-to-launch-package`.
