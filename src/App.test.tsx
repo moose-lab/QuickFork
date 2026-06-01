@@ -458,6 +458,33 @@ describe("App", () => {
           launchBrief: {
             summary: "CUDA kernels for faster attention inference.",
             audienceHypothesis: "AI project builders, open-source maintainers, and technical founders evaluating launch readiness.",
+            storyMap: {
+              title: "QwenLM/FlashQLA launch story map",
+              summary: "Source-backed visual interpretation for CUDA attention kernels.",
+              nodes: [
+                {
+                  id: "source",
+                  label: "Source",
+                  title: "Repository evidence",
+                  detail: "README describes optimized attention kernels.",
+                  source: "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+                },
+                {
+                  id: "audience",
+                  label: "Audience",
+                  title: "AI project builders",
+                  detail: "Builders evaluating inference performance work.",
+                  source: "Audience hypothesis from repo metadata and topics.",
+                },
+                {
+                  id: "workflow",
+                  label: "Workflow",
+                  title: "Install to benchmark",
+                  detail: "Install kernels -> Run benchmark -> Ship inference",
+                  source: "Workflow steps from launch brief.",
+                },
+              ],
+            },
             readmeChecklist: [
               {
                 item: "Lead with a one-sentence README value proposition.",
@@ -490,6 +517,13 @@ describe("App", () => {
               "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
             ],
             artifacts: [
+              {
+                type: "story_map",
+                label: "Project story map",
+                fileName: "qwenlm-flashqla-project-story-map.md",
+                body: "## Project story map\n\nSource-backed visual interpretation.",
+                sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
+              },
               {
                 type: "readme",
                 label: "README launch brief",
@@ -550,6 +584,10 @@ describe("App", () => {
     );
     const briefRegion = await screen.findByRole("region", { name: /free repo launch brief/i });
     expect(within(briefRegion).getByText(/AI project builders, open-source maintainers/i)).toBeInTheDocument();
+    const storyMapRegion = within(briefRegion).getByRole("region", { name: /project story map/i });
+    expect(within(storyMapRegion).getByText(/Project story map/i)).toBeInTheDocument();
+    expect(within(storyMapRegion).getByText(/Source-backed visual interpretation/i)).toBeInTheDocument();
+    expect(within(storyMapRegion).getByText(/Install to benchmark/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Lead with a one-sentence README value proposition/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Launch angle 1/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Create a ai_kernel_infra visual explainer/i)).toBeInTheDocument();
@@ -595,7 +633,7 @@ describe("App", () => {
           event: "launch_brief_viewed",
           repo_full_name: "QwenLM/FlashQLA",
           generation_id: "gen_qwenlm_flashqla_test",
-          brief_sections: 6,
+          brief_sections: 7,
         }),
       ]),
     );
@@ -606,6 +644,8 @@ describe("App", () => {
     });
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy launch brief/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Free repo launch brief"));
+    fireEvent.click(within(briefRegion).getByRole("button", { name: /copy story map/i }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Project story map"));
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy README launch brief/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("README checklist"));
     fireEvent.click(within(briefRegion).getByRole("link", { name: /download README launch brief/i }));
@@ -618,6 +658,13 @@ describe("App", () => {
             repo_full_name: "QwenLM/FlashQLA",
             generation_id: "gen_qwenlm_flashqla_test",
             artifact_type: "free_repo_launch_brief",
+          }),
+          expect.objectContaining({
+            event: "launch_story_map_copied",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            node_count: 3,
+            source_reference_count: 1,
           }),
           expect.objectContaining({
             event: "launch_artifact_copied",
@@ -642,7 +689,7 @@ describe("App", () => {
             cta_id: "request_full_launch_package",
             cta_location: "launch_brief_panel",
             lifecycle_stage: "monetization",
-            artifact_count: 2,
+            artifact_count: 3,
           }),
         ]),
       ),

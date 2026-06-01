@@ -84,6 +84,7 @@ interface GenerationSummary {
 interface RepoLaunchBriefSummary {
   summary: string;
   audienceHypothesis: string;
+  storyMap?: RepoLaunchStoryMapSummary;
   readmeChecklist: Array<{
     item: string;
     source: string;
@@ -101,8 +102,22 @@ interface RepoLaunchBriefSummary {
   artifacts?: RepoLaunchBriefArtifactSummary[];
 }
 
+interface RepoLaunchStoryMapSummary {
+  title: string;
+  summary: string;
+  nodes: RepoLaunchStoryMapNodeSummary[];
+}
+
+interface RepoLaunchStoryMapNodeSummary {
+  id: "source" | "audience" | "workflow" | "proof" | "launch";
+  label: string;
+  title: string;
+  detail: string;
+  source: string;
+}
+
 interface RepoLaunchBriefArtifactSummary {
-  type: "readme" | "social" | "deck" | "outreach" | "visual";
+  type: "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
   label: string;
   fileName: string;
   body: string;
@@ -414,6 +429,18 @@ function LaunchBriefPanel({
     });
   };
 
+  const handleCopyStoryMap = async () => {
+    if (!brief.storyMap) return;
+    await navigator.clipboard?.writeText(serializeStoryMap(brief.storyMap));
+    setCopyStatus("Copied story map");
+    trackEvent("launch_story_map_copied", {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      node_count: brief.storyMap.nodes.length,
+      source_reference_count: brief.sourceReferences.length,
+    });
+  };
+
   const handleCopyArtifact = async (artifact: RepoLaunchBriefArtifactSummary) => {
     await navigator.clipboard?.writeText(artifact.body);
     setCopyStatus(`Copied ${artifact.label}`);
@@ -468,6 +495,30 @@ function LaunchBriefPanel({
           <b>{copyStatus}</b>
         </span>
       </div>
+      {brief.storyMap ? (
+        <section className="launchStoryMap" aria-label="Project story map">
+          <div className="launchStoryMapHead">
+            <div>
+              <strong>Project story map</strong>
+              <small>{brief.storyMap.summary}</small>
+            </div>
+            <button className="secondaryButton" onClick={() => void handleCopyStoryMap()} type="button">
+              <Copy aria-hidden="true" size={15} />
+              Copy story map
+            </button>
+          </div>
+          <ol className="launchStoryMapNodes">
+            {brief.storyMap.nodes.map((node) => (
+              <li key={node.id}>
+                <span>{node.label}</span>
+                <strong>{node.title}</strong>
+                <p>{node.detail}</p>
+                <small>{node.source}</small>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
       {brief.artifacts?.length ? (
         <div className="launchArtifactList" aria-label="Launch artifact exports">
           <div className="launchArtifactIntro">
@@ -557,8 +608,8 @@ function LaunchBriefPanel({
   );
 }
 
-function getLaunchBriefSectionCount(_brief: RepoLaunchBriefSummary) {
-  return 6;
+function getLaunchBriefSectionCount(brief: RepoLaunchBriefSummary) {
+  return brief.storyMap ? 7 : 6;
 }
 
 function getArtifactDownloadHref(artifact: RepoLaunchBriefArtifactSummary) {
@@ -583,6 +634,7 @@ function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: strin
     `Summary: ${brief.summary}`,
     `Audience hypothesis: ${brief.audienceHypothesis}`,
     "",
+    ...(brief.storyMap ? [serializeStoryMap(brief.storyMap), ""] : []),
     "README checklist:",
     ...brief.readmeChecklist.map((item) => `- ${item.item} (${item.source})`),
     "",
@@ -603,6 +655,16 @@ function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: strin
     "",
     "Source references:",
     ...brief.sourceReferences.map((source) => `- ${source}`),
+  ].join("\n");
+}
+
+function serializeStoryMap(storyMap: RepoLaunchStoryMapSummary) {
+  return [
+    `Project story map: ${storyMap.title}`,
+    "",
+    storyMap.summary,
+    "",
+    ...storyMap.nodes.map((node, index) => `${index + 1}. ${node.label}: ${node.title}\n   Detail: ${node.detail}\n   Source: ${node.source}`),
   ].join("\n");
 }
 

@@ -192,7 +192,23 @@ export interface RepoLaunchBriefAngle {
   source: string;
 }
 
-export type RepoLaunchBriefArtifactType = "readme" | "social" | "deck" | "outreach" | "visual";
+export type RepoLaunchStoryMapNodeId = "source" | "audience" | "workflow" | "proof" | "launch";
+
+export interface RepoLaunchStoryMapNode {
+  id: RepoLaunchStoryMapNodeId;
+  label: string;
+  title: string;
+  detail: string;
+  source: string;
+}
+
+export interface RepoLaunchStoryMap {
+  title: string;
+  summary: string;
+  nodes: RepoLaunchStoryMapNode[];
+}
+
+export type RepoLaunchBriefArtifactType = "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
 
 export interface RepoLaunchBriefArtifact {
   type: RepoLaunchBriefArtifactType;
@@ -205,6 +221,7 @@ export interface RepoLaunchBriefArtifact {
 export interface RepoLaunchBrief {
   summary: string;
   audienceHypothesis: string;
+  storyMap: RepoLaunchStoryMap;
   readmeChecklist: RepoLaunchBriefChecklistItem[];
   launchAngles: RepoLaunchBriefAngle[];
   socialPost: string;

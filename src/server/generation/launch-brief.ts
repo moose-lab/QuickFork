@@ -7,6 +7,7 @@ import type {
   RepoLaunchBriefAngle,
   RepoLaunchBriefArtifact,
   RepoLaunchBriefChecklistItem,
+  RepoLaunchStoryMap,
   VisualDirection,
 } from "./types.js";
 
@@ -46,10 +47,20 @@ export function buildRepoLaunchBrief(input: {
   ];
   const outreachDraft = `Hi, I found ${input.brief.title} and put together a source-backed launch brief from ${repoUrl}. The draft focuses on ${insights[0]}.`;
   const visualExplainerPrompt = `Create a ${input.visualDirection.category} visual explainer as a workflow_diagram. Use ${input.visualDirection.layout.join(", ")} and keep the GitHub strip as ${repoUrl}.`;
+  const storyMap = buildStoryMap({
+    repoFullName: input.metadata.fullName,
+    summary: input.brief.subtitle,
+    audience,
+    workflow,
+    insights,
+    sourceReferences,
+    visualCategory: input.visualDirection.category,
+  });
 
   return {
     summary: input.brief.subtitle,
     audienceHypothesis: audience,
+    storyMap,
     readmeChecklist,
     launchAngles,
     socialPost,
@@ -61,6 +72,7 @@ export function buildRepoLaunchBrief(input: {
       repoFullName: input.metadata.fullName,
       summary: input.brief.subtitle,
       audienceHypothesis: audience,
+      storyMap,
       readmeChecklist,
       launchAngles,
       socialPost,
@@ -76,6 +88,7 @@ function buildLaunchBriefArtifacts(input: {
   repoFullName: string;
   summary: string;
   audienceHypothesis: string;
+  storyMap: RepoLaunchStoryMap;
   readmeChecklist: RepoLaunchBriefChecklistItem[];
   launchAngles: RepoLaunchBriefAngle[];
   socialPost: string;
@@ -88,6 +101,13 @@ function buildLaunchBriefArtifacts(input: {
   const sourceBlock = formatSourceReferences(input.sourceReferences);
 
   return [
+    {
+      type: "story_map",
+      label: "Project story map",
+      fileName: `${slug}-project-story-map.md`,
+      body: formatStoryMap(input.storyMap, sourceBlock),
+      sourceReferences: input.sourceReferences,
+    },
     {
       type: "readme",
       label: "README launch brief",
@@ -143,6 +163,76 @@ function buildLaunchBriefArtifacts(input: {
       sourceReferences: input.sourceReferences,
     },
   ];
+}
+
+function buildStoryMap(input: {
+  repoFullName: string;
+  summary: string;
+  audience: string;
+  workflow: string[];
+  insights: string[];
+  sourceReferences: string[];
+  visualCategory: VisualDirection["category"];
+}): RepoLaunchStoryMap {
+  const primarySource = input.sourceReferences[0] ?? "Repository evidence is limited; review generated claims before publishing.";
+  const secondarySource = input.sourceReferences[1] ?? primarySource;
+  const workflowDetail = input.workflow.join(" -> ");
+
+  return {
+    title: `${input.repoFullName} launch story map`,
+    summary: `Source-backed visual interpretation for ${input.summary}`,
+    nodes: [
+      {
+        id: "source",
+        label: "Source",
+        title: "Repository evidence",
+        detail: primarySource,
+        source: primarySource,
+      },
+      {
+        id: "audience",
+        label: "Audience",
+        title: "Audience hypothesis",
+        detail: input.audience,
+        source: "Audience hypothesis from repository metadata and README topics.",
+      },
+      {
+        id: "workflow",
+        label: "Workflow",
+        title: "Workflow spine",
+        detail: workflowDetail,
+        source: secondarySource,
+      },
+      {
+        id: "proof",
+        label: "Proof",
+        title: "Reviewable claim",
+        detail: input.insights[0] ?? primarySource,
+        source: primarySource,
+      },
+      {
+        id: "launch",
+        label: "Launch",
+        title: "Channel package",
+        detail: `Package README, social, deck, outreach, and visual assets using the ${input.visualCategory} direction.`,
+        source: "Launch package channels from the QuickFork generation workflow.",
+      },
+    ],
+  };
+}
+
+function formatStoryMap(storyMap: RepoLaunchStoryMap, sourceBlock: string) {
+  return [
+    `# ${storyMap.title}`,
+    "",
+    `## Project story map`,
+    "",
+    storyMap.summary,
+    "",
+    ...storyMap.nodes.map((node, index) => [`${index + 1}. ${node.label}: ${node.title}`, `   Detail: ${node.detail}`, `   Source: ${node.source}`].join("\n")),
+    "",
+    sourceBlock,
+  ].join("\n");
 }
 
 function formatSourceReferences(sourceReferences: string[]) {

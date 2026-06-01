@@ -338,3 +338,57 @@ Evidence observed:
 Next action:
 
 - Once full-launch-package requests are observable, compare them against artifact export behavior and decide whether to test signup-gated saves, paid pilot requests, or human-review packaging.
+
+## 2026-06-02 Visual Project Story Map Slice
+
+Hypothesis:
+
+- If users can see a compact source-backed story map after generation, they can understand a technical repo faster and will be more likely to copy/export launch assets or request a full launch package.
+
+Lifecycle stage:
+
+- Activation to Evaluation.
+
+Target user:
+
+- AI project builders, open-source maintainers, DevRel operators, technical founders, and studios evaluating whether a repository can become a public launch story.
+
+Changed surface:
+
+- `RepoLaunchBrief` now includes a deterministic `storyMap` with source, audience, workflow, proof, and launch nodes.
+- The generated launch brief panel now renders a `Project story map` before artifact exports.
+- Users can copy the story map as markdown.
+- `launchBrief.artifacts` now includes a `story_map` markdown export.
+- Analytics tracks `launch_story_map_copied` with repo, generation, node count, and source-reference count only.
+
+Primary CTA:
+
+- Copy story map.
+
+Primary metric:
+
+- `launch_story_map_copied`.
+- `launch_artifact_copied` and `launch_artifact_downloaded` where `artifact_type=story_map`.
+
+Guardrail:
+
+- Do not send raw README, raw story-map detail, raw artifact body, emails, tokens, secrets, unsupported customer proof, ranking claims, or revenue claims to browser analytics.
+
+Evidence gap:
+
+- Repo tests prove the story map contract, UI, and analytics hygiene. Production validation still needs real story-map copy/export rates and feedback on whether the map improves understanding.
+
+Evidence observed:
+
+- Backend RED test failed first because `launchBrief.storyMap` did not exist.
+- Frontend RED test failed first because the generated brief did not render a true story map section or copy action.
+- `npm test -- src/server/generation/generation.test.ts -t "source-backed free repo launch brief"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/App.test.tsx -t "submits the Hero generator form"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/server/generation/generation.test.ts src/App.test.tsx src/lib/analytics.test.ts`: 3 files passed, 55 tests passed.
+- `npm test`: 16 files passed, 109 tests passed.
+- `npm run build`: production build completed.
+- `git diff --check`: no whitespace errors.
+
+Next action:
+
+- Compare story-map copy/download behavior against README/social/deck/outreach exports, then decide whether the next activation slice should be a visual preview export, signup-gated saves, or a source-backed showcase example.

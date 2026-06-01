@@ -510,7 +510,24 @@ describe("project launch generation backend", () => {
       expect(result.launchBrief.socialPost).toContain("github.com/nexu-io/open-design");
       expect(result.launchBrief.visualExplainerPrompt).toContain("workflow_diagram");
       expect(result.launchBrief.sourceReferences.join("\n")).toContain("README or repo metadata includes");
+      expect(result.launchBrief.storyMap.title).toContain("nexu-io/open-design");
+      expect(result.launchBrief.storyMap.nodes.map((node) => node.id)).toEqual([
+        "source",
+        "audience",
+        "workflow",
+        "proof",
+        "launch",
+      ]);
+      expect(result.launchBrief.storyMap.nodes[0]).toEqual(
+        expect.objectContaining({
+          label: "Source",
+          title: expect.stringContaining("Repository evidence"),
+          source: expect.stringContaining("README or repo metadata includes"),
+        }),
+      );
+      expect(result.launchBrief.storyMap.nodes[2]?.detail).toContain("->");
       expect(result.launchBrief.artifacts.map((artifact) => artifact.type)).toEqual([
+        "story_map",
         "readme",
         "social",
         "deck",
@@ -519,6 +536,13 @@ describe("project launch generation backend", () => {
       ]);
       expect(result.launchBrief.artifacts).toEqual(
         expect.arrayContaining([
+          expect.objectContaining({
+            type: "story_map",
+            label: "Project story map",
+            fileName: "nexu-io-open-design-project-story-map.md",
+            body: expect.stringContaining("## Project story map"),
+            sourceReferences: expect.arrayContaining([expect.stringContaining("README or repo metadata includes")]),
+          }),
           expect.objectContaining({
             type: "readme",
             label: "README launch brief",
