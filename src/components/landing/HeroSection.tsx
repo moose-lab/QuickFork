@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Copy, Download, Github, Languages, Loader2, Maximize2, X } from "lucide-react";
+import { ArrowRight, Copy, Download, Github, Languages, Loader2, Maximize2, X } from "lucide-react";
 import { getRepoAnalyticsProperties, trackEvent } from "../../lib/analytics";
 
 type LocaleCode = "en" | "zh" | "ja";
@@ -425,6 +425,22 @@ function LaunchBriefPanel({
     trackLaunchArtifact("launch_artifact_downloaded", artifact);
   };
 
+  const fullLaunchPackageHref = getFullLaunchPackageHref();
+  const handleFullLaunchPackageIntent = () => {
+    trackEvent("cta_clicked", {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      cta_id: "request_full_launch_package",
+      cta_label: "Request full launch package",
+      cta_location: "launch_brief_panel",
+      page_type: "product_activation",
+      lifecycle_stage: "monetization",
+      target_url: fullLaunchPackageHref,
+      artifact_count: brief.artifacts?.length ?? 0,
+      source_reference_count: brief.sourceReferences.length,
+    });
+  };
+
   return (
     <section className="launchBriefPanel" role="region" aria-labelledby="launch-brief-title">
       <div className="launchBriefHead">
@@ -483,6 +499,16 @@ function LaunchBriefPanel({
           ))}
         </div>
       ) : null}
+      <div className="launchPackageCta">
+        <div>
+          <strong>Need a complete launch package?</strong>
+          <small>Request reviewed README, social, deck, outreach, and visual assets before publishing.</small>
+        </div>
+        <a className="primaryButton" href={fullLaunchPackageHref} onClick={handleFullLaunchPackageIntent}>
+          Request full launch package
+          <ArrowRight aria-hidden="true" size={16} />
+        </a>
+      </div>
       <div className="launchBriefGrid">
         <article>
           <strong>README checklist</strong>
@@ -537,6 +563,17 @@ function getLaunchBriefSectionCount(_brief: RepoLaunchBriefSummary) {
 
 function getArtifactDownloadHref(artifact: RepoLaunchBriefArtifactSummary) {
   return `data:text/plain;charset=utf-8,${encodeURIComponent(artifact.body)}`;
+}
+
+function getFullLaunchPackageHref() {
+  const params = new URLSearchParams({
+    intent: "launch-package",
+    utm_source: "quickfork",
+    utm_medium: "product",
+    utm_campaign: "full_launch_package",
+    utm_content: "artifact_review_cta",
+  });
+  return `/contact?${params.toString()}`;
 }
 
 function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: string) {

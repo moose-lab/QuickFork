@@ -286,3 +286,55 @@ Evidence observed:
 Next action:
 
 - Add a paid-intent action after artifact review, such as requesting a full launch package or saving artifacts behind signup, once export behavior is observable.
+
+## 2026-06-02 Monetization Slice
+
+Hypothesis:
+
+- If an evaluating user can request a full launch package after reviewing generated artifacts, QuickFork can capture early willingness-to-pay and SQL-ready signals without publishing unvalidated prices.
+
+Lifecycle stage:
+
+- Monetization.
+
+Target user:
+
+- AI project builders, founders, open-source maintainers, DevRel operators, and studios that need reviewed README, social, deck, outreach, and visual launch assets.
+
+Changed surface:
+
+- The generated launch brief panel now includes a `Request full launch package` CTA after artifact export.
+- `/contact?intent=launch-package` now routes to a bottom-funnel contact form.
+- Lead capture maps this intent to `sales_contact` with `requestType=full_launch_package` and `contactReason=full_launch_package`.
+- Analytics tracks the CTA as `cta_clicked` with repo, generation, artifact count, and lifecycle metadata only.
+
+Primary CTA:
+
+- Request full launch package.
+
+Primary metric:
+
+- `cta_clicked` where `cta_id=request_full_launch_package`.
+- `sales_contact_requested` where `contact_reason=full_launch_package`.
+
+Guardrail:
+
+- Do not publish exact pricing, checkout claims, revenue claims, raw artifact body, raw README text, emails, tokens, or secrets in browser analytics.
+
+Evidence gap:
+
+- This only proves the product can capture intent. It still needs real lead quality, follow-up outcomes, and willingness-to-pay conversations before changing public pricing or packaging.
+
+Evidence observed:
+
+- RED test failed first because `Request full launch package` was absent from the generated brief panel.
+- RED test failed first because `/contact?intent=launch-package` did not resolve to the contact form.
+- `npm test -- src/App.test.tsx -t "submits the Hero generator form|full launch package contact"`: 1 file passed, 2 selected tests passed.
+- `npm test -- src/seo/semantic-links.test.ts src/App.test.tsx src/lib/analytics.test.ts`: 3 files passed, 30 tests passed.
+- `npm test`: 16 files passed, 109 tests passed.
+- `npm run build`: production build completed.
+- `git diff --check`: no whitespace errors.
+
+Next action:
+
+- Once full-launch-package requests are observable, compare them against artifact export behavior and decide whether to test signup-gated saves, paid pilot requests, or human-review packaging.

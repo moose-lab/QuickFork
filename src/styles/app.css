@@ -1009,6 +1009,34 @@ blockquote {
   text-decoration: none;
 }
 
+.launchPackageCta {
+  border: 1px solid var(--border);
+  padding: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  background: #f2f7f4;
+}
+
+.launchPackageCta strong {
+  display: block;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.launchPackageCta small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.launchPackageCta .primaryButton {
+  white-space: nowrap;
+}
+
 .launchBriefGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2802,6 +2830,7 @@ blockquote {
   .launchBriefMeta,
   .launchArtifactIntro,
   .launchArtifactRow,
+  .launchPackageCta,
   .launchBriefGrid,
   .settingGrid,
   .settingGrid label:last-child,

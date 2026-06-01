@@ -339,6 +339,61 @@ describe("App", () => {
     expect(JSON.stringify(window.dataLayer)).not.toContain("founder@example.dev");
   });
 
+  it("submits full launch package contact requests as sales contact", async () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/contact?intent=launch-package&utm_source=product");
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            leadId: "lead_2",
+            lifecycleStage: "sales_qualified_lead",
+            activityId: "activity_2",
+          }),
+          {
+            headers: { "Content-Type": "application/json" },
+            status: 201,
+          },
+        ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /full launch package/i })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/work email/i), { target: { value: "founder@example.dev" } });
+    fireEvent.change(screen.getByLabelText(/company domain/i), { target: { value: "example.dev" } });
+    fireEvent.click(screen.getByRole("button", { name: /request full launch package/i }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    const payload = JSON.parse((fetchMock.mock.calls[0]?.[1] as RequestInit).body as string);
+    expect(payload).toMatchObject({
+      intent: "sales_contact",
+      email: "founder@example.dev",
+      companyDomain: "example.dev",
+      requestType: "full_launch_package",
+      contactReason: "full_launch_package",
+      crmCampaign: "2026_q2_full_launch_package",
+      firstTouch: expect.objectContaining({
+        source: "product",
+        landingPage: "http://localhost:3000/contact",
+      }),
+    });
+    expect(await screen.findByText(/we will follow up with the next step/i)).toBeInTheDocument();
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "sales_contact_requested",
+          contact_reason: "full_launch_package",
+          company_domain: "example.dev",
+          role_segment: "founder",
+          utm_source: "product",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toContain("founder@example.dev");
+  });
+
   it("renders help and legal footer routes with public metadata", () => {
     window.history.replaceState({}, "", "/help");
     const { rerender } = render(<App />);
@@ -504,6 +559,8 @@ describe("App", () => {
       "download",
       "qwenlm-flashqla-readme-launch-brief.md",
     );
+    const packageLink = within(briefRegion).getByRole("link", { name: /request full launch package/i });
+    expect(packageLink).toHaveAttribute("href", expect.stringContaining("/contact?intent=launch-package"));
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -552,6 +609,7 @@ describe("App", () => {
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy README launch brief/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("README checklist"));
     fireEvent.click(within(briefRegion).getByRole("link", { name: /download README launch brief/i }));
+    fireEvent.click(packageLink);
     await waitFor(() =>
       expect(window.dataLayer).toEqual(
         expect.arrayContaining([
@@ -576,6 +634,15 @@ describe("App", () => {
             artifact_type: "readme",
             artifact_label: "README launch brief",
             artifact_format: "text",
+          }),
+          expect.objectContaining({
+            event: "cta_clicked",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            cta_id: "request_full_launch_package",
+            cta_location: "launch_brief_panel",
+            lifecycle_stage: "monetization",
+            artifact_count: 2,
           }),
         ]),
       ),

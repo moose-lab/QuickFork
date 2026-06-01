@@ -47,6 +47,7 @@ const primaryCtaLabels: Record<MarketingPrimaryCta, string> = {
   generate_comparison_card: "Generate comparison card",
   request_demo: "Request demo",
   request_partnership: "Request partnership",
+  request_launch_package: "Request full launch package",
 };
 
 const primaryCtaHrefs: Record<MarketingPrimaryCta, string> = {
@@ -59,6 +60,7 @@ const primaryCtaHrefs: Record<MarketingPrimaryCta, string> = {
   generate_comparison_card: "/#hero",
   request_demo: "/contact?intent=demo",
   request_partnership: "/contact?intent=partnership",
+  request_launch_package: "/contact?intent=launch-package",
 };
 
 const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
