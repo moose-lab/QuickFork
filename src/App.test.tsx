@@ -16,7 +16,7 @@ describe("App", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders the landing architecture from the reference page", () => {
+  it("renders the landing architecture around the repository launch package", () => {
     render(<App />);
 
     expect(screen.getByRole("banner")).toHaveClass("nav");
@@ -46,7 +46,7 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /start a fork/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: /turn a github repository into a launch-ready story/i,
+        name: /generate a cold-start launch package from one github repository/i,
       }),
     ).toBeInTheDocument();
     const form = screen.getByRole("form", { name: /project launch generator/i });
@@ -85,11 +85,11 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /preview prompts/i })).not.toBeInTheDocument();
     expect(
       screen.getByText(
-        /Generate cold-start launch materials for README pages, social media, PPT decks, and product outreach from one repository URL\./i,
+        /QuickFork reads repository evidence, explains the project visually, and drafts README, social, deck, and outreach assets/i,
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /Generate traceable launch assets from repository evidence/i }),
+      screen.getByRole("heading", { name: /Generate a source-backed launch package from repository evidence/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /From GitHub URL to multilingual launch package/i })).toBeInTheDocument();
   }, 10000);
@@ -145,7 +145,7 @@ describe("App", () => {
     expect(screen.getByText("https://seekersai.com/resources/github-project-marketing-card-guide")).toBeInTheDocument();
     expect(within(routeDetails).getByText("Resource")).toBeInTheDocument();
     const primaryCta = screen
-      .getAllByRole("link", { name: /generate launch card/i })
+      .getAllByRole("link", { name: /generate free repo brief/i })
       .find((link) => link.classList.contains("primaryButton"));
     expect(primaryCta).toHaveAttribute("href", "/#hero");
     expect(document.title).toBe("GitHub Project Marketing Card | QuickFork");
@@ -175,6 +175,53 @@ describe("App", () => {
           buyer_stage: "awareness",
           page_type: "resource",
           utm_source: "github",
+        }),
+      ]),
+    );
+  });
+
+  it("renders the GitHub repo to launch package page as a high-intent growth page", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/github-repo-to-launch-package?utm_source=google");
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: /github repo to launch package for cold-start technical launches/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/source-backed README, social, deck, outreach, and visual explainer assets/i),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/AI project builders, open-source maintainers/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Start from one repository URL/i)).toBeInTheDocument();
+    expect(screen.getByText(/Package the same story for every channel/i)).toBeInTheDocument();
+    expect(screen.getByText(/Review before publishing/i)).toBeInTheDocument();
+    expect(screen.getByText(/How is this different from asking ChatGPT to write launch copy/i)).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("GitHub Repo To Launch Package | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps github repo to launch package demand into source-backed README, social, deck, outreach, and visual explainer assets for cold-start technical launches.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/github-repo-to-launch-package",
+    );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/product/github-repo-to-launch-package",
+          page_type: "product",
+          page_intent: "category_or_feature_consideration",
+          buyer_stage: "consideration",
+          intent_cluster: "github_repo_to_launch_package",
+          utm_source: "google",
         }),
       ]),
     );
@@ -502,11 +549,11 @@ describe("App", () => {
   it("uses native FAQ disclosure items", () => {
     render(<App />);
 
-    const defaultQuestion = screen.getByText(/Does QuickFork copy the reference page/i).closest("details");
+    const defaultQuestion = screen.getByText(/What does QuickFork generate from a repository URL/i).closest("details");
 
     expect(defaultQuestion).toBeInTheDocument();
     expect(defaultQuestion).toHaveAttribute("open");
-    expect(screen.getByText(/Can the page use real product data later/i)).toBeInTheDocument();
+    expect(screen.getByText(/How does QuickFork avoid generic AI marketing copy/i)).toBeInTheDocument();
   });
 
   it("renders sign-in and sign-up routes for auth entry", () => {

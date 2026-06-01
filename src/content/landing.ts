@@ -99,7 +99,7 @@ export const featureCards = [
   },
   {
     code: "F-02 / README extraction",
-    title: "Generate traceable launch assets from repository evidence.",
+    title: "Generate source-backed launch assets from repository evidence.",
     body: "README text, GitHub metadata, topics, metrics, official links, and referenced images become the project evidence base.",
     description:
       "README text, GitHub metadata, topics, metrics, official links, and referenced images become the project evidence base.",
@@ -152,13 +152,13 @@ export const featureCards = [
 export const showcases = [
   {
     id: "visual-posture-title",
-    label: "Visual posture",
-    eyebrow: "Visual posture",
+    label: "Project explainer",
+    eyebrow: "Project explainer",
     title:
-      "The page should feel designed by a senior product team, not assembled from blocks.",
-    body: "Design.com's reference page is useful because it explains the path, the payoff, and the objections in a predictable order. QuickFork keeps that clarity, then raises the tone for SaaS buyers and UI/UX professionals.",
-    copy: "Design.com's reference page is useful because it explains the path, the payoff, and the objections in a predictable order. QuickFork keeps that clarity, then raises the tone for SaaS buyers and UI/UX professionals.",
-    metaLabel: "Image strategy",
+      "A good launch package helps strangers understand the repo before they read the code.",
+    body: "QuickFork turns README evidence, repository metadata, and workflow signals into a visual explanation that can support a README hero, launch post, pitch deck, or demo follow-up.",
+    copy: "QuickFork turns README evidence, repository metadata, and workflow signals into a visual explanation that can support a README hero, launch post, pitch deck, or demo follow-up.",
+    metaLabel: "Launch asset strategy",
     imageFirst: true,
     image: {
       src: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=82",
@@ -169,24 +169,24 @@ export const showcases = [
     meta: [
       {
         label: "Section role",
-        value: "Reset attention after dense feature matrix",
+        value: "Make the project understandable",
       },
-      { label: "Asset type", value: "Real editorial photography" },
+      { label: "Asset type", value: "README hero / deck visual" },
       {
         label: "Composition",
-        value: "Full-bleed crop with visible work context",
+        value: "Project context before decoration",
       },
-      { label: "Constraint", value: "Hero and sections share one system" },
+      { label: "Constraint", value: "Claims stay source-backed" },
     ],
   },
   {
     id: "critique-title",
-    label: "Image slot B",
-    eyebrow: "Image slot B",
-    title: "A landing page for designers should include evidence of process.",
-    body: "Instead of decorative illustrations, use photography that signals working sessions, review surfaces, and product judgment. These assets make the page feel operational and mature.",
-    copy: "Instead of decorative illustrations, use photography that signals working sessions, review surfaces, and product judgment. These assets make the page feel operational and mature.",
-    metaLabel: "Second image strategy",
+    label: "Launch review",
+    eyebrow: "Launch review",
+    title: "Cold-start builders need channel-ready assets without losing technical accuracy.",
+    body: "QuickFork keeps the same factual brief behind README copy, social posts, deck structure, and outreach drafts, so the launch story stays consistent while each channel gets the right format.",
+    copy: "QuickFork keeps the same factual brief behind README copy, social posts, deck structure, and outreach drafts, so the launch story stays consistent while each channel gets the right format.",
+    metaLabel: "Package strategy",
     imageFirst: false,
     image: {
       src: "https://images.unsplash.com/photo-1558655146-364adaf1fcc9?auto=format&fit=crop&w=1800&q=82",
@@ -195,10 +195,10 @@ export const showcases = [
         "Image slot B - product design process photography - placed before objections and FAQ",
     },
     meta: [
-      { label: "Placement", value: "Before FAQ to slow the reader down" },
-      { label: "Purpose", value: "Humanize the tool before objections" },
-      { label: "Style", value: "Muted editorial, not startup stock" },
-      { label: "Fallback", value: "Use product canvas crop if no photo exists" },
+      { label: "Placement", value: "Before FAQ to handle trust objections" },
+      { label: "Purpose", value: "Show reviewable launch workflow" },
+      { label: "Style", value: "Operational, not hype-driven" },
+      { label: "Fallback", value: "Use generated artifact preview" },
     ],
   },
 ] satisfies Array<Showcase>;
@@ -246,26 +246,26 @@ export const canvasModules = [
 export const proofQuotes = [
   {
     quote:
-      "It gives the team a credible landing-page spine before anyone starts decorating pixels.",
-    body: "Best for product designers who need to turn a reference into a critique-ready SaaS page direction.",
-    copy: "Best for product designers who need to turn a reference into a critique-ready SaaS page direction.",
-    cite: "Design lead - early SaaS studio",
+      "It gives the team a credible launch spine before anyone starts rewriting the README by hand.",
+    body: "Best for builders who need to turn repository evidence into reviewable launch materials.",
+    copy: "Best for builders who need to turn repository evidence into reviewable launch materials.",
+    cite: "Early product-marketing review",
   },
   {
     quote:
-      "The useful part is the translation layer: consumer page flow becomes B2B product storytelling.",
-    body: "QuickFork helps teams avoid direct copying while still learning from pages that explain a workflow well.",
-    copy: "QuickFork helps teams avoid direct copying while still learning from pages that explain a workflow well.",
-    cite: "Founder - productized design service",
+      "The useful part is the translation layer: repo context becomes README, social, deck, and outreach drafts.",
+    body: "QuickFork helps teams avoid generic AI copy while keeping launch channels aligned.",
+    copy: "QuickFork helps teams avoid generic AI copy while keeping launch channels aligned.",
+    cite: "Founder workflow note",
   },
 ] satisfies Array<ProofQuote>;
 
 export const proofAudience = [
-  { label: "Primary buyer", value: "UI/UX landing-page designers" },
-  { label: "Secondary buyer", value: "SaaS founders and PMs" },
+  { label: "Primary user", value: "AI project builders" },
+  { label: "Secondary user", value: "Open-source maintainers and DevRel teams" },
   {
     label: "Core job",
-    value: "Turn reference pages into original product pages",
+    value: "Turn one repository URL into launch assets",
   },
   {
     label: "Proof policy",
@@ -275,35 +275,35 @@ export const proofAudience = [
 
 export const faqItems = [
   {
-    question: "Does QuickFork copy the reference page?",
+    question: "What does QuickFork generate from a repository URL?",
     answer:
-      "No. The reference is used for structure, section intent, and conversion rhythm. QuickFork rewrites the copy, palette, layout posture, and SaaS-specific content so the result is original.",
+      "QuickFork generates a source-backed launch brief, README-oriented copy, social launch copy, deck structure, outreach drafts, visual prompts, image outputs, quality reports, and a manifest for review.",
     defaultOpen: true,
   },
   {
     question: "What do I need before starting?",
     answer:
-      "A reference URL, the SaaS product name, audience, preferred tone, and any sections that must be included or avoided. The product works best when constraints are explicit.",
+      "Start with a public GitHub repository URL. The workflow works best when the README, repository metadata, official links, screenshots, and identity assets already describe the project clearly.",
   },
   {
-    question: "Can I redesign selected sections without breaking the hero?",
+    question: "Can the generated launch package be edited?",
     answer:
-      "Yes. QuickFork can preserve an existing hero direction while rebuilding Features, How-to, Social Proof, FAQ, and image breaks into the same visual system.",
+      "Yes. The generated package is a draft for human review. Builders can edit claims, remove unsupported language, change tone, and choose which README, social, deck, or outreach assets are publishable.",
   },
   {
     question: "What does the export include?",
     answer:
-      "A complete responsive HTML landing-page prototype with inline CSS, realistic section copy, image placement guidance, and a clear visual system for handoff.",
+      "The current workflow returns artifact paths for prompts, generated images, quality reports, and manifest data. The growth roadmap adds fuller README, social, deck, and outreach exports.",
   },
   {
-    question: "How does it help mature UI/UX designers?",
+    question: "How does QuickFork avoid generic AI marketing copy?",
     answer:
-      "It removes blank-canvas setup work while preserving judgment. Designers still choose the direction, edit the hierarchy, and decide which claims are real enough to ship.",
+      "QuickFork starts from repository evidence, labels uncertain claims, preserves source-backed project facts, and avoids unsupported rankings, customer counts, revenue claims, or invented logos.",
   },
   {
-    question: "Can the page use real product data later?",
+    question: "Who is the first product lifecycle stage for?",
     answer:
-      "Yes. Placeholder proof blocks are intentionally labelled by role and can be replaced with customer names, conversion data, screenshots, or case-study quotes when available.",
+      "The first lifecycle stage is for cold-start AI projects, open-source maintainers, indie technical founders, and DevRel teams that need a credible launch package before they have public proof.",
   },
 ] satisfies Array<FaqItem>;
 

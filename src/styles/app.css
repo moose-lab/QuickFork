@@ -2047,6 +2047,7 @@ blockquote {
 
 .marketingHeroSection,
 .marketingBodySection,
+.marketingGrowthSection,
 .marketingCaptureSection,
 .marketingRelatedSection {
   width: min(var(--container), calc(100% - 40px));
@@ -2093,6 +2094,15 @@ blockquote {
   font-size: 18px;
   line-height: 1.5;
   text-wrap: pretty;
+}
+
+.marketingHeroCopy .marketingDefinition {
+  max-width: 680px;
+  border-left: 3px solid var(--orange);
+  padding-left: 14px;
+  color: var(--fg);
+  font-size: 16px;
+  line-height: 1.45;
 }
 
 .marketingActions {
@@ -2169,6 +2179,39 @@ blockquote {
   margin-top: 18px;
 }
 
+.marketingPersonaList {
+  max-width: 760px;
+  margin: 24px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: #ffffff;
+}
+
+.marketingPersonaList div {
+  min-height: 150px;
+  padding: 16px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+}
+
+.marketingPersonaList dt {
+  color: var(--muted);
+  font: 650 11px/1.35 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.marketingPersonaList dd {
+  margin: 0;
+  color: var(--fg);
+  font-size: 16px;
+  line-height: 1.42;
+}
+
 .marketingStepRail {
   border: 1px solid var(--border);
   display: grid;
@@ -2211,6 +2254,86 @@ blockquote {
 
 .marketingRelatedSection {
   padding: 28px 0 82px;
+}
+
+.marketingGrowthSection {
+  padding: 32px 0 52px;
+}
+
+.marketingBenefitGrid,
+.marketingFaqGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.marketingBenefitGrid article {
+  min-height: 220px;
+  padding: 18px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+}
+
+.marketingBenefitGrid strong {
+  font-size: 22px;
+  line-height: 1.08;
+}
+
+.marketingBenefitGrid p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.marketingWorkflowList {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  counter-reset: workflow;
+  list-style: none;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.marketingWorkflowList li {
+  min-height: 240px;
+  padding: 18px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+  counter-increment: workflow;
+}
+
+.marketingWorkflowList li::before {
+  content: counter(workflow, decimal-leading-zero);
+  color: var(--orange);
+  font: 650 13px/1 var(--font-mono);
+}
+
+.marketingWorkflowList strong {
+  font-size: 22px;
+  line-height: 1.08;
+}
+
+.marketingWorkflowList p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.marketingFaqGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .marketingCaptureSection {
@@ -2335,6 +2458,7 @@ blockquote {
   .secondaryArticle,
   .marketingHeroGrid,
   .marketingBodyGrid,
+  .marketingPersonaList,
   .leadCaptureForm,
   .leadCaptureFields {
     grid-template-columns: 1fr;
@@ -2404,6 +2528,7 @@ blockquote {
   .closing,
   .marketingHeroSection,
   .marketingBodySection,
+  .marketingGrowthSection,
   .marketingCaptureSection,
   .marketingRelatedSection,
   .secondaryHero,
@@ -2571,6 +2696,12 @@ blockquote {
   }
 
   .marketingRelatedGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .marketingBenefitGrid,
+  .marketingWorkflowList,
+  .marketingFaqGrid {
     grid-template-columns: 1fr;
   }
 

@@ -364,9 +364,9 @@ export function HeroSection() {
     <section className="hero" id="hero" aria-labelledby="hero-title">
       <div className="heroGrid">
         <div className="heroContent">
-          <h1 id="hero-title">Turn a GitHub repository into a launch-ready story.</h1>
+          <h1 id="hero-title">Generate a cold-start launch package from one GitHub repository.</h1>
           <p className="heroCopy">
-            Generate cold-start launch materials for README pages, social media, PPT decks, and product outreach from one repository URL.
+            QuickFork reads repository evidence, explains the project visually, and drafts README, social, deck, and outreach assets that builders can review before launch.
           </p>
           <ProjectLaunchInputPanel />
         </div>
