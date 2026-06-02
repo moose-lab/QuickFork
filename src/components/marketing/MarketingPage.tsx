@@ -79,6 +79,7 @@ export function MarketingPage({ link }: MarketingPageProps) {
               <h1 id="marketing-page-title">{headline}</h1>
               <p>{description}</p>
               <p className="marketingDefinition">{narrative.definition}</p>
+              {narrative.lastUpdated ? <p className="marketingUpdated">Last updated: {narrative.lastUpdated}</p> : null}
               <div className="marketingActions">
                 <a className="primaryButton" href={ctaHref} onClick={handlePrimaryCtaClick}>
                   {ctaLabel}

@@ -610,3 +610,62 @@ Decision:
 Next action:
 
 - After production deploy, verify the route returns 200, appears in sitemap and `llms.txt`, and starts collecting route-level CTA/contact evidence.
+
+## 2026-06-02 Open Source Launch Checklist Resource Slice
+
+Hypothesis:
+
+- If open-source maintainers receive a source-backed launch checklist instead of a generic resource shell, they can see QuickFork as a useful early launch-planning tool and are more likely to request the checklist or generate a repo brief.
+
+Lifecycle stage:
+
+- Discovery to Validation.
+
+Target user:
+
+- Open-source maintainers and AI/devtool builders preparing a public GitHub repository launch.
+
+Changed surface:
+
+- `/resources/open-source-launch-checklist` now has a dedicated source-backed narrative instead of the generic resource template.
+- The page defines the job around README trust, repository social preview, audience feedback, launch assets, and post-launch learning.
+- Public source notes now link Open Source Guides, GitHub README docs, GitHub social preview docs, and Product Hunt launch preparation.
+- `MarketingPageNarrative` now supports an optional `lastUpdated` field and renders `Last updated: June 2, 2026`.
+- `public/llms.txt` and `public/sitemap.xml` were refreshed from the SEO/GEO route contract.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-open-source-launch-checklist-resource.md`.
+- Added research synthesis at `docs/marketing/research/2026-06-02-open-source-launch-checklist.md`.
+
+Primary CTA:
+
+- Request checklist.
+
+Primary metric:
+
+- `lead_magnet_requested / resource_page_viewed` for `/resources/open-source-launch-checklist`.
+
+Guardrail:
+
+- Do not claim ranking lift, revenue, customer count, Product Hunt success, guaranteed growth, conversion lift, or exact pricing from this resource.
+
+Evidence gap:
+
+- The route is source-backed but not validated demand. Production page views, checklist requests, lead quality, follow-up interviews, repo brief starts, and AI-search citation behavior are still required.
+
+Evidence observed:
+
+- RED route test failed first because `/resources/open-source-launch-checklist` used generic resource copy instead of checklist-specific content.
+- RED public-growth test failed first because `llms.txt` still exposed the generic resource description.
+- `npm test -- src/App.test.tsx -t "open-source launch checklist"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/seo/public-growth.test.ts -t "machine-readable AI context"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts`: 3 files passed, 30 tests passed.
+- `npm test`: 19 files passed, 124 tests passed.
+- `npm run build`: TypeScript build and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Decision:
+
+- Treat this as a P1 resource-depth fix and a lead-magnet validation surface. It is not evidence of willingness to pay yet.
+
+Next action:
+
+- Run full verification, push the branch, open a PR, and after deploy smoke-test the production route, sitemap, and `llms.txt`.
