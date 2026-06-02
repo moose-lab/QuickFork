@@ -461,6 +461,65 @@ describe("App", () => {
     );
   }, 10000);
 
+  it("renders the GitHub repo visual explainer as a source-backed product route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/github-repo-visual-explainer?utm_source=google");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /GitHub Repo Visual Explainer/i })).toBeInTheDocument();
+    expect(screen.getAllByText(/source-backed visual package/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Visual package outputs/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Project story map/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/README hero card/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/GitHub social preview/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Deck-ready explainer slide/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: /GitHub Docs About READMEs/i })).toHaveAttribute(
+      "href",
+      "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+    );
+    expect(screen.getByRole("link", { name: /GitHub Docs social preview/i })).toHaveAttribute(
+      "href",
+      expect.stringContaining("docs.github.com"),
+    );
+    expect(screen.getByRole("link", { name: /Open Source Guides finding users/i })).toHaveAttribute(
+      "href",
+      "https://opensource.guide/finding-users/",
+    );
+    expect(screen.getByRole("link", { name: /Product Hunt launch guide/i })).toHaveAttribute(
+      "href",
+      "https://www.producthunt.com/launch/preparing-for-launch",
+    );
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("GitHub Repo Visual Explainer | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps github repo visual explainer demand into source-backed story maps, README hero cards, GitHub social previews, and deck-ready visual launch assets for technical repositories.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/github-repo-visual-explainer",
+    );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_type: "product",
+          buyer_stage: "consideration",
+          intent_cluster: "github_repo_visual_explainer",
+          utm_source: "google",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(
+      /email|token|secret|api_key|ranking|revenue|customers|guaranteed|viral|fully autonomous/i,
+    );
+  }, 10000);
+
   it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");

@@ -1,5 +1,6 @@
 import type { MarketingBuyerStage, MarketingLink, MarketingPageType, MarketingPrimaryCta } from "./link-catalog";
 import { launchReadinessScorecard, type LaunchReadinessScorecard } from "./launch-readiness-score";
+import { visualExplainerPackage, type VisualExplainerPackage } from "./visual-explainer-package";
 
 export interface MarketingPageNarrative {
   definition: string;
@@ -25,6 +26,7 @@ export interface MarketingPageNarrative {
   }>;
   lastUpdated?: string;
   scorecard?: LaunchReadinessScorecard;
+  visualPackage?: VisualExplainerPackage;
 }
 
 const pageTypeLabels: Record<MarketingPageType, string> = {
@@ -205,6 +207,97 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
           "Only when the benchmark appears in repository evidence, linked official docs, generated quality reports, or explicit user input. Otherwise QuickFork should avoid or label the claim as unvalidated.",
       },
     ],
+  },
+  github_repo_visual_explainer: {
+    definition:
+      "A GitHub repo visual explainer is a source-backed visual package that turns repository evidence into a project story map, README hero card direction, GitHub social preview, and deck-ready explainer slide before teams publish launch materials.",
+    targetUser: "AI project builders, DevRel operators, open-source maintainers, and design/product leads preparing a public repository launch.",
+    jobToBeDone:
+      "When a technical repo is hard to understand at first glance, help the builder turn README evidence, audience context, workflow, and proof into visual assets that make the project easier to scan before the full launch package is generated.",
+    evidenceBoundary:
+      "Visual explainer claims should come from the repository, official identity assets, public launch guidance, or explicit human input. The page should not promise rankings, revenue, launch outcomes, viral sharing, or autonomous publishing.",
+    benefits: [
+      {
+        title: "Make the project scannable before the README",
+        body: "Use a story map and hero-card direction to explain what the repo does, who it helps, how it works, and what proof needs review.",
+      },
+      {
+        title: "Connect visual assets to launch channels",
+        body: "Plan README, GitHub social preview, deck, and Product Hunt gallery directions from the same source-backed project brief.",
+      },
+      {
+        title: "Keep identity and proof reviewable",
+        body: "Prefer official repo assets, GitHub avatars, source references, and uncertainty labels instead of random logos or invented benchmarks.",
+      },
+      {
+        title: "Measure visual understanding as activation",
+        body: "Track whether users open previews, copy story maps, download visual exports, and continue into the generation flow.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Read the repo evidence",
+        body: "Start with README, metadata, topics, linked docs, official identity assets, and any explicit user notes instead of a blank prompt.",
+      },
+      {
+        title: "Build a project story map",
+        body: "Map source, audience, workflow, proof, and launch context so the visual direction explains the project rather than decorating it.",
+      },
+      {
+        title: "Draft visual launch surfaces",
+        body: "Turn the same source-backed story into README hero card, GitHub social preview, Product Hunt gallery, and deck-ready explainer directions.",
+      },
+      {
+        title: "Generate and review assets",
+        body: "Use the studio to generate launch materials, then review visual identity, unsupported claims, and channel fit before public use.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is a GitHub repo visual explainer?",
+        answer:
+          "It is a source-backed visual package that turns a repository into a story map, README hero card direction, GitHub social preview, and deck-ready explainer slide so people can understand the project faster.",
+      },
+      {
+        question: "Who should use a repo visual explainer?",
+        answer:
+          "It is for AI project builders, open-source maintainers, DevRel teams, founders, and design/product leads who need visual launch assets without inventing logos, customer proof, or performance claims.",
+      },
+      {
+        question: "How does QuickFork keep the visuals source-backed?",
+        answer:
+          "QuickFork starts from repository evidence and official identity assets, then labels visual direction as reviewable launch material instead of final public proof.",
+      },
+      {
+        question: "Does a visual explainer guarantee more traffic or launch success?",
+        answer:
+          "No. The explainer is an activation and review surface. Production analytics and interviews are still needed before treating it as validated demand.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub positions the README as the project explanation surface, which makes README hero direction a launch-readiness input.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "GitHub Docs social preview",
+        body: "GitHub documents repository social preview customization, making shared-link visuals a concrete launch surface.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides ties project growth to audience discovery and feedback, which the story map turns into visual context.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation makes gallery assets, maker context, tagline, and launch-day copy part of visual launch work.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+    visualPackage: visualExplainerPackage,
   },
   open_source_launch_checklist: {
     definition:
@@ -501,6 +594,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   if (link.intentCluster === "ai_project_launch") {
     return "AI Project Launch for source-backed technical launches.";
   }
+  if (link.intentCluster === "github_repo_visual_explainer") {
+    return "GitHub Repo Visual Explainer for source-backed project understanding.";
+  }
   if (link.intentCluster === "open_source_launch_checklist") {
     return "Open Source Launch Checklist for source-backed repository launches.";
   }
@@ -539,6 +635,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "ai_project_launch") {
     return "QuickFork maps AI project launch demand into source-backed README, social, deck, outreach, and visual launch assets for cold-start AI repositories.";
+  }
+  if (link.intentCluster === "github_repo_visual_explainer") {
+    return "QuickFork maps github repo visual explainer demand into source-backed story maps, README hero cards, GitHub social previews, and deck-ready visual launch assets for technical repositories.";
   }
   if (link.intentCluster === "open_source_launch_checklist") {
     return "QuickFork maps open source launch checklist demand into source-backed README, social preview, Product Hunt, deck, outreach, and post-launch learning steps for public GitHub repository launches.";
