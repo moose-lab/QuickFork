@@ -114,3 +114,13 @@ Required evidence before deciding:
 Current decision:
 
 - Hypothesis only. The pages are production-ready for measurement, but demand is still unvalidated.
+
+Follow-through evidence:
+
+- PR #26 merged into `main` at merge commit `a0f1abcc0d46ae3579366f812afd3df1826a58d1`.
+- Main CI/CD run `26829360409` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production smoke passed for `https://seekersai.com/product/source-backed-launch-assets` with HTTP 200.
+- Production smoke passed for `https://seekersai.com/product/readme-marketing-cards` with HTTP 200.
+- Production sitemap contains both product URLs.
+- Production `llms.txt` contains both page descriptions.
+- This evidence proves the measurement framework shipped, not that either page has validated demand.
