@@ -299,6 +299,96 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
     lastUpdated: "June 2, 2026",
     visualPackage: visualExplainerPackage,
   },
+  github_repo_to_launch_deck: {
+    definition:
+      "A GitHub repository pitch deck generator turns repo evidence into a deck-ready launch brief: slide outline, product story, audience, proof limits, Product Hunt narrative, outreach notes, and visual explainer prompts that a founder or DevRel team can review before presenting the project.",
+    targetUser: "AI project founders, indie technical founders, and DevRel operators preparing repository-backed launches.",
+    jobToBeDone:
+      "When a technical project needs a launch deck, help the team turn one GitHub repository URL into a coherent story arc for README, Product Hunt, social, outreach, and deck review.",
+    evidenceBoundary:
+      "Deck claims should come from README evidence, repository metadata, linked docs, official assets, generated quality reports, or explicit user input. The page should not promise funding, rankings, revenue, customer adoption, or Product Hunt outcomes.",
+    benefits: [
+      {
+        title: "Turn repo context into a slide story",
+        body: "Convert README, workflow, topics, identity assets, and proof limits into a clear deck spine instead of starting from a blank slide template.",
+      },
+      {
+        title: "Keep Product Hunt and deck copy aligned",
+        body: "Use the same source-backed narrative for tagline, gallery direction, maker context, social posts, and outreach so launch assets do not contradict each other.",
+      },
+      {
+        title: "Explain the project before people read the code",
+        body: "Create a deck-ready overview of what the repo does, who it helps, how it works, and which claims need human review.",
+      },
+      {
+        title: "Route deck demand into the launch package",
+        body: "Measure whether visitors who need pitch or launch decks continue into repo brief generation, artifact exports, or full launch package requests.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Paste a public repository URL",
+        body: "QuickFork starts from repository metadata, README evidence, topics, linked docs, and official identity assets.",
+      },
+      {
+        title: "Build the deck-ready brief",
+        body: "The brief separates audience, problem, workflow, proof, caveats, visual direction, and launch CTA before drafting slide structure.",
+      },
+      {
+        title: "Draft launch deck sections",
+        body: "Generate an outline for problem, product, workflow, proof boundary, demo path, launch asks, Product Hunt story, and outreach narrative.",
+      },
+      {
+        title: "Review before presenting",
+        body: "Founders and DevRel operators approve claims, visuals, examples, pricing status, and public wording before using the deck externally.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is a GitHub repository pitch deck generator?",
+        answer:
+          "It is a source-backed workflow that turns one repository URL into a deck-ready launch brief, slide outline, Product Hunt story, outreach narrative, and visual explainer prompts for human review.",
+      },
+      {
+        question: "Who is the repo-to-launch-deck page for?",
+        answer:
+          "It is for AI project founders, indie technical founders, open-source maintainers, and DevRel operators who need to explain a repository-backed project in slides without inventing proof.",
+      },
+      {
+        question: "How is this different from a generic pitch deck template?",
+        answer:
+          "A generic template starts from slide categories. QuickFork starts from repository evidence, then maps the same source-backed story to deck sections, README language, Product Hunt context, and outreach copy.",
+      },
+      {
+        question: "Can QuickFork guarantee deck outcomes?",
+        answer:
+          "No. QuickFork creates reviewable launch materials. Humans still approve claims, visuals, pricing language, examples, and where the deck is presented.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub treats the README as the repository explanation surface, which makes README evidence the first input for a source-backed deck brief.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "GitHub Docs social preview",
+        body: "Repository social preview guidance makes shared-link visuals part of the same story that later appears in Product Hunt galleries and launch decks.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Open Source Guides finding users",
+        body: "Open-source audience discovery and feedback loops shape who the deck is for and what questions the launch story should answer.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation requires concise product story, media choices, maker context, and launch-day copy that can share a deck-ready brief.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+  },
   repository_launch_package_pilot: {
     definition:
       "A repository launch package pilot is a source-backed request path for teams that need a complete launch package across README, social, deck, outreach, visual explainer, review, and measurement work before QuickFork publishes fixed pricing.",
@@ -665,6 +755,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   if (link.intentCluster === "github_repo_visual_explainer") {
     return "GitHub Repo Visual Explainer for source-backed project understanding.";
   }
+  if (link.intentCluster === "github_repo_to_launch_deck") {
+    return "GitHub Repository Pitch Deck Generator for source-backed launch decks.";
+  }
   if (link.intentCluster === "repository_launch_package_pilot") {
     return "Repository Launch Package Pilot for source-backed paid-intent learning.";
   }
@@ -709,6 +802,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "github_repo_visual_explainer") {
     return "QuickFork maps github repo visual explainer demand into source-backed story maps, README hero cards, GitHub social previews, and deck-ready visual launch assets for technical repositories.";
+  }
+  if (link.intentCluster === "github_repo_to_launch_deck") {
+    return "QuickFork maps github repository pitch deck generator demand into a deck-ready launch brief, slide outline, Product Hunt story, and outreach narrative from repository evidence.";
   }
   if (link.intentCluster === "repository_launch_package_pilot") {
     return "QuickFork maps repository launch package pilot demand into a full launch package pilot for README, social, deck, outreach, visual explainer, review, and measurement work.";
