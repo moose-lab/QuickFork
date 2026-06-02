@@ -108,6 +108,7 @@ function buildLeadCapturePayload(link: MarketingLink, form: LeadCaptureFormState
   const touch = buildAttributionTouch();
   const isDemo = link.pageType === "contact" && link.slug === "demo";
   const isPartnership = link.pageType === "contact" && link.slug === "partnership";
+  const isLaunchPackage = link.pageType === "contact" && link.slug === "launch-package";
 
   return {
     intent: link.pageType === "resource" ? "resource" : isDemo ? "demo" : isPartnership ? "partnership" : "sales_contact",
@@ -117,8 +118,8 @@ function buildLeadCapturePayload(link: MarketingLink, form: LeadCaptureFormState
     roleSegment: link.persona,
     resourceSlug: link.pageType === "resource" ? link.slug : undefined,
     captureLocation: "marketing_page",
-    requestType: isDemo ? "founder_demo" : isPartnership ? "devrel_partnership" : undefined,
-    contactReason: isDemo ? "quickfork_demo" : isPartnership ? "devrel_partnership" : undefined,
+    requestType: isDemo ? "founder_demo" : isPartnership ? "devrel_partnership" : isLaunchPackage ? "full_launch_package" : undefined,
+    contactReason: isDemo ? "quickfork_demo" : isPartnership ? "devrel_partnership" : isLaunchPackage ? "full_launch_package" : undefined,
     crmCampaign: link.crmCampaign,
     firstTouch: touch,
     lastTouch: touch,

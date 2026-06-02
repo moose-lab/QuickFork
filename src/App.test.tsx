@@ -16,7 +16,7 @@ describe("App", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders the landing architecture from the reference page", () => {
+  it("renders the landing architecture around the repository launch package", () => {
     render(<App />);
 
     expect(screen.getByRole("banner")).toHaveClass("nav");
@@ -46,7 +46,7 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /start a fork/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: /turn a github repository into a launch-ready story/i,
+        name: /generate a cold-start launch package from one github repository/i,
       }),
     ).toBeInTheDocument();
     const form = screen.getByRole("form", { name: /project launch generator/i });
@@ -85,11 +85,11 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /preview prompts/i })).not.toBeInTheDocument();
     expect(
       screen.getByText(
-        /Generate cold-start launch materials for README pages, social media, PPT decks, and product outreach from one repository URL\./i,
+        /QuickFork reads repository evidence, explains the project visually, and drafts README, social, deck, and outreach assets/i,
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /Generate traceable launch assets from repository evidence/i }),
+      screen.getByRole("heading", { name: /Generate a source-backed launch package from repository evidence/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /From GitHub URL to multilingual launch package/i })).toBeInTheDocument();
   }, 10000);
@@ -145,7 +145,7 @@ describe("App", () => {
     expect(screen.getByText("https://seekersai.com/resources/github-project-marketing-card-guide")).toBeInTheDocument();
     expect(within(routeDetails).getByText("Resource")).toBeInTheDocument();
     const primaryCta = screen
-      .getAllByRole("link", { name: /generate launch card/i })
+      .getAllByRole("link", { name: /generate free repo brief/i })
       .find((link) => link.classList.contains("primaryButton"));
     expect(primaryCta).toHaveAttribute("href", "/#hero");
     expect(document.title).toBe("GitHub Project Marketing Card | QuickFork");
@@ -178,6 +178,99 @@ describe("App", () => {
         }),
       ]),
     );
+  });
+
+  it("renders the GitHub repo to launch package page as a high-intent growth page", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/github-repo-to-launch-package?utm_source=google");
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: /github repo to launch package for cold-start technical launches/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/source-backed README, social, deck, outreach, and visual explainer assets/i),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/AI project builders, open-source maintainers/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Start from one repository URL/i)).toBeInTheDocument();
+    expect(screen.getByText(/Package the same story for every channel/i)).toBeInTheDocument();
+    expect(screen.getByText(/Review before publishing/i)).toBeInTheDocument();
+    expect(screen.getByText(/How is this different from asking ChatGPT to write launch copy/i)).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("GitHub Repo To Launch Package | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps github repo to launch package demand into source-backed README, social, deck, outreach, and visual explainer assets for cold-start technical launches.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/github-repo-to-launch-package",
+    );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/product/github-repo-to-launch-package",
+          page_type: "product",
+          page_intent: "category_or_feature_consideration",
+          buyer_stage: "consideration",
+          intent_cluster: "github_repo_to_launch_package",
+          utm_source: "google",
+        }),
+      ]),
+    );
+  });
+
+  it("renders the AI project launch use case as an AI/GEO growth route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/use-cases/ai-project-launch?utm_source=perplexity");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /AI project launch/i })).toBeInTheDocument();
+    expect(screen.getByText(/source-backed launch package for an AI repository/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/AI project builders and open-source AI maintainers/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Turn repo evidence into a launch story/i)).toBeInTheDocument();
+    expect(screen.getByText(/What does an AI project launch page need to explain/i)).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    fireEvent.click(primaryCta!);
+    expect(document.title).toBe("AI Project Launch | QuickFork");
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/use-cases/ai-project-launch",
+    );
+    const schema = JSON.parse(document.querySelector('script[data-quickfork-marketing-schema]')?.textContent ?? "{}");
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity[0].name).toContain("What does an AI project launch page need to explain");
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/use-cases/ai-project-launch",
+          page_type: "use_case",
+          buyer_stage: "consideration",
+          intent_cluster: "ai_project_launch",
+          utm_source: "perplexity",
+        }),
+        expect.objectContaining({
+          event: "cta_clicked",
+          cta_id: "generate_launch_card",
+          cta_location: "marketing_page_hero",
+          page_type: "use_case",
+          intent_cluster: "ai_project_launch",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/ranking|revenue|customers|guaranteed/i);
   });
 
   it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
@@ -292,6 +385,61 @@ describe("App", () => {
     expect(JSON.stringify(window.dataLayer)).not.toContain("founder@example.dev");
   });
 
+  it("submits full launch package contact requests as sales contact", async () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/contact?intent=launch-package&utm_source=product");
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            leadId: "lead_2",
+            lifecycleStage: "sales_qualified_lead",
+            activityId: "activity_2",
+          }),
+          {
+            headers: { "Content-Type": "application/json" },
+            status: 201,
+          },
+        ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /full launch package/i })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/work email/i), { target: { value: "founder@example.dev" } });
+    fireEvent.change(screen.getByLabelText(/company domain/i), { target: { value: "example.dev" } });
+    fireEvent.click(screen.getByRole("button", { name: /request full launch package/i }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    const payload = JSON.parse((fetchMock.mock.calls[0]?.[1] as RequestInit).body as string);
+    expect(payload).toMatchObject({
+      intent: "sales_contact",
+      email: "founder@example.dev",
+      companyDomain: "example.dev",
+      requestType: "full_launch_package",
+      contactReason: "full_launch_package",
+      crmCampaign: "2026_q2_full_launch_package",
+      firstTouch: expect.objectContaining({
+        source: "product",
+        landingPage: "http://localhost:3000/contact",
+      }),
+    });
+    expect(await screen.findByText(/we will follow up with the next step/i)).toBeInTheDocument();
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "sales_contact_requested",
+          contact_reason: "full_launch_package",
+          company_domain: "example.dev",
+          role_segment: "founder",
+          utm_source: "product",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toContain("founder@example.dev");
+  });
+
   it("renders help and legal footer routes with public metadata", () => {
     window.history.replaceState({}, "", "/help");
     const { rerender } = render(<App />);
@@ -353,6 +501,91 @@ describe("App", () => {
             { provider: "wavespeed", model: "openai/gpt-5.5", purpose: "readme_analysis", status: "completed" },
             { provider: "wavespeed", model: "openai/gpt-image-2/text-to-image", purpose: "image_generation", status: "completed" },
           ],
+          launchBrief: {
+            summary: "CUDA kernels for faster attention inference.",
+            audienceHypothesis: "AI project builders, open-source maintainers, and technical founders evaluating launch readiness.",
+            storyMap: {
+              title: "QwenLM/FlashQLA launch story map",
+              summary: "Source-backed visual interpretation for CUDA attention kernels.",
+              nodes: [
+                {
+                  id: "source",
+                  label: "Source",
+                  title: "Repository evidence",
+                  detail: "README describes optimized attention kernels.",
+                  source: "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+                },
+                {
+                  id: "audience",
+                  label: "Audience",
+                  title: "AI project builders",
+                  detail: "Builders evaluating inference performance work.",
+                  source: "Audience hypothesis from repo metadata and topics.",
+                },
+                {
+                  id: "workflow",
+                  label: "Workflow",
+                  title: "Install to benchmark",
+                  detail: "Install kernels -> Run benchmark -> Ship inference",
+                  source: "Workflow steps from launch brief.",
+                },
+              ],
+            },
+            readmeChecklist: [
+              {
+                item: "Lead with a one-sentence README value proposition.",
+                source: "Derived from repository evidence and README positioning.",
+              },
+              {
+                item: "Show source-backed features before implementation detail.",
+                source: "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+              },
+            ],
+            launchAngles: [
+              {
+                title: "Launch angle 1",
+                body: "Optimizes attention kernels for lower latency inference.",
+                source: "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+              },
+            ],
+            socialPost: "CUDA kernels for faster attention inference.\n\nOptimizes attention kernels for lower latency inference.\n\ngithub.com/QwenLM/FlashQLA",
+            deckOutline: [
+              "Problem: FlashQLA is hard to understand from raw repository context.",
+              "What it does: CUDA kernels for faster attention inference.",
+              "Why it matters: Optimizes attention kernels for lower latency inference.",
+              "Workflow: Install kernels -> Run benchmark -> Ship inference",
+            ],
+            outreachDraft:
+              "Hi, I found FlashQLA and put together a source-backed launch brief from github.com/QwenLM/FlashQLA.",
+            visualExplainerPrompt:
+              "Create a ai_kernel_infra visual explainer using workflow_diagram. Keep the GitHub strip as github.com/QwenLM/FlashQLA.",
+            sourceReferences: [
+              "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+            ],
+            artifacts: [
+              {
+                type: "story_map",
+                label: "Project story map",
+                fileName: "qwenlm-flashqla-project-story-map.md",
+                body: "## Project story map\n\nSource-backed visual interpretation.",
+                sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
+              },
+              {
+                type: "readme",
+                label: "README launch brief",
+                fileName: "qwenlm-flashqla-readme-launch-brief.md",
+                body: "README checklist\n- Lead with source-backed value.",
+                sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
+              },
+              {
+                type: "social",
+                label: "Social launch post",
+                fileName: "qwenlm-flashqla-social-launch-post.txt",
+                body: "CUDA kernels for faster attention inference.",
+                sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
+              },
+            ],
+          },
         }),
         { headers: { "Content-Type": "application/json" }, status: 201 },
       ),
@@ -395,6 +628,23 @@ describe("App", () => {
       "href",
       "https://wavespeed.ai/generated/qwenlm-flashqla.png",
     );
+    const briefRegion = await screen.findByRole("region", { name: /free repo launch brief/i });
+    expect(within(briefRegion).getByText(/AI project builders, open-source maintainers/i)).toBeInTheDocument();
+    const storyMapRegion = within(briefRegion).getByRole("region", { name: /project story map/i });
+    expect(within(storyMapRegion).getByText(/Project story map/i)).toBeInTheDocument();
+    expect(within(storyMapRegion).getByText(/Source-backed visual interpretation/i)).toBeInTheDocument();
+    expect(within(storyMapRegion).getByText(/Install to benchmark/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByText(/Lead with a one-sentence README value proposition/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByText(/Launch angle 1/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByText(/Create a ai_kernel_infra visual explainer/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByText(/Export artifacts/i)).toBeInTheDocument();
+    expect(within(briefRegion).getByRole("button", { name: /copy README launch brief/i })).toBeInTheDocument();
+    expect(within(briefRegion).getByRole("link", { name: /download README launch brief/i })).toHaveAttribute(
+      "download",
+      "qwenlm-flashqla-readme-launch-brief.md",
+    );
+    const packageLink = within(briefRegion).getByRole("link", { name: /request full launch package/i });
+    expect(packageLink).toHaveAttribute("href", expect.stringContaining("/contact?intent=launch-package"));
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -425,8 +675,72 @@ describe("App", () => {
           preset: "4:3",
           has_image_url: true,
         }),
+        expect.objectContaining({
+          event: "launch_brief_viewed",
+          repo_full_name: "QwenLM/FlashQLA",
+          generation_id: "gen_qwenlm_flashqla_test",
+          brief_sections: 7,
+        }),
       ]),
     );
+
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: vi.fn(async () => undefined) },
+    });
+    fireEvent.click(within(briefRegion).getByRole("button", { name: /copy launch brief/i }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Free repo launch brief"));
+    fireEvent.click(within(briefRegion).getByRole("button", { name: /copy story map/i }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Project story map"));
+    fireEvent.click(within(briefRegion).getByRole("button", { name: /copy README launch brief/i }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("README checklist"));
+    fireEvent.click(within(briefRegion).getByRole("link", { name: /download README launch brief/i }));
+    fireEvent.click(packageLink);
+    await waitFor(() =>
+      expect(window.dataLayer).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            event: "launch_brief_copied",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            artifact_type: "free_repo_launch_brief",
+          }),
+          expect.objectContaining({
+            event: "launch_story_map_copied",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            node_count: 3,
+            source_reference_count: 1,
+          }),
+          expect.objectContaining({
+            event: "launch_artifact_copied",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            artifact_type: "readme",
+            artifact_label: "README launch brief",
+            artifact_format: "text",
+          }),
+          expect.objectContaining({
+            event: "launch_artifact_downloaded",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            artifact_type: "readme",
+            artifact_label: "README launch brief",
+            artifact_format: "text",
+          }),
+          expect.objectContaining({
+            event: "cta_clicked",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            cta_id: "request_full_launch_package",
+            cta_location: "launch_brief_panel",
+            lifecycle_stage: "monetization",
+            artifact_count: 3,
+          }),
+        ]),
+      ),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toContain("README checklist");
 
     fireEvent.click(previewImage);
     const previewDialog = await screen.findByRole("dialog", { name: /generated image preview/i });
@@ -502,11 +816,11 @@ describe("App", () => {
   it("uses native FAQ disclosure items", () => {
     render(<App />);
 
-    const defaultQuestion = screen.getByText(/Does QuickFork copy the reference page/i).closest("details");
+    const defaultQuestion = screen.getByText(/What does QuickFork generate from a repository URL/i).closest("details");
 
     expect(defaultQuestion).toBeInTheDocument();
     expect(defaultQuestion).toHaveAttribute("open");
-    expect(screen.getByText(/Can the page use real product data later/i)).toBeInTheDocument();
+    expect(screen.getByText(/How does QuickFork avoid generic AI marketing copy/i)).toBeInTheDocument();
   });
 
   it("renders sign-in and sign-up routes for auth entry", () => {

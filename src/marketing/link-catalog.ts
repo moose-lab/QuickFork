@@ -21,6 +21,7 @@ export const marketingPrimaryCtas = [
   "generate_comparison_card",
   "request_demo",
   "request_partnership",
+  "request_launch_package",
 ] as const;
 
 export type MarketingLinkStatus = (typeof marketingLinkStatuses)[number];
@@ -136,6 +137,25 @@ export const marketingLinks: readonly MarketingLink[] = [
       medium: "referral",
       campaign: "open_source_launch",
       content: "repo_footer",
+    },
+  },
+  {
+    status: "published",
+    funnelStage: "top",
+    buyerStage: "consideration",
+    persona: "ai_project_builder",
+    intentCluster: "ai_project_launch",
+    pageType: "use_case",
+    slug: "ai-project-launch",
+    canonicalUrl: "https://seekersai.com/use-cases/ai-project-launch",
+    primaryKeyword: "ai project launch",
+    primaryCta: "generate_launch_card",
+    crmCampaign: "2026_q2_ai_project_launch",
+    utm: {
+      source: "perplexity",
+      medium: "ai_search",
+      campaign: "ai_project_launch",
+      content: "use_case_page",
     },
   },
   {
@@ -364,6 +384,25 @@ export const marketingLinks: readonly MarketingLink[] = [
       medium: "referral",
       campaign: "devrel_partnerships",
       content: "partner_intro",
+    },
+  },
+  {
+    status: "draft",
+    funnelStage: "bottom",
+    buyerStage: "decision",
+    persona: "founder",
+    intentCluster: "full_launch_package",
+    pageType: "contact",
+    slug: "launch-package",
+    canonicalUrl: "https://seekersai.com/contact?intent=launch-package",
+    primaryKeyword: "full launch package",
+    primaryCta: "request_launch_package",
+    crmCampaign: "2026_q2_full_launch_package",
+    utm: {
+      source: "quickfork",
+      medium: "product",
+      campaign: "full_launch_package",
+      content: "artifact_review_cta",
     },
   },
 ] as const;

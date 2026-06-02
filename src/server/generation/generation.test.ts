@@ -480,6 +480,90 @@ describe("project launch generation backend", () => {
     }
   });
 
+  it("returns a source-backed free repo launch brief for activation", async () => {
+    const outputRoot = await mkdtemp(join(tmpdir(), "quickfork-brief-"));
+
+    try {
+      const result = await runProjectLaunchGeneration({
+        repoUrl: "https://github.com/nexu-io/open-design",
+        provider: "mock",
+        outputRoot,
+        mock: {
+          repoMetadata: openDesignMetadata,
+          readmeMarkdown: openDesignReadme,
+        },
+      });
+
+      expect(result).toHaveProperty("launchBrief");
+      expect(result.launchBrief.summary).toContain("Open-source Claude Design alternative");
+      expect(result.launchBrief.audienceHypothesis).toContain("Open-source maintainers");
+      expect(result.launchBrief.readmeChecklist).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            item: expect.stringContaining("README"),
+            source: expect.stringContaining("repository evidence"),
+          }),
+        ]),
+      );
+      expect(result.launchBrief.launchAngles).toHaveLength(3);
+      expect(result.launchBrief.deckOutline).toHaveLength(4);
+      expect(result.launchBrief.socialPost).toContain("github.com/nexu-io/open-design");
+      expect(result.launchBrief.visualExplainerPrompt).toContain("workflow_diagram");
+      expect(result.launchBrief.sourceReferences.join("\n")).toContain("README or repo metadata includes");
+      expect(result.launchBrief.storyMap.title).toContain("nexu-io/open-design");
+      expect(result.launchBrief.storyMap.nodes.map((node) => node.id)).toEqual([
+        "source",
+        "audience",
+        "workflow",
+        "proof",
+        "launch",
+      ]);
+      expect(result.launchBrief.storyMap.nodes[0]).toEqual(
+        expect.objectContaining({
+          label: "Source",
+          title: expect.stringContaining("Repository evidence"),
+          source: expect.stringContaining("README or repo metadata includes"),
+        }),
+      );
+      expect(result.launchBrief.storyMap.nodes[2]?.detail).toContain("->");
+      expect(result.launchBrief.artifacts.map((artifact) => artifact.type)).toEqual([
+        "story_map",
+        "readme",
+        "social",
+        "deck",
+        "outreach",
+        "visual",
+      ]);
+      expect(result.launchBrief.artifacts).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: "story_map",
+            label: "Project story map",
+            fileName: "nexu-io-open-design-project-story-map.md",
+            body: expect.stringContaining("## Project story map"),
+            sourceReferences: expect.arrayContaining([expect.stringContaining("README or repo metadata includes")]),
+          }),
+          expect.objectContaining({
+            type: "readme",
+            label: "README launch brief",
+            fileName: "nexu-io-open-design-readme-launch-brief.md",
+            body: expect.stringContaining("README checklist"),
+            sourceReferences: expect.arrayContaining([expect.stringContaining("README or repo metadata includes")]),
+          }),
+          expect.objectContaining({
+            type: "deck",
+            label: "Pitch deck outline",
+            body: expect.stringContaining("Problem:"),
+          }),
+        ]),
+      );
+      expect(JSON.stringify(result.launchBrief)).not.toMatch(/best|guaranteed|customers|revenue/i);
+      expect(JSON.stringify(result.launchBrief.artifacts)).not.toMatch(/guaranteed|customers|revenue|ranking/i);
+    } finally {
+      await rm(outputRoot, { recursive: true, force: true });
+    }
+  });
+
   it("uses cautious fallback brief language when source evidence is thin", () => {
     const repo = parseGitHubRepositoryUrl("https://github.com/nexu-io/open-design");
     const readme = extractReadmeContext("# Open Design\n\n", repo, { ...openDesignMetadata, description: null, stars: 0, language: null, topics: [] });

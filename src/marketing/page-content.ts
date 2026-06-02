@@ -1,5 +1,24 @@
 import type { MarketingBuyerStage, MarketingLink, MarketingPageType, MarketingPrimaryCta } from "./link-catalog";
 
+export interface MarketingPageNarrative {
+  definition: string;
+  targetUser: string;
+  jobToBeDone: string;
+  evidenceBoundary: string;
+  benefits: Array<{
+    title: string;
+    body: string;
+  }>;
+  workflow: Array<{
+    title: string;
+    body: string;
+  }>;
+  faqs: Array<{
+    question: string;
+    answer: string;
+  }>;
+}
+
 const pageTypeLabels: Record<MarketingPageType, string> = {
   product: "Product",
   use_case: "Use case",
@@ -19,7 +38,7 @@ const buyerStageLabels: Record<MarketingBuyerStage, string> = {
 };
 
 const primaryCtaLabels: Record<MarketingPrimaryCta, string> = {
-  generate_launch_card: "Generate launch card",
+  generate_launch_card: "Generate free repo brief",
   request_checklist: "Request checklist",
   request_prompt_template: "Request prompt template",
   start_free_tool: "Start free tool",
@@ -28,6 +47,7 @@ const primaryCtaLabels: Record<MarketingPrimaryCta, string> = {
   generate_comparison_card: "Generate comparison card",
   request_demo: "Request demo",
   request_partnership: "Request partnership",
+  request_launch_package: "Request full launch package",
 };
 
 const primaryCtaHrefs: Record<MarketingPrimaryCta, string> = {
@@ -40,6 +60,144 @@ const primaryCtaHrefs: Record<MarketingPrimaryCta, string> = {
   generate_comparison_card: "/#hero",
   request_demo: "/contact?intent=demo",
   request_partnership: "/contact?intent=partnership",
+  request_launch_package: "/contact?intent=launch-package",
+};
+
+const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
+  github_repo_to_launch_package: {
+    definition:
+      "A GitHub repo to launch package workflow turns repository evidence into a reviewable launch brief, README improvements, social copy, deck structure, outreach drafts, and visual explainer assets for a cold-start technical product.",
+    targetUser: "AI project builders, open-source maintainers, indie technical founders, and DevRel teams.",
+    jobToBeDone:
+      "When a technical project is ready to share, help the team explain the repo clearly across launch channels without rewriting the same story by hand.",
+    evidenceBoundary:
+      "Claims should come from repository metadata, README content, official links, generated quality reports, or explicit user input.",
+    benefits: [
+      {
+        title: "Start from one repository URL",
+        body: "Use the repo as the intake surface instead of asking builders to assemble a blank marketing brief.",
+      },
+      {
+        title: "Keep launch claims source-backed",
+        body: "Preserve the difference between repository evidence, user-provided facts, and hypotheses that still need review.",
+      },
+      {
+        title: "Package the same story for every channel",
+        body: "Create aligned README, social, deck, outreach, and visual explanation assets from the same project brief.",
+      },
+      {
+        title: "Help strangers understand the project fast",
+        body: "Translate technical workflow, architecture, and value into launch-ready explanations for users who have not read the code.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Paste a public GitHub repo",
+        body: "QuickFork normalizes the owner, repo, URL, README, metadata, topics, and identity assets.",
+      },
+      {
+        title: "Build a source-backed brief",
+        body: "The pipeline extracts project purpose, audience hypotheses, workflows, proof limits, and launch angles.",
+      },
+      {
+        title: "Generate launch assets",
+        body: "The package drafts README copy, social posts, deck outline, outreach copy, visual prompts, images, and quality reports.",
+      },
+      {
+        title: "Review before publishing",
+        body: "Builders inspect the artifact manifest, edit unsupported language, and export only the assets that match their launch.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is a GitHub repo to launch package?",
+        answer:
+          "It is a collection of source-backed launch materials generated from one repository URL: brief, README copy, social posts, deck outline, outreach drafts, visual prompts, generated images, and review artifacts.",
+      },
+      {
+        question: "How is this different from asking ChatGPT to write launch copy?",
+        answer:
+          "QuickFork provides a structured workflow around repository evidence, channel outputs, visual explanation, quality reports, and launch review instead of relying on a blank chat prompt.",
+      },
+      {
+        question: "Who should use this first?",
+        answer:
+          "The first target users are AI project builders, open-source maintainers, indie technical founders, and DevRel teams preparing a public launch from a working repo.",
+      },
+      {
+        question: "Does QuickFork publish the generated assets automatically?",
+        answer:
+          "No. QuickFork produces reviewable launch drafts. A human should approve claims, visuals, pricing, examples, and public publishing decisions.",
+      },
+    ],
+  },
+  ai_project_launch: {
+    definition:
+      "A source-backed launch package for an AI repository turns README evidence, model or workflow context, benchmarks, caveats, visuals, and distribution copy into reviewable materials for a cold-start launch. It helps builders explain what the project does before audiences read the code.",
+    targetUser: "AI project builders and open-source AI maintainers preparing a public launch.",
+    jobToBeDone:
+      "When an AI repo is ready to share, help the builder explain the model, system, benchmark, or workflow clearly across README, social, deck, and outreach surfaces.",
+    evidenceBoundary:
+      "AI project launch claims should come from README evidence, repository metadata, linked docs, official benchmarks, generated quality reports, or explicit user input. If evidence is thin, the copy should label claims as hypotheses.",
+    benefits: [
+      {
+        title: "Turn repo evidence into a launch story",
+        body: "Compress README, topics, workflow notes, and repo metadata into a story that non-maintainers can scan before reading implementation details.",
+      },
+      {
+        title: "Explain the technical value without hype",
+        body: "Frame model, agent, kernel, benchmark, or developer-workflow claims as reviewable launch copy instead of unsupported AI marketing language.",
+      },
+      {
+        title: "Create channel-specific launch assets",
+        body: "Draft README sections, social posts, pitch-deck flow, outreach copy, and visual explainer prompts from the same source-backed brief.",
+      },
+      {
+        title: "Keep visual interpretation tied to the repo",
+        body: "Use story maps, workflow diagrams, GitHub identity assets, and source references so visuals explain the project rather than decorate it.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Paste the AI repository URL",
+        body: "QuickFork reads the public repo, README, topics, metadata, and identity signals without requiring a blank marketing brief.",
+      },
+      {
+        title: "Map source, audience, workflow, proof, and launch",
+        body: "The launch brief and story map separate what the repo proves from what still needs human review.",
+      },
+      {
+        title: "Generate README, social, deck, and outreach drafts",
+        body: "Each artifact stays aligned to the same project story so the launch does not fragment across channels.",
+      },
+      {
+        title: "Review before publishing",
+        body: "Builders approve claims, visuals, benchmark language, pricing, and examples before any public launch material is used.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What does an AI project launch page need to explain?",
+        answer:
+          "It should explain the repo's purpose, target user, technical workflow, evidence limits, visual story, README path, social angle, deck outline, and outreach message without inventing benchmarks, customers, rankings, or revenue.",
+      },
+      {
+        question: "Who is the AI project launch use case for?",
+        answer:
+          "It is for AI project builders, open-source AI maintainers, research engineers, technical founders, and DevRel teams preparing a public launch from a working repository.",
+      },
+      {
+        question: "How does QuickFork reduce launch prep work for AI projects?",
+        answer:
+          "QuickFork starts from one GitHub repository URL, builds a source-backed brief, creates a story map, and drafts README, social, deck, outreach, and visual prompt assets for review.",
+      },
+      {
+        question: "Can QuickFork claim benchmark improvements for an AI repo?",
+        answer:
+          "Only when the benchmark appears in repository evidence, linked official docs, generated quality reports, or explicit user input. Otherwise QuickFork should avoid or label the claim as unvalidated.",
+      },
+    ],
+  },
 };
 
 export function getMarketingPageTitle(link: MarketingLink) {
@@ -47,6 +205,13 @@ export function getMarketingPageTitle(link: MarketingLink) {
 }
 
 export function getMarketingPageHeadline(link: MarketingLink) {
+  if (link.intentCluster === "github_repo_to_launch_package") {
+    return "GitHub Repo To Launch Package for cold-start technical launches.";
+  }
+  if (link.intentCluster === "ai_project_launch") {
+    return "AI Project Launch for source-backed technical launches.";
+  }
+
   const keyword = formatMarketingLabel(link.primaryKeyword);
 
   switch (link.pageType) {
@@ -70,6 +235,13 @@ export function getMarketingPageHeadline(link: MarketingLink) {
 }
 
 export function getMarketingPageDescription(link: MarketingLink) {
+  if (link.intentCluster === "github_repo_to_launch_package") {
+    return "QuickFork maps github repo to launch package demand into source-backed README, social, deck, outreach, and visual explainer assets for cold-start technical launches.";
+  }
+  if (link.intentCluster === "ai_project_launch") {
+    return "QuickFork maps AI project launch demand into source-backed README, social, deck, outreach, and visual launch assets for cold-start AI repositories.";
+  }
+
   const audience = formatMarketingLabel(link.persona.replace(/_/g, " "));
   const pageType = pageTypeLabels[link.pageType].toLowerCase();
 
@@ -92,11 +264,62 @@ export function getMarketingPageTypeLabel(link: MarketingLink) {
   return pageTypeLabels[link.pageType];
 }
 
+export function getMarketingPageNarrative(link: MarketingLink): MarketingPageNarrative {
+  return (
+    pageNarratives[link.intentCluster] ?? {
+      definition: getMarketingPageDescription(link),
+      targetUser: formatMarketingLabel(link.persona.replace(/_/g, " ")),
+      jobToBeDone: "Move from a specific search or campaign intent into one measurable QuickFork product action.",
+      evidenceBoundary:
+        "Keep the page tied to repository evidence, route metadata, and explicit user input. Do not add unverified performance claims.",
+      benefits: [
+        {
+          title: "Capture a precise intent",
+          body: `This route targets ${link.primaryKeyword} with a canonical URL and one primary CTA.`,
+        },
+        {
+          title: "Keep claims reviewable",
+          body: "The page frames QuickFork as a source-backed launch workflow instead of a generic AI content generator.",
+        },
+        {
+          title: "Connect traffic to activation",
+          body: "The CTA routes visitors back to the generator, lead capture, or a bottom-funnel follow-up action.",
+        },
+      ],
+      workflow: [
+        {
+          title: "Match the query",
+          body: `Answer the visitor's ${formatMarketingLabel(link.intentCluster)} intent with clear product language.`,
+        },
+        {
+          title: "Explain the source-backed workflow",
+          body: "Show how repo evidence becomes a brief, prompt, visual asset, report, and manifest.",
+        },
+        {
+          title: "Route to one next action",
+          body: `Ask the visitor to ${getMarketingPrimaryCtaLabel(link).toLowerCase()}.`,
+        },
+      ],
+      faqs: [
+        {
+          question: `Who is this ${pageTypeLabels[link.pageType].toLowerCase()} page for?`,
+          answer: `It is for ${formatMarketingLabel(link.persona.replace(/_/g, " "))} visitors evaluating ${link.primaryKeyword}.`,
+        },
+        {
+          question: "What proof can this page claim?",
+          answer: "Only repository-grounded workflow claims are safe until interviews, analytics, or customer evidence proves more.",
+        },
+      ],
+    }
+  );
+}
+
 export function formatMarketingLabel(value: string) {
   return value
     .replace(/[-_]+/g, " ")
     .replace(/\b\w/g, (character) => character.toUpperCase())
     .replace(/\bGithub\b/g, "GitHub")
+    .replace(/\bAi\b/g, "AI")
     .replace(/\bChatgpt\b/g, "ChatGPT")
     .replace(/\bDevrel\b/g, "DevRel")
     .replace(/\bReadme\b/g, "README")

@@ -181,6 +181,57 @@ export interface MarketingCardQualityReport {
   revisionPrompt?: string;
 }
 
+export interface RepoLaunchBriefChecklistItem {
+  item: string;
+  source: string;
+}
+
+export interface RepoLaunchBriefAngle {
+  title: string;
+  body: string;
+  source: string;
+}
+
+export type RepoLaunchStoryMapNodeId = "source" | "audience" | "workflow" | "proof" | "launch";
+
+export interface RepoLaunchStoryMapNode {
+  id: RepoLaunchStoryMapNodeId;
+  label: string;
+  title: string;
+  detail: string;
+  source: string;
+}
+
+export interface RepoLaunchStoryMap {
+  title: string;
+  summary: string;
+  nodes: RepoLaunchStoryMapNode[];
+}
+
+export type RepoLaunchBriefArtifactType = "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
+
+export interface RepoLaunchBriefArtifact {
+  type: RepoLaunchBriefArtifactType;
+  label: string;
+  fileName: string;
+  body: string;
+  sourceReferences: string[];
+}
+
+export interface RepoLaunchBrief {
+  summary: string;
+  audienceHypothesis: string;
+  storyMap: RepoLaunchStoryMap;
+  readmeChecklist: RepoLaunchBriefChecklistItem[];
+  launchAngles: RepoLaunchBriefAngle[];
+  socialPost: string;
+  deckOutline: string[];
+  outreachDraft: string;
+  visualExplainerPrompt: string;
+  sourceReferences: string[];
+  artifacts: RepoLaunchBriefArtifact[];
+}
+
 export interface CreateGenerationInput {
   repoUrl: string;
   locales?: LocaleCode[];
@@ -237,6 +288,7 @@ export interface GenerationResponse {
   stages: GenerationStage[];
   modelCalls: GenerationModelCall[];
   brief: ProjectBrief;
+  launchBrief: RepoLaunchBrief;
   visualDirection: VisualDirection;
   localizedCopy: Record<LocaleCode, LocalizedCardCopy>;
   outputs: Record<LocaleCode, GenerationOutputItem>;

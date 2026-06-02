@@ -10,6 +10,7 @@ import {
   getMarketingPageDescription,
   getMarketingPageHeadline,
   getMarketingPageKicker,
+  getMarketingPageNarrative,
   getMarketingPageTitle,
   getMarketingPageTypeLabel,
   getMarketingPrimaryCtaHref,
@@ -26,9 +27,11 @@ export function MarketingPage({ link }: MarketingPageProps) {
   const ctaHref = getMarketingPrimaryCtaHref(link);
   const headline = getMarketingPageHeadline(link);
   const description = getMarketingPageDescription(link);
+  const narrative = getMarketingPageNarrative(link);
   const relatedLinks = getRelatedLinks(link);
 
   useEffect(() => applyRouteMetadata(link), [link]);
+  useEffect(() => applyMarketingSchema(link), [link]);
 
   useEffect(() => {
     if (link.pageType === "resource") {
@@ -75,6 +78,7 @@ export function MarketingPage({ link }: MarketingPageProps) {
               <span className="monoLabel">{getMarketingPageKicker(link)}</span>
               <h1 id="marketing-page-title">{headline}</h1>
               <p>{description}</p>
+              <p className="marketingDefinition">{narrative.definition}</p>
               <div className="marketingActions">
                 <a className="primaryButton" href={ctaHref} onClick={handlePrimaryCtaClick}>
                   {ctaLabel}
@@ -113,12 +117,18 @@ export function MarketingPage({ link }: MarketingPageProps) {
           <div className="marketingBodyGrid">
             <div className="marketingNarrative">
               <span className="monoLabel">Route purpose</span>
-              <h2 id="marketing-workflow-title">Move from search intent to a generated launch asset.</h2>
-              <p>
-                This route is built around a clean canonical URL, a specific acquisition intent, and one product action.
-                The copy stays tied to repository evidence so future SEO pages can scale without inventing performance
-                claims.
-              </p>
+              <h2 id="marketing-workflow-title">Move from search intent to a source-backed launch package.</h2>
+              <p>{narrative.jobToBeDone}</p>
+              <dl className="marketingPersonaList" aria-label="Target user and evidence boundary">
+                <div>
+                  <dt>Target user</dt>
+                  <dd>{narrative.targetUser}</dd>
+                </div>
+                <div>
+                  <dt>Evidence boundary</dt>
+                  <dd>{narrative.evidenceBoundary}</dd>
+                </div>
+              </dl>
             </div>
             <div className="marketingStepRail" aria-label="Marketing funnel path">
               <article>
@@ -137,6 +147,51 @@ export function MarketingPage({ link }: MarketingPageProps) {
                 <span>Keep UTM and CRM campaign names aligned.</span>
               </article>
             </div>
+          </div>
+        </section>
+
+        <section className="marketingGrowthSection" aria-labelledby="marketing-benefits-title">
+          <div className="marketingRelatedHead">
+            <span className="monoLabel">Launch package</span>
+            <h2 id="marketing-benefits-title">Turn technical repo context into assets people can actually use.</h2>
+          </div>
+          <div className="marketingBenefitGrid">
+            {narrative.benefits.map((benefit) => (
+              <article key={benefit.title}>
+                <strong>{benefit.title}</strong>
+                <p>{benefit.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="marketingGrowthSection" aria-labelledby="marketing-package-workflow-title">
+          <div className="marketingRelatedHead">
+            <span className="monoLabel">Workflow</span>
+            <h2 id="marketing-package-workflow-title">A repeatable path from repo input to launch review.</h2>
+          </div>
+          <ol className="marketingWorkflowList">
+            {narrative.workflow.map((step) => (
+              <li key={step.title}>
+                <strong>{step.title}</strong>
+                <p>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="marketingGrowthSection" aria-labelledby="marketing-faq-title">
+          <div className="marketingRelatedHead">
+            <span className="monoLabel">AI-search FAQ</span>
+            <h2 id="marketing-faq-title">Answer the questions AI builders ask before launch.</h2>
+          </div>
+          <div className="marketingFaqGrid">
+            {narrative.faqs.map((item) => (
+              <details className="faqItem" key={item.question} open={item.question.startsWith("What is")}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
           </div>
         </section>
 
@@ -213,6 +268,35 @@ function getOrCreateCanonicalLink() {
   link.rel = "canonical";
   document.head.appendChild(link);
   return link;
+}
+
+function applyMarketingSchema(link: MarketingLink) {
+  const narrative = getMarketingPageNarrative(link);
+  const existing = document.querySelector('script[data-quickfork-marketing-schema]');
+  existing?.remove();
+
+  const schema = document.createElement("script");
+  schema.type = "application/ld+json";
+  schema.setAttribute("data-quickfork-marketing-schema", "true");
+  schema.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    name: getMarketingPageTitle(link),
+    url: link.canonicalUrl,
+    mainEntity: narrative.faqs.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  });
+  document.head.append(schema);
+
+  return () => {
+    schema.remove();
+  };
 }
 
 function getRelatedLinks(currentLink: MarketingLink) {

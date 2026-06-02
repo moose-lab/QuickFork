@@ -189,7 +189,7 @@ describe("typed semantic marketing link catalog", () => {
       expect(title).toContain("QuickFork");
       expect(title).toContain(toTitleCase(link.primaryKeyword));
       expect(description).toContain("QuickFork");
-      expect(description).toContain(link.primaryKeyword);
+      expect(description.toLowerCase()).toContain(link.primaryKeyword.toLowerCase());
       expect(headline).toContain(toTitleCase(link.primaryKeyword));
       expect(`${title} ${description} ${headline}`).not.toMatch(/\b(#1|customers|revenue|cheapest|guaranteed)\b/i);
       expect(titles.has(title)).toBe(false);
@@ -205,6 +205,7 @@ describe("typed semantic marketing link catalog", () => {
     const link = getMarketingLinkByPath("/resources/github-project-marketing-card-guide");
 
     expect(link?.slug).toBe("github-project-marketing-card-guide");
+    expect(getMarketingLinkByPath("/use-cases/ai-project-launch")?.slug).toBe("ai-project-launch");
     expect(getMarketingLinkByPath("/contact")).toBeUndefined();
   });
 });
@@ -213,6 +214,7 @@ function toTitleCase(value: string) {
   return value
     .replace(/\b\w/g, (character) => character.toUpperCase())
     .replace(/\bGithub\b/g, "GitHub")
+    .replace(/\bAi\b/g, "AI")
     .replace(/\bChatgpt\b/g, "ChatGPT")
     .replace(/\bDevrel\b/g, "DevRel")
     .replace(/\bReadme\b/g, "README")

@@ -19,7 +19,7 @@ export function FeatureSection() {
           copy="QuickFork now exposes the backend generation contract in the page itself: repo URL in, curated brief, localized copy, prompts, mock cards, quality reports, and manifest paths out."
           eyebrow="01 / Features"
           id="features-title"
-          title="Generate traceable launch assets from repository evidence."
+          title="Generate a source-backed launch package from repository evidence."
         />
         <div className="featureBoard" aria-label="QuickFork feature set">
           {featureCards.map((feature) => (
@@ -141,10 +141,10 @@ export function ProofSection() {
     <section className="section" id="proof" aria-labelledby="proof-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="Design.com uses a large testimonial field to make creation feel safe. QuickFork uses proof more carefully: name the use cases, show professional judgment, and leave numerical claims out until real product data exists."
+          copy="QuickFork uses proof carefully: name the user, explain the workflow, and leave numerical claims out until real product data exists."
           eyebrow="03 / Social proof"
           id="proof-title"
-          title="Show who trusts the workflow before claiming scale."
+          title="Show who the workflow is for before claiming scale."
         />
         <div className="proofGrid">
           <div className="quoteRail">
@@ -162,7 +162,7 @@ export function ProofSection() {
             ))}
           </div>
           <aside className="proofAside" aria-label="QuickFork audience proof">
-            <h3>Built for serious page work.</h3>
+            <h3>Built for launch work that still needs review.</h3>
             <div className="proofList">
               {proofAudience.map((item) => (
                 <span key={item.label}>
@@ -183,7 +183,7 @@ export function FAQSection() {
     <section className="section" id="faq" aria-labelledby="faq-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="The FAQ mirrors the reference page's role: reduce hesitation after the user understands the workflow. QuickFork answers concerns about originality, export quality, editable control, and reference-inspired design."
+          copy="The FAQ reduces hesitation after the user understands the workflow. QuickFork answers concerns about evidence, output quality, editable control, and launch-readiness."
           eyebrow="04 / FAQ"
           id="faq-title"
           title="Answer what a serious buyer will ask."
@@ -206,15 +206,15 @@ export function ClosingCTA() {
     <section className="closing" id="pricing" aria-labelledby="closing-title">
       <div>
         <span className="monoLabel">Final CTA</span>
-        <h2 id="closing-title">Start with the page that works. Ship the page that belongs to you.</h2>
+        <h2 id="closing-title">Start with the repo you have. Ship the launch package you need.</h2>
         <p>
-          QuickFork turns reference-page logic into a polished SaaS landing draft for teams that need strategy, copy,
-          hierarchy, and handoff in the same artifact.
+          QuickFork turns repository evidence into a reviewable launch brief, README assets, social copy, deck structure,
+          outreach drafts, and visual explainers for technical products.
         </p>
       </div>
       <a className="button" href="#features">
         <PanelTop aria-hidden="true" size={17} />
-        Fork a landing page
+        Review the workflow
       </a>
     </section>
   );

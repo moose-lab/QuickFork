@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Download, Github, Languages, Loader2, Maximize2, X } from "lucide-react";
+import { ArrowRight, Copy, Download, Github, Languages, Loader2, Maximize2, X } from "lucide-react";
 import { getRepoAnalyticsProperties, trackEvent } from "../../lib/analytics";
 
 type LocaleCode = "en" | "zh" | "ja";
@@ -78,6 +78,50 @@ interface GenerationSummary {
     purpose: string;
     status: string;
   }>;
+  launchBrief?: RepoLaunchBriefSummary;
+}
+
+interface RepoLaunchBriefSummary {
+  summary: string;
+  audienceHypothesis: string;
+  storyMap?: RepoLaunchStoryMapSummary;
+  readmeChecklist: Array<{
+    item: string;
+    source: string;
+  }>;
+  launchAngles: Array<{
+    title: string;
+    body: string;
+    source: string;
+  }>;
+  socialPost: string;
+  deckOutline: string[];
+  outreachDraft: string;
+  visualExplainerPrompt: string;
+  sourceReferences: string[];
+  artifacts?: RepoLaunchBriefArtifactSummary[];
+}
+
+interface RepoLaunchStoryMapSummary {
+  title: string;
+  summary: string;
+  nodes: RepoLaunchStoryMapNodeSummary[];
+}
+
+interface RepoLaunchStoryMapNodeSummary {
+  id: "source" | "audience" | "workflow" | "proof" | "launch";
+  label: string;
+  title: string;
+  detail: string;
+  source: string;
+}
+
+interface RepoLaunchBriefArtifactSummary {
+  type: "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
+  label: string;
+  fileName: string;
+  body: string;
+  sourceReferences: string[];
 }
 
 async function createGeneration(input: {
@@ -113,6 +157,7 @@ function ProjectLaunchInputPanel() {
   const [generation, setGeneration] = useState<GenerationSummary | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [lastTrackedRepoInput, setLastTrackedRepoInput] = useState("");
+  const trackedBriefId = useRef<string | null>(null);
 
   const toggleLocale = (locale: LocaleCode) => {
     setLocales((current) => {
@@ -190,6 +235,17 @@ function ProjectLaunchInputPanel() {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [previewImageUrl]);
+
+  useEffect(() => {
+    if (!generation?.launchBrief || trackedBriefId.current === generation.id) return;
+    trackedBriefId.current = generation.id;
+    trackEvent("launch_brief_viewed", {
+      ...getRepoAnalyticsProperties(generation.repo?.repo_url ?? repoUrl),
+      generation_id: generation.id,
+      brief_sections: getLaunchBriefSectionCount(generation.launchBrief),
+      source_reference_count: generation.launchBrief.sourceReferences.length,
+    });
+  }, [generation, repoUrl]);
 
   const trackRepoInputIntent = () => {
     const trimmedRepoUrl = repoUrl.trim();
@@ -300,6 +356,15 @@ function ProjectLaunchInputPanel() {
         </p>
       </form>
 
+      {generation?.launchBrief ? (
+        <LaunchBriefPanel
+          brief={generation.launchBrief}
+          generationId={generation.id}
+          repoFullName={generation.repo?.full_name ?? "Generated project"}
+          repoUrl={generation.repo?.repo_url ?? repoUrl}
+        />
+      ) : null}
+
       {generation ? (
         <span className="srOnly" aria-live="polite">
           Generated launch image for {generation.repo?.full_name ?? generation.id}
@@ -326,6 +391,281 @@ function ProjectLaunchInputPanel() {
       ) : null}
     </div>
   );
+}
+
+function LaunchBriefPanel({
+  brief,
+  generationId,
+  repoFullName,
+  repoUrl,
+}: {
+  brief: RepoLaunchBriefSummary;
+  generationId: string;
+  repoFullName: string;
+  repoUrl: string;
+}) {
+  const [copyStatus, setCopyStatus] = useState("Ready to copy");
+
+  const trackLaunchArtifact = (event: "launch_artifact_copied" | "launch_artifact_downloaded", artifact: RepoLaunchBriefArtifactSummary) => {
+    trackEvent(event, {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      artifact_type: artifact.type,
+      artifact_label: artifact.label,
+      artifact_format: "text",
+      source_reference_count: artifact.sourceReferences.length,
+    });
+  };
+
+  const handleCopy = async () => {
+    const exportText = serializeLaunchBrief(brief, repoFullName);
+    await navigator.clipboard?.writeText(exportText);
+    setCopyStatus("Copied launch brief");
+    trackEvent("launch_brief_copied", {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      artifact_type: "free_repo_launch_brief",
+      brief_sections: getLaunchBriefSectionCount(brief),
+    });
+  };
+
+  const handleCopyStoryMap = async () => {
+    if (!brief.storyMap) return;
+    await navigator.clipboard?.writeText(serializeStoryMap(brief.storyMap));
+    setCopyStatus("Copied story map");
+    trackEvent("launch_story_map_copied", {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      node_count: brief.storyMap.nodes.length,
+      source_reference_count: brief.sourceReferences.length,
+    });
+  };
+
+  const handleCopyArtifact = async (artifact: RepoLaunchBriefArtifactSummary) => {
+    await navigator.clipboard?.writeText(artifact.body);
+    setCopyStatus(`Copied ${artifact.label}`);
+    trackLaunchArtifact("launch_artifact_copied", artifact);
+  };
+
+  const handleArtifactDownload = (artifact: RepoLaunchBriefArtifactSummary) => {
+    setCopyStatus(`Downloaded ${artifact.label}`);
+    trackLaunchArtifact("launch_artifact_downloaded", artifact);
+  };
+
+  const fullLaunchPackageHref = getFullLaunchPackageHref();
+  const handleFullLaunchPackageIntent = () => {
+    trackEvent("cta_clicked", {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      cta_id: "request_full_launch_package",
+      cta_label: "Request full launch package",
+      cta_location: "launch_brief_panel",
+      page_type: "product_activation",
+      lifecycle_stage: "monetization",
+      target_url: fullLaunchPackageHref,
+      artifact_count: brief.artifacts?.length ?? 0,
+      source_reference_count: brief.sourceReferences.length,
+    });
+  };
+
+  return (
+    <section className="launchBriefPanel" role="region" aria-labelledby="launch-brief-title">
+      <div className="launchBriefHead">
+        <div>
+          <span className="monoLabel">Free repo launch brief</span>
+          <h3 id="launch-brief-title">Free repo launch brief</h3>
+          <p>{brief.summary}</p>
+        </div>
+        <button className="secondaryButton" onClick={handleCopy} type="button">
+          <Copy aria-hidden="true" size={16} />
+          Copy launch brief
+        </button>
+      </div>
+      <div className="launchBriefMeta">
+        <span>
+          Audience hypothesis
+          <b>{brief.audienceHypothesis}</b>
+        </span>
+        <span>
+          Source references
+          <b>{brief.sourceReferences.length}</b>
+        </span>
+        <span>
+          Status
+          <b>{copyStatus}</b>
+        </span>
+      </div>
+      {brief.storyMap ? (
+        <section className="launchStoryMap" aria-label="Project story map">
+          <div className="launchStoryMapHead">
+            <div>
+              <strong>Project story map</strong>
+              <small>{brief.storyMap.summary}</small>
+            </div>
+            <button className="secondaryButton" onClick={() => void handleCopyStoryMap()} type="button">
+              <Copy aria-hidden="true" size={15} />
+              Copy story map
+            </button>
+          </div>
+          <ol className="launchStoryMapNodes">
+            {brief.storyMap.nodes.map((node) => (
+              <li key={node.id}>
+                <span>{node.label}</span>
+                <strong>{node.title}</strong>
+                <p>{node.detail}</p>
+                <small>{node.source}</small>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+      {brief.artifacts?.length ? (
+        <div className="launchArtifactList" aria-label="Launch artifact exports">
+          <div className="launchArtifactIntro">
+            <strong>Export artifacts</strong>
+            <small>Copy or download channel-ready text without sending raw content to analytics.</small>
+          </div>
+          {brief.artifacts.map((artifact) => (
+            <div className="launchArtifactRow" key={`${artifact.type}-${artifact.fileName}`}>
+              <div>
+                <strong>{artifact.label}</strong>
+                <small>{artifact.fileName}</small>
+              </div>
+              <div className="launchArtifactActions">
+                <button aria-label={`Copy ${artifact.label}`} onClick={() => void handleCopyArtifact(artifact)} type="button">
+                  <Copy aria-hidden="true" size={15} />
+                  Copy
+                </button>
+                <a
+                  aria-label={`Download ${artifact.label}`}
+                  download={artifact.fileName}
+                  href={getArtifactDownloadHref(artifact)}
+                  onClick={() => handleArtifactDownload(artifact)}
+                >
+                  <Download aria-hidden="true" size={15} />
+                  Download
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <div className="launchPackageCta">
+        <div>
+          <strong>Need a complete launch package?</strong>
+          <small>Request reviewed README, social, deck, outreach, and visual assets before publishing.</small>
+        </div>
+        <a className="primaryButton" href={fullLaunchPackageHref} onClick={handleFullLaunchPackageIntent}>
+          Request full launch package
+          <ArrowRight aria-hidden="true" size={16} />
+        </a>
+      </div>
+      <div className="launchBriefGrid">
+        <article>
+          <strong>README checklist</strong>
+          <ul>
+            {brief.readmeChecklist.map((item) => (
+              <li key={item.item}>
+                {item.item}
+                <small>{item.source}</small>
+              </li>
+            ))}
+          </ul>
+        </article>
+        <article>
+          <strong>Launch angles</strong>
+          <ul>
+            {brief.launchAngles.map((angle) => (
+              <li key={angle.title}>
+                {angle.title}: {angle.body}
+                <small>{angle.source}</small>
+              </li>
+            ))}
+          </ul>
+        </article>
+        <article>
+          <strong>Social post</strong>
+          <p>{brief.socialPost}</p>
+        </article>
+        <article>
+          <strong>Deck outline</strong>
+          <ol>
+            {brief.deckOutline.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ol>
+        </article>
+        <article>
+          <strong>Outreach draft</strong>
+          <p>{brief.outreachDraft}</p>
+        </article>
+        <article>
+          <strong>Visual explainer prompt</strong>
+          <p>{brief.visualExplainerPrompt}</p>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function getLaunchBriefSectionCount(brief: RepoLaunchBriefSummary) {
+  return brief.storyMap ? 7 : 6;
+}
+
+function getArtifactDownloadHref(artifact: RepoLaunchBriefArtifactSummary) {
+  return `data:text/plain;charset=utf-8,${encodeURIComponent(artifact.body)}`;
+}
+
+function getFullLaunchPackageHref() {
+  const params = new URLSearchParams({
+    intent: "launch-package",
+    utm_source: "quickfork",
+    utm_medium: "product",
+    utm_campaign: "full_launch_package",
+    utm_content: "artifact_review_cta",
+  });
+  return `/contact?${params.toString()}`;
+}
+
+function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: string) {
+  return [
+    `Free repo launch brief: ${repoFullName}`,
+    "",
+    `Summary: ${brief.summary}`,
+    `Audience hypothesis: ${brief.audienceHypothesis}`,
+    "",
+    ...(brief.storyMap ? [serializeStoryMap(brief.storyMap), ""] : []),
+    "README checklist:",
+    ...brief.readmeChecklist.map((item) => `- ${item.item} (${item.source})`),
+    "",
+    "Launch angles:",
+    ...brief.launchAngles.map((angle) => `- ${angle.title}: ${angle.body} (${angle.source})`),
+    "",
+    "Social post:",
+    brief.socialPost,
+    "",
+    "Deck outline:",
+    ...brief.deckOutline.map((item, index) => `${index + 1}. ${item}`),
+    "",
+    "Outreach draft:",
+    brief.outreachDraft,
+    "",
+    "Visual explainer prompt:",
+    brief.visualExplainerPrompt,
+    "",
+    "Source references:",
+    ...brief.sourceReferences.map((source) => `- ${source}`),
+  ].join("\n");
+}
+
+function serializeStoryMap(storyMap: RepoLaunchStoryMapSummary) {
+  return [
+    `Project story map: ${storyMap.title}`,
+    "",
+    storyMap.summary,
+    "",
+    ...storyMap.nodes.map((node, index) => `${index + 1}. ${node.label}: ${node.title}\n   Detail: ${node.detail}\n   Source: ${node.source}`),
+  ].join("\n");
 }
 
 function ProductAnimationPanel() {
@@ -364,9 +704,9 @@ export function HeroSection() {
     <section className="hero" id="hero" aria-labelledby="hero-title">
       <div className="heroGrid">
         <div className="heroContent">
-          <h1 id="hero-title">Turn a GitHub repository into a launch-ready story.</h1>
+          <h1 id="hero-title">Generate a cold-start launch package from one GitHub repository.</h1>
           <p className="heroCopy">
-            Generate cold-start launch materials for README pages, social media, PPT decks, and product outreach from one repository URL.
+            QuickFork reads repository evidence, explains the project visually, and drafts README, social, deck, and outreach assets that builders can review before launch.
           </p>
           <ProjectLaunchInputPanel />
         </div>
