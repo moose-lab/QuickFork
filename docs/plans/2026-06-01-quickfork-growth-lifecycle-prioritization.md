@@ -1231,3 +1231,59 @@ Decision:
 Next action:
 
 - Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
+
+## 2026-06-02 Launch Package Fit Score Slice
+
+Hypothesis:
+
+- If the full launch package request converts structured qualification fields into a server-side fit score, QuickFork can prioritize monetization interviews and scoped package follow-up before publishing exact prices.
+
+Lifecycle stage:
+
+- Monetization learning.
+
+Target user:
+
+- Founders, open-source maintainers, DevRel operators, and studios that have a launch deadline, launch package scope, human review need, or repeat repository launch workflow.
+
+Changed surface:
+
+- Added `scoreLaunchPackageFit` for deterministic server-side launch package scoring.
+- Updated lead capture to compute `packageFit` only for `full_launch_package` requests.
+- CRM lead fit and engagement scores now rise for high-fit full launch package qualification.
+- CRM activity stores a safe `packageFit` object with score, tier, recommended next step, and reason codes.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-launch-package-fit-score.md`.
+
+Metric:
+
+- `packageFit.score`
+- `packageFit.tier`
+- `packageFit.recommendedNextStep`
+
+Guardrail:
+
+- Do not send `packageFit` to browser analytics.
+- Do not include raw notes, raw repository URL, email, name, secrets, artifact bodies, unsupported customer proof, ranking, revenue, pricing, or guaranteed-launch claims in `packageFit`.
+- Do not treat a high score as pricing validation; it is a follow-up prioritization signal.
+
+Evidence gap:
+
+- No qualified pilot-call outcomes, checkout starts, won opportunities, willingness-to-pay interviews, or repeat paid launch workflows exist yet.
+
+Evidence observed:
+
+- RED scorer test failed first because `src/server/marketing/launch-package-fit.ts` did not exist.
+- RED lead capture test failed first because full launch package leads still used default `fitScore: 60` and `engagementScore: 70`.
+- `npm test -- src/server/marketing/launch-package-fit.test.ts src/server/marketing/lead-capture.test.ts -t "launch package fit|full launch package qualification"`: 2 files passed, 2 selected tests passed.
+- `npm test -- src/server/marketing/launch-package-fit.test.ts src/server/marketing/lead-capture.test.ts`: 2 files passed, 6 tests passed.
+- `npm test`: 23 files passed, 142 tests passed.
+- `npm run build`: TypeScript build and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Decision:
+
+- Treat package fit score as a CRM prioritization and product-learning signal, not validated paid demand or a public pricing claim.
+
+Next action:
+
+- Push/open PR, merge after CI, then inspect production lead-capture deployment evidence without submitting real contact data unless explicitly requested.

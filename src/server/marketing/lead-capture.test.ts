@@ -139,6 +139,13 @@ describe("lead capture", () => {
     );
 
     expect(result.lifecycleStage).toBe("sales_qualified_lead");
+    expect(crm.listLeads()[0]).toEqual(
+      expect.objectContaining({
+        fitScore: 91,
+        engagementScore: 90,
+        qualificationReason: "High launch package fit from structured qualification.",
+      }),
+    );
     expect(crm.listActivities()[0]).toEqual(
       expect.objectContaining({
         type: "sales_contact_requested",
@@ -156,9 +163,24 @@ describe("lead capture", () => {
             humanReviewNeeded: true,
             notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",
           },
+          packageFit: {
+            score: 91,
+            tier: "high",
+            recommendedNextStep: "sales_interview",
+            reasonCodes: [
+              "repo:github",
+              "timeline:within_30_days",
+              "model:single_launch",
+              "trigger:launch_deadline",
+              "scope:full_package",
+              "review:human_needed",
+            ],
+          },
         }),
       }),
     );
+    expect(JSON.stringify(crm.listActivities()[0]?.properties?.packageFit)).not.toContain("Launching an AI repo");
+    expect(JSON.stringify(crm.listActivities()[0]?.properties?.packageFit)).not.toContain("https://github.com");
   });
 
   it("rejects missing or malformed lead capture input before CRM sync", () => {
