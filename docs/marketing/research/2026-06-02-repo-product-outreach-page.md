@@ -81,6 +81,9 @@ Do not publish claims about:
 - Focused route/SEO verification passed: `npm test -- src/marketing/product-outreach-package.test.ts src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts` returned 4 files passed, 38 tests passed.
 - Full verification passed: `git diff --check` returned 0, `npm test` returned 22 files passed and 140 tests passed, and `npm run build` completed TypeScript plus Vite production build.
 - Local smoke passed: `http://127.0.0.1:5176/product/github-repo-to-product-outreach` returned HTTP 200, local sitemap contained the outreach URL, and local `llms.txt` contained `GitHub Repo Product Outreach` plus the source-backed outreach brief description.
+- PR #14 merged into `main` at merge commit `776115722e3b2acb6f70b255ba4a2062914b0164`.
+- Main CI/CD run `26818466190` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production smoke passed: `https://seekersai.com/product/github-repo-to-product-outreach` returned HTTP 200, production sitemap contains the outreach route, production `llms.txt` contains `GitHub Repo Product Outreach` and the source-backed outreach brief description, and production bundle `/assets/index-Bgr1koiC.js` contains `GitHub Repo Product Outreach`, `github_repo_product_outreach`, and `source-backed outreach package`.
 
 ## Evidence Gaps
 

@@ -842,6 +842,12 @@ Evidence observed:
 - `npm test`: 22 files passed, 140 tests passed.
 - `npm run build`: TypeScript and Vite production build completed.
 - Local dev smoke: `http://127.0.0.1:5176/product/github-repo-to-product-outreach`, `/sitemap.xml`, and `/llms.txt` returned expected route/status/content evidence; the dev server was stopped after verification.
+- PR #14 merged into `main` at merge commit `776115722e3b2acb6f70b255ba4a2062914b0164`.
+- Main CI/CD run `26818466190` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production smoke: `https://seekersai.com/product/github-repo-to-product-outreach` returned HTTP 200.
+- Production sitemap contains `https://seekersai.com/product/github-repo-to-product-outreach`.
+- Production `llms.txt` contains `GitHub Repo Product Outreach` and the source-backed outreach brief description.
+- Production JS bundle `/assets/index-Bgr1koiC.js` contains `GitHub Repo Product Outreach`, `github_repo_product_outreach`, and `source-backed outreach package`.
 
 Decision:
 
