@@ -1279,6 +1279,10 @@ Evidence observed:
 - `npm test`: 23 files passed, 142 tests passed.
 - `npm run build`: TypeScript build and Vite production build completed.
 - `git diff --check`: no whitespace errors.
+- PR #22 merged into `main` at merge commit `d9d0c9ef1e7be8f61f90b585239bd13be3575065`.
+- Main CI/CD run `26824999903` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production smoke passed: `https://seekersai.com/contact?intent=launch-package` returned HTTP 200.
+- Production API smoke passed without creating lead data: `GET https://seekersai.com/api/lead-capture` returned HTTP 405 with `METHOD_NOT_ALLOWED`.
 
 Decision:
 
@@ -1286,4 +1290,4 @@ Decision:
 
 Next action:
 
-- Push/open PR, merge after CI, then inspect production lead-capture deployment evidence without submitting real contact data unless explicitly requested.
+- Review actual full launch package lead quality before changing public package or pricing language.
