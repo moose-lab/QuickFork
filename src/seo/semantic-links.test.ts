@@ -212,6 +212,18 @@ describe("typed semantic marketing link catalog", () => {
 
     expect(link?.slug).toBe("github-project-marketing-card-guide");
     expect(getMarketingLinkByPath("/use-cases/ai-project-launch")?.slug).toBe("ai-project-launch");
+    expect(getMarketingLinkByPath("/product/source-backed-launch-assets")).toEqual(
+      expect.objectContaining({
+        intentCluster: "source_backed_launch_assets",
+        primaryKeyword: "source backed launch assets",
+      }),
+    );
+    expect(getMarketingLinkByPath("/product/readme-marketing-cards")).toEqual(
+      expect.objectContaining({
+        intentCluster: "readme_marketing_cards",
+        primaryKeyword: "readme marketing cards",
+      }),
+    );
     expect(getMarketingLinkByPath("/product/github-repo-to-launch-deck")).toEqual(
       expect.objectContaining({
         intentCluster: "github_repo_to_launch_deck",
@@ -225,6 +237,28 @@ describe("typed semantic marketing link catalog", () => {
       }),
     );
     expect(getMarketingLinkByPath("/contact")).toBeUndefined();
+  });
+
+  it("publishes a source-backed launch assets product page contract", () => {
+    const link = getMarketingLinkByPath("/product/source-backed-launch-assets");
+
+    expect(link).toBeDefined();
+    expect(getMarketingPageTitle(link!)).toContain("Source Backed Launch Assets");
+    expect(getMarketingPageHeadline(link!)).toContain("Source Backed Launch Assets");
+    expect(getMarketingPageDescription(link!)).toContain(
+      "reviewable README, social, deck, outreach, and visual materials",
+    );
+    expect(getMarketingPageDescription(link!)).not.toMatch(/guaranteed|rankings|revenue|customers|viral/i);
+  });
+
+  it("publishes a README marketing cards product page contract", () => {
+    const link = getMarketingLinkByPath("/product/readme-marketing-cards");
+
+    expect(link).toBeDefined();
+    expect(getMarketingPageTitle(link!)).toContain("README Marketing Cards");
+    expect(getMarketingPageHeadline(link!)).toContain("README Marketing Cards");
+    expect(getMarketingPageDescription(link!)).toContain("README-first hero cards");
+    expect(getMarketingPageDescription(link!)).not.toMatch(/guaranteed|rankings|revenue|customers|viral/i);
   });
 
   it("publishes a source-backed repo-to-deck brief page contract", () => {

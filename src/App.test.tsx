@@ -299,6 +299,112 @@ describe("App", () => {
     );
   });
 
+  it("renders source-backed launch assets as a high-intent product route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/source-backed-launch-assets?utm_source=perplexity");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /Source Backed Launch Assets/i })).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/reviewable README, social, deck, outreach, and visual materials/i).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Product marketers, DevRel operators, AI project builders/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Replace a blank prompt with a source map/i)).toBeInTheDocument();
+    expect(screen.getByText(/Keep launch claims reviewable/i)).toBeInTheDocument();
+    expect(screen.getByText(/What are source-backed launch assets/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /GitHub Docs About READMEs/i })).toHaveAttribute(
+      "href",
+      expect.stringContaining("docs.github.com"),
+    );
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("Source Backed Launch Assets | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps source backed launch assets demand into reviewable README, social, deck, outreach, and visual materials generated from repository evidence, source maps, and human-approved claims.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/source-backed-launch-assets",
+    );
+    const schema = JSON.parse(document.querySelector('script[data-quickfork-marketing-schema]')?.textContent ?? "{}");
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity[0].name).toContain("What are source-backed launch assets");
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/product/source-backed-launch-assets",
+          page_type: "product",
+          buyer_stage: "consideration",
+          intent_cluster: "source_backed_launch_assets",
+          utm_source: "perplexity",
+        }),
+      ]),
+    );
+    expect(document.body.textContent).not.toMatch(
+      /\b(guaranteed|rankings|revenue|customers|viral|fully autonomous)\b/i,
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key/i);
+  }, 10000);
+
+  it("renders README marketing cards as a README-first product route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/readme-marketing-cards?utm_source=google");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /README Marketing Cards/i })).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/README-first hero cards, GitHub social preview direction, and launch visuals/i).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Design leads, open-source maintainers, AI project builders/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Make the README scannable before the code/i)).toBeInTheDocument();
+    expect(screen.getByText(/Connect README visuals to launch channels/i)).toBeInTheDocument();
+    expect(screen.getByText(/What is a README marketing card/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /GitHub Docs social preview/i })).toHaveAttribute(
+      "href",
+      expect.stringContaining("docs.github.com"),
+    );
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("README Marketing Cards | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps readme marketing cards demand into README-first hero cards, GitHub social preview direction, and launch visuals grounded in repository evidence and human review.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/readme-marketing-cards",
+    );
+    const schema = JSON.parse(document.querySelector('script[data-quickfork-marketing-schema]')?.textContent ?? "{}");
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity[0].name).toContain("What is a README marketing card");
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/product/readme-marketing-cards",
+          page_type: "product",
+          buyer_stage: "consideration",
+          intent_cluster: "readme_marketing_cards",
+          utm_source: "google",
+        }),
+      ]),
+    );
+    expect(document.body.textContent).not.toMatch(
+      /\b(guaranteed|rankings|revenue|customers|viral|fully autonomous)\b/i,
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key/i);
+  }, 10000);
+
   it("renders the AI project launch use case as an AI/GEO growth route", () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/use-cases/ai-project-launch?utm_source=perplexity");
