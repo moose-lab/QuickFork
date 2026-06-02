@@ -1394,6 +1394,16 @@ Evidence observed:
 - RED registry test failed first because `2026_q2_source_backed_assets_intent_validation` did not exist.
 - RED evidence test failed first because pending evidence rows for the source-backed and README experiments did not exist.
 - GREEN focused verification passed: `npm test -- src/marketing/growth-experiments.test.ts src/marketing/growth-experiment-report.test.ts` returned 2 files passed and 13 tests passed.
+- Full verification passed: `npm test` returned 23 files passed and 149 tests passed.
+- Build verification passed: `npm run build` completed TypeScript build and Vite production build.
+- Diff hygiene passed: `git diff --check` returned no whitespace errors.
+- PR #26 merged into `main` at merge commit `a0f1abcc0d46ae3579366f812afd3df1826a58d1`.
+- Main CI/CD run `26829360409` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production route smoke passed: `https://seekersai.com/product/source-backed-launch-assets` returned HTTP 200.
+- Production route smoke passed: `https://seekersai.com/product/readme-marketing-cards` returned HTTP 200.
+- Production sitemap still contains both product URLs.
+- Production `llms.txt` still contains both Source Backed Launch Assets and README Marketing Cards descriptions.
+- Remote branch `feature/page-intent-validation-expansion` was deleted after merge.
 
 Decision:
 
