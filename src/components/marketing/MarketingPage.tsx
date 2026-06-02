@@ -284,6 +284,57 @@ export function MarketingPage({ link }: MarketingPageProps) {
           </section>
         ) : null}
 
+        {narrative.launchPackageExample ? (
+          <section className="marketingGrowthSection" aria-labelledby="marketing-launch-example-title">
+            <div className="marketingRelatedHead">
+              <span className="monoLabel">Source-backed example</span>
+              <h2 id="marketing-launch-example-title">{narrative.launchPackageExample.title}</h2>
+              <p className="marketingVisualPackageBoundary">{narrative.launchPackageExample.claimBoundary}</p>
+            </div>
+            <div className="marketingExampleSummary">
+              <dl className="marketingMetaList">
+                <div>
+                  <dt>Source repo</dt>
+                  <dd>{narrative.launchPackageExample.repoFullName}</dd>
+                </div>
+                <div>
+                  <dt>Target user</dt>
+                  <dd>{narrative.launchPackageExample.targetUser}</dd>
+                </div>
+                <div>
+                  <dt>Validation question</dt>
+                  <dd>{narrative.launchPackageExample.validationQuestion}</dd>
+                </div>
+              </dl>
+              <div className="marketingExampleLinks" aria-label="Launch package example source links">
+                {narrative.launchPackageExample.links.map((exampleLink) => (
+                  <a
+                    href={exampleLink.url}
+                    key={exampleLink.label}
+                    rel={exampleLink.url.startsWith("http") ? "noreferrer" : undefined}
+                    target={exampleLink.url.startsWith("http") ? "_blank" : undefined}
+                  >
+                    <strong>{exampleLink.label}</strong>
+                    <span>{exampleLink.note}</span>
+                    <ExternalLink size={15} aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div className="marketingExampleOutputGrid">
+              {narrative.launchPackageExample.outputs.map((output) => (
+                <article key={output.id}>
+                  <span>{output.lifecycleStage}</span>
+                  <strong>{output.title}</strong>
+                  <p>{output.quickForkOutput}</p>
+                  <small>{output.sourceSignal}</small>
+                  <em>{output.reviewQuestion}</em>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="marketingGrowthSection" aria-labelledby="marketing-faq-title">
           <div className="marketingRelatedHead">
             <span className="monoLabel">AI-search FAQ</span>

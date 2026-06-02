@@ -793,6 +793,69 @@ Next action:
 
 - Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
 
+## 2026-06-02 Source-Backed Launch Package Example Slice
+
+Hypothesis:
+
+- If a published example page shows a concrete launch package created from one public GitHub repository, visitors and AI-search systems can understand QuickFork's output shape before the visitor submits their own repository URL.
+
+Lifecycle stage:
+
+- Discovery and Validation to Activation.
+
+Target user:
+
+- Open-source maintainers, AI project builders, indie technical founders, and DevRel operators evaluating whether QuickFork can package a technical repository for public launch.
+
+Changed surface:
+
+- `/examples/qwenlm-flashqla-launch-card` now uses dedicated source-backed example narrative and metadata instead of the generic example shell.
+- Added `src/marketing/launch-package-example.ts` as a typed example package model for target-user discovery, story map, README, social, deck, and outreach outputs.
+- Added launch-package example rendering to `MarketingPage` for routes with `narrative.launchPackageExample`.
+- Updated `public/llms.txt` so AI crawlers can read the example as a source-backed launch package example.
+- Added research synthesis at `docs/marketing/research/2026-06-02-source-backed-launch-package-example.md`.
+
+Primary CTA:
+
+- Generate similar card.
+
+Primary metric:
+
+- `example_page_viewed` for `qwenlm-flashqla-launch-card`.
+- `cta_clicked` back to `/#hero`.
+
+Guardrail:
+
+- Do not send raw README text, raw generated output, emails, tokens, secrets, pricing, customer proof, ranking, revenue, or guaranteed-growth claims to browser analytics.
+- Do not treat the example as proof of benchmark performance, adoption, revenue, Product Hunt outcomes, or willingness to pay.
+
+Evidence gap:
+
+- Production route views, CTA clicks, repo submissions, full-package requests, and interviews are still required before scaling example pages.
+
+Evidence observed:
+
+- RED App test failed first because the route still rendered the generic example heading and had no launch-package example section.
+- `npm test -- src/App.test.tsx -t "source-backed launch package example"`: 1 file passed, 1 selected test passed.
+- RED public-growth test failed first because `public/llms.txt` still exposed the generic example description.
+- `npm test -- src/seo/public-growth.test.ts -t "machine-readable AI context"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/seo/public-growth.test.ts`: 1 file passed, 6 tests passed.
+- `npm test -- src/seo/semantic-links.test.ts`: 1 file passed, 9 tests passed.
+- Initial concurrent `npm test` + `npm run build` run timed out in unrelated App/Auth tests under load; after build completed, standalone `npm test` passed with 22 files and 141 tests.
+- `npm run build`: TypeScript and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+- Local route smoke passed: `http://127.0.0.1:5177/examples/qwenlm-flashqla-launch-card` returned HTTP 200.
+- Local `llms.txt` contains the new source-backed launch package example description.
+- Built bundle contains `QwenLM FlashQLA Launch Card as a source-backed launch package example`, `source-backed launch package example`, and `qwenlm_flashqla_launch_card`.
+
+Decision:
+
+- Treat this as a focused public proof surface. Do not scale programmatic examples until this route has production traffic, example-page activation evidence, and interview feedback.
+
+Next action:
+
+- Run focused route, SEO, semantic-link, full test, and build verification. After merge, smoke-test the production route, `llms.txt`, sitemap, and deployed bundle strings.
+
 ## 2026-06-02 Repo Launch Deck Brief Slice
 
 Hypothesis:

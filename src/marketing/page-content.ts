@@ -1,4 +1,8 @@
 import type { MarketingBuyerStage, MarketingLink, MarketingPageType, MarketingPrimaryCta } from "./link-catalog";
+import {
+  qwenFlashQlaLaunchPackageExample,
+  type LaunchPackageExample,
+} from "./launch-package-example";
 import { launchReadinessScorecard, type LaunchReadinessScorecard } from "./launch-readiness-score";
 import { productOutreachPackage, type ProductOutreachPackage } from "./product-outreach-package";
 import { visualExplainerPackage, type VisualExplainerPackage } from "./visual-explainer-package";
@@ -26,6 +30,7 @@ export interface MarketingPageNarrative {
     url: string;
   }>;
   lastUpdated?: string;
+  launchPackageExample?: LaunchPackageExample;
   scorecard?: LaunchReadinessScorecard;
   outreachPackage?: ProductOutreachPackage;
   visualPackage?: VisualExplainerPackage;
@@ -838,6 +843,69 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
     lastUpdated: "June 2, 2026",
     scorecard: launchReadinessScorecard,
   },
+  qwenlm_flashqla_launch_card: {
+    definition:
+      "This source-backed launch package example shows how QuickFork can turn the QwenLM/FlashQLA repository into target-user discovery, a project story map, README launch brief, social launch post, launch deck outline, and product outreach draft without inventing proof.",
+    targetUser: "AI project builders evaluating CUDA attention performance",
+    jobToBeDone:
+      "When an AI infrastructure repository is ready to share, help the maintainer show what a source-backed launch package could look like before asking users to generate a similar package.",
+    evidenceBoundary:
+      "No invented benchmark, customer, ranking, revenue, or pricing claims. The example should stay tied to public repository context and human review.",
+    benefits: [
+      {
+        title: "Show the package before the form",
+        body: "Give visitors a concrete example of the audience, story, README, social, deck, and outreach outputs they can expect from one repository URL.",
+      },
+      {
+        title: "Make source boundaries visible",
+        body: "Keep the GitHub repository link, claim boundary, and review questions next to the generated package outputs.",
+      },
+      {
+        title: "Turn proof browsing into activation",
+        body: "Route example visitors back to the generator with a generate-similar-card CTA and example-page analytics.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Start from QwenLM/FlashQLA",
+        body: "Use the public repository as the source boundary for the example instead of a generic launch prompt.",
+      },
+      {
+        title: "Map audience and story first",
+        body: "Create target-user discovery and a project story map before drafting README, social, deck, and outreach assets.",
+      },
+      {
+        title: "Review every output",
+        body: "Check whether claims, proof, examples, and launch asks are supported before using the generated material publicly.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What does this QuickFork example show?",
+        answer:
+          "It shows a source-backed launch package example for QwenLM/FlashQLA: target-user discovery, project story map, README launch brief, social launch post, launch deck outline, and product outreach draft.",
+      },
+      {
+        question: "Why use a public repository example?",
+        answer:
+          "A public repository example helps AI search systems and visitors understand the concrete QuickFork output without relying on private data, unsupported claims, or hidden customer proof.",
+      },
+      {
+        question: "Can this example prove launch results?",
+        answer:
+          "No. It demonstrates the package structure and evidence boundary. It does not prove benchmark performance, rankings, revenue, adoption, Product Hunt outcomes, or willingness to pay.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "FlashQLA public repository source",
+        body: "The public repository is the example source boundary for the generated package structure.",
+        url: "https://github.com/QwenLM/FlashQLA",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+    launchPackageExample: qwenFlashQlaLaunchPackageExample,
+  },
 };
 
 export function getMarketingPageTitle(link: MarketingLink) {
@@ -871,6 +939,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   }
   if (link.intentCluster === "launch_readiness_score") {
     return "GitHub Repo Launch Readiness Score for source-backed pre-launch reviews.";
+  }
+  if (link.intentCluster === "qwenlm_flashqla_launch_card") {
+    return "QwenLM FlashQLA Launch Card as a source-backed launch package example.";
   }
 
   const keyword = formatMarketingLabel(link.primaryKeyword);
@@ -922,6 +993,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "launch_readiness_score") {
     return "QuickFork maps github repo launch readiness score demand into a 100-point source-backed readiness score for README trust, repository preview, audience feedback, launch assets, and follow-up measurement.";
+  }
+  if (link.intentCluster === "qwenlm_flashqla_launch_card") {
+    return "QuickFork maps qwenlm flashqla launch card demand into a source-backed launch package example with target-user discovery, story map, README, social, deck, and outreach outputs.";
   }
 
   const audience = formatMarketingLabel(link.persona.replace(/_/g, " "));
