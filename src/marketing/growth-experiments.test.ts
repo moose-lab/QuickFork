@@ -53,6 +53,36 @@ describe("growth experiment registry", () => {
     );
   });
 
+  it("adds the source-backed and README product pages to page intent validation", () => {
+    expect(getGrowthExperimentById("2026_q2_source_backed_assets_intent_validation")).toEqual(
+      expect.objectContaining({
+        status: "active",
+        lifecycleStage: "validation",
+        targetUser: "product_marketer",
+        controlPath: "/product/github-repo-to-launch-package",
+        variantPath: "/product/source-backed-launch-assets",
+        primaryCta: "generate_launch_card",
+        primaryMetric: "cta_clicked_per_page_view",
+        guardrailMetric: "generation_failed_per_generation_started",
+        minimumWindow: "14_days",
+      }),
+    );
+
+    expect(getGrowthExperimentById("2026_q2_readme_cards_intent_validation")).toEqual(
+      expect.objectContaining({
+        status: "active",
+        lifecycleStage: "validation",
+        targetUser: "design_lead",
+        controlPath: "/product/github-repo-to-launch-package",
+        variantPath: "/product/readme-marketing-cards",
+        primaryCta: "generate_launch_card",
+        primaryMetric: "cta_clicked_per_page_view",
+        guardrailMetric: "generation_failed_per_generation_started",
+        minimumWindow: "14_days",
+      }),
+    );
+  });
+
   it("mirrors the editable CSV registry", () => {
     const { headers, rows } = parseRegistry();
 

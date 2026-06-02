@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { getGrowthExperimentById } from "./growth-experiments";
+import { getGrowthExperimentById, growthExperimentRegistry } from "./growth-experiments";
 import {
   calculateRate,
   getGrowthExperimentEvidenceById,
@@ -94,6 +94,33 @@ describe("growth experiment evidence report", () => {
           nextEvidenceNeeded: row.next_evidence_needed,
         }),
       );
+    }
+  });
+
+  it("has an evidence row for every registry experiment", () => {
+    const registryIds = growthExperimentRegistry.map((experiment) => experiment.id).sort();
+    const evidenceIds = growthExperimentEvidence.map((evidence) => evidence.experimentId).sort();
+
+    expect(evidenceIds).toEqual(registryIds);
+  });
+
+  it("keeps source-backed and README validation evidence pending", () => {
+    for (const experimentId of [
+      "2026_q2_source_backed_assets_intent_validation",
+      "2026_q2_readme_cards_intent_validation",
+    ]) {
+      const evidence = getGrowthExperimentEvidenceById(experimentId);
+
+      expect(evidence).toEqual(
+        expect.objectContaining({
+          status: "pending_evidence",
+          searchConsoleStatus: "pending",
+          aiVisibilityStatus: "pending",
+          decision: "insufficient_data",
+        }),
+      );
+      expect(evidence?.nextEvidenceNeeded).toContain("search_console_query_baseline");
+      expect(evidence?.nextEvidenceNeeded).toContain("ai_answer_audit");
     }
   });
 
