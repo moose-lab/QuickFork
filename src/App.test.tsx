@@ -180,6 +180,78 @@ describe("App", () => {
     );
   });
 
+  it("renders a source-backed launch package example for a real repository route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/examples/qwenlm-flashqla-launch-card?utm_source=github");
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: /QwenLM FlashQLA Launch Card as a source-backed launch package example/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/source-backed launch package example/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/QwenLM\/FlashQLA/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Target user discovery map/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Project story map/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/README launch brief/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Social launch post/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Launch deck outline/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Product outreach draft/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/AI project builders evaluating CUDA attention performance/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Does this kernel reduce inference bottlenecks enough to try/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/No invented benchmark, customer, ranking, revenue, or pricing claims/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: /QwenLM\/FlashQLA source repository/i })).toHaveAttribute(
+      "href",
+      "https://github.com/QwenLM/FlashQLA",
+    );
+    expect(screen.getByRole("link", { name: /QuickFork launch package generator/i })).toHaveAttribute("href", "/#hero");
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate similar card/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("QwenLM FlashQLA Launch Card | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps qwenlm flashqla launch card demand into a source-backed launch package example with target-user discovery, story map, README, social, deck, and outreach outputs.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/examples/qwenlm-flashqla-launch-card",
+    );
+    const schema = JSON.parse(document.querySelector('script[data-quickfork-marketing-schema]')?.textContent ?? "{}");
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity[0].name).toContain("What does this QuickFork example show");
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/examples/qwenlm-flashqla-launch-card",
+          page_type: "example",
+          page_intent: "proof",
+          buyer_stage: "decision",
+          intent_cluster: "qwenlm_flashqla_launch_card",
+          utm_source: "github",
+        }),
+        expect.objectContaining({
+          event: "example_page_viewed",
+          example_slug: "qwenlm-flashqla-launch-card",
+          repo_full_name: "QwenLM/FlashQLA",
+          source_type: "curated_catalog",
+          buyer_stage: "decision",
+          page_type: "example",
+          intent_cluster: "qwenlm_flashqla_launch_card",
+          utm_source: "github",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(
+      /email|token|secret|api_key|ranking|revenue|customers|guaranteed|viral|raw|readme/i,
+    );
+  }, 10000);
+
   it("renders the GitHub repo to launch package page as a high-intent growth page", () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/product/github-repo-to-launch-package?utm_source=google");

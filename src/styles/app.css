@@ -2824,6 +2824,107 @@ blockquote {
   line-height: 1.45;
 }
 
+.marketingExampleSummary {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(300px, 0.65fr);
+  gap: 14px;
+  align-items: stretch;
+  margin-bottom: 14px;
+}
+
+.marketingExampleSummary .marketingMetaList,
+.marketingExampleLinks {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.marketingExampleSummary .marketingMetaList {
+  margin: 0;
+}
+
+.marketingExampleLinks {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+}
+
+.marketingExampleLinks a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 10px;
+  align-items: center;
+  padding: 14px;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.marketingExampleLinks a + a {
+  border-top: 1px solid var(--border);
+}
+
+.marketingExampleLinks strong {
+  color: var(--dark);
+  font-size: 0.94rem;
+}
+
+.marketingExampleLinks span {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.marketingExampleOutputGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.marketingExampleOutputGrid article {
+  min-height: 260px;
+  padding: 18px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.marketingExampleOutputGrid span,
+.marketingExampleOutputGrid small,
+.marketingExampleOutputGrid em {
+  color: var(--muted);
+  font: 650 11px/1.35 var(--font-mono);
+  font-style: normal;
+}
+
+.marketingExampleOutputGrid span {
+  color: var(--magenta);
+  text-transform: uppercase;
+}
+
+.marketingExampleOutputGrid strong {
+  color: var(--dark);
+  font-size: 1.04rem;
+  line-height: 1.15;
+}
+
+.marketingExampleOutputGrid p,
+.marketingExampleOutputGrid small,
+.marketingExampleOutputGrid em {
+  margin: 0;
+}
+
+.marketingExampleOutputGrid p {
+  color: var(--fg);
+  line-height: 1.5;
+}
+
 .marketingFaqGrid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -2997,6 +3098,8 @@ blockquote {
   .marketingHeroGrid,
   .marketingBodyGrid,
   .marketingPersonaList,
+  .marketingExampleSummary,
+  .marketingExampleOutputGrid,
   .leadCaptureForm,
   .leadCaptureFields,
   .leadQualificationFields {
