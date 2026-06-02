@@ -1,5 +1,6 @@
 import type { MarketingBuyerStage, MarketingLink, MarketingPageType, MarketingPrimaryCta } from "./link-catalog";
 import { launchReadinessScorecard, type LaunchReadinessScorecard } from "./launch-readiness-score";
+import { productOutreachPackage, type ProductOutreachPackage } from "./product-outreach-package";
 import { visualExplainerPackage, type VisualExplainerPackage } from "./visual-explainer-package";
 
 export interface MarketingPageNarrative {
@@ -26,6 +27,7 @@ export interface MarketingPageNarrative {
   }>;
   lastUpdated?: string;
   scorecard?: LaunchReadinessScorecard;
+  outreachPackage?: ProductOutreachPackage;
   visualPackage?: VisualExplainerPackage;
 }
 
@@ -388,6 +390,103 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
       },
     ],
     lastUpdated: "June 2, 2026",
+  },
+  github_repo_product_outreach: {
+    definition:
+      "GitHub repo product outreach turns repository evidence into a source-backed outreach package: launch email draft, community feedback post, partner or newsletter note, Product Hunt first comment, and human review checklist for a cold-start technical product.",
+    targetUser:
+      "AI project founders, indie technical founders, open-source maintainers, and DevRel operators preparing launch follow-up from a working repository.",
+    jobToBeDone:
+      "When a repo is ready to share beyond the README, help the builder turn source-backed project context into reviewable outreach drafts for the right channels without sending messages automatically.",
+    evidenceBoundary:
+      "Outreach claims should come from README evidence, repository metadata, linked docs, official assets, generated quality reports, or explicit user input. The page should not promise replies, business outcomes, search outcomes, Product Hunt outcomes, or exact pricing.",
+    benefits: [
+      {
+        title: "Turn launch assets into follow-up drafts",
+        body: "Reuse the same repo brief, story map, deck outline, and source references instead of writing disconnected follow-up messages by hand.",
+      },
+      {
+        title: "Separate channels before writing copy",
+        body: "Plan owned email, community feedback, partner notes, Product Hunt context, and human review as different surfaces with different norms.",
+      },
+      {
+        title: "Keep outreach source-backed",
+        body: "Tie claims, links, examples, audience hypotheses, and asks back to repository evidence or explicit human input before anyone publishes the draft.",
+      },
+      {
+        title: "Measure outreach as product value",
+        body: "Use artifact copy/download and launch-package request behavior to learn whether outreach is strong enough to support paid packaging.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Paste the public repository URL",
+        body: "QuickFork reads README evidence, repo metadata, topics, official links, and identity signals before drafting any launch follow-up.",
+      },
+      {
+        title: "Build the outreach brief",
+        body: "The brief defines the target user, source-backed value, channel fit, proof boundary, and the one reviewable ask for the launch.",
+      },
+      {
+        title: "Draft channel-specific follow-up",
+        body: "Generate launch email, community feedback, partner or newsletter, Product Hunt first-comment, and review-checklist directions from the same source story.",
+      },
+      {
+        title: "Human review before sending",
+        body: "A human checks source references, platform tone, contact context, unsupported claims, legal requirements, and whether the message is useful on its own.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is GitHub repo product outreach?",
+        answer:
+          "It is a source-backed workflow that turns one repository URL into reviewable launch follow-up drafts for email, communities, partners, newsletters, Product Hunt context, and human review.",
+      },
+      {
+        question: "Who should use a repo-to-outreach page?",
+        answer:
+          "It is for founders, open-source maintainers, AI project builders, and DevRel operators who need outreach drafts after the README, deck, social, and visual story are already grounded in repository evidence.",
+      },
+      {
+        question: "Does QuickFork send outreach automatically?",
+        answer:
+          "No. QuickFork creates source-backed drafts and review checklists. Humans still choose recipients, check platform rules, approve claims, and decide whether any message should be sent.",
+      },
+      {
+        question: "How does this connect to the paid launch package?",
+        answer:
+          "Outreach is one high-value export in the launch package. Copy/download behavior, full package requests, and interviews should determine whether it belongs in a paid tier.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides connects audience discovery, messaging, and feedback loops to open-source growth before broad promotion.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub positions the README as the project explanation surface, so outreach should start from the same source-backed story.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt preparation makes tagline, media, maker context, launch-day comments, and follow-up response planning part of the launch package.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+      {
+        label: "FTC CAN-SPAM compliance guide",
+        body: "The FTC guide makes truthful commercial email identity, subject, opt-out, and contact review a required human checkpoint.",
+        url: "https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business",
+      },
+      {
+        label: "Hacker News guidelines",
+        body: "Hacker News guidelines warn against primarily promotional submissions, so community outreach should be feedback-oriented and useful without a click.",
+        url: "https://news.ycombinator.com/newsguidelines.html",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+    outreachPackage: productOutreachPackage,
   },
   repository_launch_package_pilot: {
     definition:
@@ -758,6 +857,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   if (link.intentCluster === "github_repo_to_launch_deck") {
     return "GitHub Repository Pitch Deck Generator for source-backed launch decks.";
   }
+  if (link.intentCluster === "github_repo_product_outreach") {
+    return "GitHub Repo Product Outreach for source-backed launch follow-up.";
+  }
   if (link.intentCluster === "repository_launch_package_pilot") {
     return "Repository Launch Package Pilot for source-backed paid-intent learning.";
   }
@@ -805,6 +907,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "github_repo_to_launch_deck") {
     return "QuickFork maps github repository pitch deck generator demand into a deck-ready launch brief, slide outline, Product Hunt story, and outreach narrative from repository evidence.";
+  }
+  if (link.intentCluster === "github_repo_product_outreach") {
+    return "QuickFork maps github repo product outreach demand into a source-backed outreach brief, launch email sequence, community post angle, partner note, and human review checklist from repository evidence.";
   }
   if (link.intentCluster === "repository_launch_package_pilot") {
     return "QuickFork maps repository launch package pilot demand into a full launch package pilot for README, social, deck, outreach, visual explainer, review, and measurement work.";

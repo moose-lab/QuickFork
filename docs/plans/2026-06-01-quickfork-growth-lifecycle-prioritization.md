@@ -799,6 +799,58 @@ Next action:
 
 - Compare route-level `page_view`, `cta_clicked`, `generation_started`, `generation_completed`, and deck artifact export behavior against `/product/github-repo-to-launch-package`.
 
+## 2026-06-02 Repo Product Outreach Page Slice
+
+Hypothesis:
+
+- If QuickFork publishes a source-backed repo-to-product-outreach page, founders and DevRel operators preparing cold-start launches will see outreach drafts as reviewable launch-package artifacts and will be more likely to generate a free repo brief or request a full package.
+
+Lifecycle stage:
+
+- Activation to Evaluation, P4 launch package export learning.
+
+Target user:
+
+- AI project founders, indie technical founders, open-source maintainers, and DevRel operators preparing Product Hunt, community, partner, newsletter, or pilot-customer follow-up from a GitHub-backed product.
+
+Changed surface:
+
+- Added `/product/github-repo-to-product-outreach` as a published product route in the semantic marketing route inventory.
+- Added `src/marketing/product-outreach-package.ts` with source-backed outreach outputs for launch email draft, community feedback post, partner/newsletter note, Product Hunt first comment, and human review checklist.
+- Added route-specific page narrative, source notes, metadata, sitemap, and `llms.txt` coverage.
+- Repo research note: `docs/marketing/research/2026-06-02-repo-product-outreach-page.md`
+- Implementation plan: `docs/superpowers/plans/2026-06-02-repo-product-outreach-page.md`
+
+Metric:
+
+- `cta_clicked` on `/product/github-repo-to-product-outreach`, segmented by `page_view` where `intent_cluster=github_repo_product_outreach`.
+- Downstream: `launch_artifact_copied` and `launch_artifact_downloaded` where `artifact_type=outreach`.
+
+Guardrail:
+
+- Do not publish claims about guaranteed replies, email sending, scraped leads, search performance, business outcomes, customer acquisition, Product Hunt results, or exact public pricing.
+- Keep outreach as human-reviewed drafts, not automated distribution.
+
+Evidence observed:
+
+- RED model test failed first because `src/marketing/product-outreach-package.ts` did not exist.
+- RED route test failed first because `/product/github-repo-to-product-outreach` rendered the homepage rather than a marketing route.
+- RED public-growth tests failed first because sitemap and `llms.txt` did not include the route.
+- `npm test -- src/marketing/product-outreach-package.test.ts src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts -t "product outreach|public growth|semantic marketing"`: 4 files passed, 18 selected tests passed.
+- `npm test -- src/marketing/product-outreach-package.test.ts src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts`: 4 files passed, 38 tests passed.
+- `git diff --check`: no whitespace errors.
+- `npm test`: 22 files passed, 140 tests passed.
+- `npm run build`: TypeScript and Vite production build completed.
+- Local dev smoke: `http://127.0.0.1:5176/product/github-repo-to-product-outreach`, `/sitemap.xml`, and `/llms.txt` returned expected route/status/content evidence; the dev server was stopped after verification.
+
+Decision:
+
+- Treat this as a published-route candidate and productization hypothesis, not validated outreach demand. Production analytics, artifact export behavior, full package requests, and interviews are still required.
+
+Next action:
+
+- Run full verification, PR/merge, production smoke, then compare route-level `page_view`, `cta_clicked`, `generation_started`, `generation_completed`, and outreach artifact export behavior against the deck and full package pilot pages.
+
 ## 2026-06-02 Launch Package Intent Qualification Slice
 
 Hypothesis:

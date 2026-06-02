@@ -58,6 +58,9 @@ describe("semantic marketing link inventory", () => {
       "https://seekersai.com/product/github-repo-to-launch-deck",
     );
     expect(rows.map((row) => row.canonical_url)).toContain(
+      "https://seekersai.com/product/github-repo-to-product-outreach",
+    );
+    expect(rows.map((row) => row.canonical_url)).toContain(
       "https://seekersai.com/compare/chatgpt-open-source-launch-copy",
     );
   });
@@ -215,6 +218,12 @@ describe("typed semantic marketing link catalog", () => {
         primaryKeyword: "github repository pitch deck generator",
       }),
     );
+    expect(getMarketingLinkByPath("/product/github-repo-to-product-outreach")).toEqual(
+      expect.objectContaining({
+        intentCluster: "github_repo_product_outreach",
+        primaryKeyword: "github repo product outreach",
+      }),
+    );
     expect(getMarketingLinkByPath("/contact")).toBeUndefined();
   });
 
@@ -226,6 +235,18 @@ describe("typed semantic marketing link catalog", () => {
     expect(getMarketingPageHeadline(link!)).toContain("GitHub Repository Pitch Deck Generator");
     expect(getMarketingPageDescription(link!)).toContain("deck-ready launch brief");
     expect(getMarketingPageDescription(link!)).not.toMatch(/funding|guaranteed|rankings|revenue/i);
+  });
+
+  it("publishes a source-backed repo product outreach page contract", () => {
+    const link = getMarketingLinkByPath("/product/github-repo-to-product-outreach");
+
+    expect(link).toBeDefined();
+    expect(getMarketingPageTitle(link!)).toContain("GitHub Repo Product Outreach");
+    expect(getMarketingPageHeadline(link!)).toContain("GitHub Repo Product Outreach");
+    expect(getMarketingPageDescription(link!)).toContain("source-backed outreach brief");
+    expect(getMarketingPageDescription(link!)).not.toMatch(
+      /spam|scraped|guaranteed|revenue|reply rate|deliverability/i,
+    );
   });
 });
 

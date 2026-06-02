@@ -263,6 +263,27 @@ export function MarketingPage({ link }: MarketingPageProps) {
           </section>
         ) : null}
 
+        {narrative.outreachPackage ? (
+          <section className="marketingGrowthSection" aria-labelledby="marketing-outreach-package-title">
+            <div className="marketingRelatedHead">
+              <span className="monoLabel">Product outreach package</span>
+              <h2 id="marketing-outreach-package-title">{narrative.outreachPackage.title}</h2>
+              <p className="marketingVisualPackageBoundary">{narrative.outreachPackage.claimBoundary}</p>
+            </div>
+            <div className="marketingVisualPackageGrid">
+              {narrative.outreachPackage.outputs.map((output) => (
+                <article key={output.id}>
+                  <span>{output.channel}</span>
+                  <strong>{output.title}</strong>
+                  <p>{output.projectQuestion}</p>
+                  <small>{output.quickForkSurface}</small>
+                  <em>{output.activationMetric}</em>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="marketingGrowthSection" aria-labelledby="marketing-faq-title">
           <div className="marketingRelatedHead">
             <span className="monoLabel">AI-search FAQ</span>
