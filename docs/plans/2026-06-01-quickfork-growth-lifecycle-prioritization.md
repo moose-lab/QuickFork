@@ -495,3 +495,57 @@ Evidence observed:
 Next action:
 
 - Add a lightweight reporting surface or manual GA4 checklist that exports this registry into a route comparison table after enough production data exists.
+
+## 2026-06-02 Growth Experiment Evidence Report Slice
+
+Hypothesis:
+
+- If the AI project launch route is compared against the product-category route with a pre-declared evidence table, QuickFork can decide the next landing-page investment from measured behavior instead of copy preference.
+
+Lifecycle stage:
+
+- Validation.
+
+Target user:
+
+- AI project builders and open-source AI maintainers preparing a public repository launch.
+
+Changed surface:
+
+- Added `docs/marketing/data/growth-experiment-evidence.csv` as the editable pending evidence inventory for the active landing-page comparison.
+- Added `src/marketing/growth-experiment-report.ts` to join the experiment registry with evidence rows and render a Markdown comparison report.
+- Added `src/marketing/growth-experiment-report.test.ts` to lock pending-state behavior, route comparability, metric hygiene, and claim safety.
+- Added the implementation plan at `docs/superpowers/plans/2026-06-02-growth-experiment-evidence-report.md`.
+
+Primary CTA:
+
+- Generate free repo brief.
+
+Primary metric:
+
+- `cta_clicked_per_page_view` for `generate_launch_card`.
+
+Guardrail:
+
+- `generation_failed_per_generation_started`.
+- The report must not claim validation, revenue, customers, guaranteed growth, or a winning variant before 14-day production evidence exists.
+
+Evidence gap:
+
+- The evidence row is intentionally `pending_evidence`. A decision still needs comparable GA4 `page_view`, `cta_clicked`, `generation_started`, and `generation_failed` data for `/product/github-repo-to-launch-package` and `/use-cases/ai-project-launch`, plus Search Console and AI visibility checks.
+
+Evidence observed:
+
+- RED test failed first because `src/marketing/growth-experiment-report.ts` did not exist.
+- `npm test -- src/marketing/growth-experiment-report.test.ts`: 1 file passed, 6 tests passed.
+- `npm test -- src/marketing/growth-experiment-report.test.ts src/marketing/growth-experiments.test.ts src/lib/analytics.test.ts`: 3 files passed, 19 tests passed.
+- `npm test`: 18 files passed, 120 tests passed.
+- `npm run build`: TypeScript build and Vite production build completed.
+
+Decision:
+
+- Treat the report as an evidence collection contract, not a validation result. Current decision remains `insufficient_data` until the 14-day production window is filled.
+
+Next action:
+
+- Fill `docs/marketing/data/growth-experiment-evidence.csv` after a full production window, then use the rendered report to decide whether `/use-cases/ai-project-launch` should be promoted, revised, or replaced by the next high-intent page.
