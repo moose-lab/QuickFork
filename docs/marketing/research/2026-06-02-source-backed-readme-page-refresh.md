@@ -95,3 +95,22 @@ The page contracts are now stronger, but demand is not validated until productio
 ## Next Validation Step
 
 Add these routes to the next AI-answer and Search Console baseline review, then compare CTA and generation behavior against `/product/github-repo-to-launch-package`.
+
+## Validation Handoff
+
+The source-backed and README routes now have explicit pending validation rows instead of a loose follow-up note.
+
+Added experiment IDs:
+
+- `2026_q2_source_backed_assets_intent_validation`: compares `/product/source-backed-launch-assets` against `/product/github-repo-to-launch-package` for product-marketer intent.
+- `2026_q2_readme_cards_intent_validation`: compares `/product/readme-marketing-cards` against `/product/github-repo-to-launch-package` for design-lead intent.
+
+Required evidence before deciding:
+
+- 14 days of GA4 `page_view`, `cta_clicked`, `generation_started`, and `generation_failed` data.
+- Search Console query baseline for non-brand source-backed launch asset and README marketing card queries.
+- AI-answer audit for whether ChatGPT search, Perplexity, Gemini, Claude, or Google AI answers can describe each page without inventing pricing, rankings, customers, revenue, or launch outcomes.
+
+Current decision:
+
+- Hypothesis only. The pages are production-ready for measurement, but demand is still unvalidated.

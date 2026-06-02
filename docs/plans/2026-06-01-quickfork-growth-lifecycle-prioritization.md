@@ -1351,3 +1351,54 @@ Decision:
 Next action:
 
 - Add both routes to the next AI-answer and Search Console baseline review, then compare CTA and generation behavior against `/product/github-repo-to-launch-package`.
+
+## 2026-06-02 Page Intent Validation Expansion Slice
+
+Hypothesis:
+
+- If `/product/source-backed-launch-assets` and `/product/readme-marketing-cards` address narrower jobs than the generic GitHub repo launch package page, they should produce clearer CTA and generation signals without increasing generation failure or unsupported-claim risk.
+
+Lifecycle stage:
+
+- Validation.
+
+Target user:
+
+- Product marketers and DevRel operators validating source-backed launch assets.
+- Design leads and open-source maintainers validating README marketing cards.
+
+Changed surface:
+
+- `docs/marketing/data/growth-experiment-registry.csv`
+- `docs/marketing/data/growth-experiment-evidence.csv`
+- `src/marketing/growth-experiments.ts`
+- `src/marketing/growth-experiments.test.ts`
+- `src/marketing/growth-experiment-report.ts`
+- `src/marketing/growth-experiment-report.test.ts`
+- `docs/superpowers/plans/2026-06-02-page-intent-validation-expansion.md`
+- `docs/marketing/research/2026-06-02-source-backed-readme-page-refresh.md`
+
+Metric:
+
+- `cta_clicked_per_page_view` for `generate_launch_card`, comparing each variant route against `/product/github-repo-to-launch-package`.
+
+Guardrail:
+
+- `generation_failed_per_generation_started`.
+- Do not claim rankings, revenue, customer count, Product Hunt outcomes, conversion lift, exact pricing, AI citation wins, Search Console demand, or willingness to pay.
+- Keep evidence rows free of email, raw repo text, tokens, secrets, raw artifact bodies, pricing claims, rankings, revenue, customers, or unsupported proof.
+
+Evidence observed:
+
+- Baseline `npm test` passed before changes: 23 files passed and 146 tests passed.
+- RED registry test failed first because `2026_q2_source_backed_assets_intent_validation` did not exist.
+- RED evidence test failed first because pending evidence rows for the source-backed and README experiments did not exist.
+- GREEN focused verification passed: `npm test -- src/marketing/growth-experiments.test.ts src/marketing/growth-experiment-report.test.ts` returned 2 files passed and 13 tests passed.
+
+Decision:
+
+- Treat this as a formal validation framework expansion, not validated demand. The two product pages now have pending experiment and evidence rows that define what data must be collected before comparing page intent quality.
+
+Next action:
+
+- Collect 14 days of GA4 page view, CTA click, generation start, and generation failure data for the two new experiments, plus Search Console query baselines and AI-answer audits.
