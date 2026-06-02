@@ -21,8 +21,19 @@ interface LeadCaptureInput {
   requestType?: string;
   contactReason?: string;
   crmCampaign?: string;
+  qualification?: LeadQualificationInput;
   firstTouch: CrmAttributionTouch;
   lastTouch: CrmAttributionTouch;
+}
+
+interface LeadQualificationInput {
+  repoUrl?: string;
+  repoHost?: string;
+  repoFullName?: string;
+  launchTimeline?: string;
+  packageScope?: string[];
+  humanReviewNeeded?: boolean;
+  notes?: string;
 }
 
 interface LeadCaptureOptions {
@@ -86,6 +97,7 @@ export async function captureLead(body: unknown, options: LeadCaptureOptions = {
         requestType: input.requestType,
         contactReason: input.contactReason,
         crmCampaign: input.crmCampaign,
+        qualification: input.qualification,
         sourcePage: input.firstTouch.landingPage ?? input.lastTouch.landingPage,
       },
     });
@@ -125,6 +137,7 @@ export function normalizeLeadCaptureInput(body: unknown, now: () => string = () 
     requestType: normalizeOptionalString(value.requestType, "requestType"),
     contactReason: normalizeOptionalString(value.contactReason, "contactReason"),
     crmCampaign: normalizeOptionalString(value.crmCampaign, "crmCampaign"),
+    qualification: normalizeQualification(value.qualification),
     firstTouch: normalizeAttributionTouch(value.firstTouch, now),
     lastTouch: normalizeAttributionTouch(value.lastTouch, now),
   } satisfies LeadCaptureInput;
@@ -178,6 +191,66 @@ function normalizeOptionalString(value: unknown, fieldName: string) {
     throw new LeadCaptureError("VALIDATION_ERROR", `${fieldName} must be a non-empty string.`, 422);
   }
   return value.trim().slice(0, 240);
+}
+
+function normalizeQualification(value: unknown): LeadQualificationInput | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== "object") {
+    throw new LeadCaptureError("VALIDATION_ERROR", "qualification must be a JSON object.", 422);
+  }
+
+  const source = value as Record<string, unknown>;
+  const repoUrl = normalizeOptionalString(source.repoUrl, "qualification.repoUrl");
+  const repoReference = normalizeRepoReference(repoUrl);
+  const packageScope = normalizeOptionalStringArray(source.packageScope, "qualification.packageScope");
+
+  return {
+    repoUrl: repoReference.repoUrl,
+    repoHost: repoReference.repoHost,
+    repoFullName: repoReference.repoFullName,
+    launchTimeline: normalizeOptionalString(source.launchTimeline, "qualification.launchTimeline"),
+    packageScope,
+    humanReviewNeeded: normalizeOptionalBoolean(source.humanReviewNeeded, "qualification.humanReviewNeeded"),
+    notes: normalizeOptionalString(source.notes, "qualification.notes"),
+  };
+}
+
+function normalizeRepoReference(repoUrl: string | undefined) {
+  if (!repoUrl) return {};
+
+  try {
+    const url = new URL(repoUrl);
+    const [owner, repoWithExtension] = url.pathname.replace(/^\/+/, "").split("/");
+    const repo = repoWithExtension?.replace(/\.git$/i, "");
+
+    return {
+      repoUrl: `${url.origin}${url.pathname.replace(/\/+$/, "")}`,
+      repoHost: url.hostname,
+      repoFullName: url.hostname === "github.com" && owner && repo ? `${owner}/${repo}` : undefined,
+    };
+  } catch {
+    return { repoUrl };
+  }
+}
+
+function normalizeOptionalStringArray(value: unknown, fieldName: string) {
+  if (value === undefined || value === null) return undefined;
+  if (!Array.isArray(value)) {
+    throw new LeadCaptureError("VALIDATION_ERROR", `${fieldName} must be an array.`, 422);
+  }
+
+  const normalizedValues = value
+    .map((item) => normalizeOptionalString(item, fieldName))
+    .filter((item): item is string => Boolean(item));
+  return normalizedValues.length ? normalizedValues.slice(0, 10) : undefined;
+}
+
+function normalizeOptionalBoolean(value: unknown, fieldName: string) {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== "boolean") {
+    throw new LeadCaptureError("VALIDATION_ERROR", `${fieldName} must be a boolean.`, 422);
+  }
+  return value;
 }
 
 function normalizeAttributionTouch(value: unknown, now: () => string): CrmAttributionTouch {

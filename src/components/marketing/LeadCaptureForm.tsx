@@ -13,10 +13,16 @@ export function LeadCaptureForm({ link }: LeadCaptureFormProps) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [companyDomain, setCompanyDomain] = useState("");
+  const [repoUrl, setRepoUrl] = useState("");
+  const [launchTimeline, setLaunchTimeline] = useState("");
+  const [packageScope, setPackageScope] = useState<string[]>([]);
+  const [humanReviewNeeded, setHumanReviewNeeded] = useState(false);
+  const [notes, setNotes] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isContact = link.pageType === "contact";
+  const isLaunchPackage = isLaunchPackageLink(link);
   const buttonLabel = isContact ? getMarketingPrimaryCtaLabel(link) : "Request resource";
 
   async function submitLead(event: FormEvent<HTMLFormElement>) {
@@ -25,7 +31,16 @@ export function LeadCaptureForm({ link }: LeadCaptureFormProps) {
     setError("");
     setIsSubmitting(true);
 
-    const payload = buildLeadCapturePayload(link, { email, name, companyDomain });
+    const payload = buildLeadCapturePayload(link, {
+      email,
+      name,
+      companyDomain,
+      repoUrl,
+      launchTimeline,
+      packageScope,
+      humanReviewNeeded,
+      notes,
+    });
     trackLeadCaptureRequested(link, payload);
 
     try {
@@ -44,6 +59,11 @@ export function LeadCaptureForm({ link }: LeadCaptureFormProps) {
       setEmail("");
       setName("");
       setCompanyDomain("");
+      setRepoUrl("");
+      setLaunchTimeline("");
+      setPackageScope([]);
+      setHumanReviewNeeded(false);
+      setNotes("");
     } catch {
       setError("We could not capture the request. Please try again.");
     } finally {
@@ -87,6 +107,59 @@ export function LeadCaptureForm({ link }: LeadCaptureFormProps) {
           />
         </label>
       </div>
+      {isLaunchPackage ? (
+        <div className="leadQualificationFields" aria-label="Launch package qualification">
+          <label>
+            GitHub repository URL
+            <input
+              inputMode="url"
+              placeholder="https://github.com/owner/repo"
+              value={repoUrl}
+              onChange={(event) => setRepoUrl(event.target.value)}
+            />
+          </label>
+          <label>
+            Launch timeline
+            <select value={launchTimeline} onChange={(event) => setLaunchTimeline(event.target.value)}>
+              <option value="">Select timeline</option>
+              <option value="within_7_days">Within 7 days</option>
+              <option value="within_30_days">Within 30 days</option>
+              <option value="this_quarter">This quarter</option>
+              <option value="exploring">Exploring</option>
+            </select>
+          </label>
+          <fieldset>
+            <legend>Package scope</legend>
+            {launchPackageScopeOptions.map((option) => (
+              <label key={option.value}>
+                <input
+                  checked={packageScope.includes(option.value)}
+                  onChange={() => togglePackageScope(option.value, setPackageScope)}
+                  type="checkbox"
+                />
+                {option.label}
+              </label>
+            ))}
+          </fieldset>
+          <label className="leadCaptureCheckbox">
+            <input
+              checked={humanReviewNeeded}
+              onChange={(event) => setHumanReviewNeeded(event.target.checked)}
+              type="checkbox"
+            />
+            Human review needed
+          </label>
+          <label className="leadCaptureNotes">
+            Launch notes
+            <textarea
+              rows={3}
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
+              placeholder="Launch deadline, review need, or channels to prepare"
+            />
+          </label>
+        </div>
+      ) : null}
       <button className="primaryButton" type="submit" disabled={isSubmitting}>
         {isContact ? <Send size={17} aria-hidden="true" /> : <Mail size={17} aria-hidden="true" />}
         {isSubmitting ? "Sending" : buttonLabel}
@@ -102,13 +175,19 @@ interface LeadCaptureFormState {
   email: string;
   name: string;
   companyDomain: string;
+  repoUrl: string;
+  launchTimeline: string;
+  packageScope: string[];
+  humanReviewNeeded: boolean;
+  notes: string;
 }
 
 function buildLeadCapturePayload(link: MarketingLink, form: LeadCaptureFormState) {
   const touch = buildAttributionTouch();
   const isDemo = link.pageType === "contact" && link.slug === "demo";
   const isPartnership = link.pageType === "contact" && link.slug === "partnership";
-  const isLaunchPackage = link.pageType === "contact" && link.slug === "launch-package";
+  const isLaunchPackage = isLaunchPackageLink(link);
+  const repoReference = parseRepoReference(form.repoUrl);
 
   return {
     intent: link.pageType === "resource" ? "resource" : isDemo ? "demo" : isPartnership ? "partnership" : "sales_contact",
@@ -120,6 +199,17 @@ function buildLeadCapturePayload(link: MarketingLink, form: LeadCaptureFormState
     captureLocation: "marketing_page",
     requestType: isDemo ? "founder_demo" : isPartnership ? "devrel_partnership" : isLaunchPackage ? "full_launch_package" : undefined,
     contactReason: isDemo ? "quickfork_demo" : isPartnership ? "devrel_partnership" : isLaunchPackage ? "full_launch_package" : undefined,
+    qualification: isLaunchPackage
+      ? {
+          repoUrl: form.repoUrl.trim() || undefined,
+          repoHost: repoReference.repoHost,
+          repoFullName: repoReference.repoFullName,
+          launchTimeline: form.launchTimeline || undefined,
+          packageScope: form.packageScope.length ? form.packageScope : undefined,
+          humanReviewNeeded: form.humanReviewNeeded,
+          notes: form.notes.trim() || undefined,
+        }
+      : undefined,
     crmCampaign: link.crmCampaign,
     firstTouch: touch,
     lastTouch: touch,
@@ -152,6 +242,7 @@ function trackLeadCaptureRequested(link: MarketingLink, payload: ReturnType<type
     contact_reason: payload.contactReason,
     company_domain: payload.companyDomain,
     role_segment: link.persona,
+    ...getSafeQualificationAnalytics(payload.qualification),
   });
 }
 
@@ -170,8 +261,54 @@ function trackLeadCaptureDelivered(link: MarketingLink, payload: ReturnType<type
       contact_reason: payload.contactReason,
       company_domain: payload.companyDomain,
       role_segment: link.persona,
+      ...getSafeQualificationAnalytics(payload.qualification),
     });
   }
+}
+
+const launchPackageScopeOptions = [
+  { value: "readme", label: "README" },
+  { value: "social", label: "Social" },
+  { value: "deck", label: "Deck" },
+  { value: "outreach", label: "Outreach" },
+  { value: "visual_explainer", label: "Visual explainer" },
+] as const;
+
+function isLaunchPackageLink(link: MarketingLink) {
+  return link.pageType === "contact" && link.slug === "launch-package";
+}
+
+function togglePackageScope(scope: string, setPackageScope: (updater: (currentScopes: string[]) => string[]) => void) {
+  setPackageScope((currentScopes) =>
+    currentScopes.includes(scope) ? currentScopes.filter((currentScope) => currentScope !== scope) : [...currentScopes, scope],
+  );
+}
+
+function parseRepoReference(repoUrl: string) {
+  if (!repoUrl.trim()) return {};
+
+  try {
+    const url = new URL(repoUrl.trim());
+    const [owner, repoWithExtension] = url.pathname.replace(/^\/+/, "").split("/");
+    const repo = repoWithExtension?.replace(/\.git$/i, "");
+
+    return {
+      repoHost: url.hostname,
+      repoFullName: url.hostname === "github.com" && owner && repo ? `${owner}/${repo}` : undefined,
+    };
+  } catch {
+    return {};
+  }
+}
+
+function getSafeQualificationAnalytics(qualification: ReturnType<typeof buildLeadCapturePayload>["qualification"]) {
+  if (!qualification) return {};
+
+  return {
+    launch_timeline: qualification.launchTimeline,
+    package_scope_count: qualification.packageScope?.length ?? 0,
+    human_review_needed: qualification.humanReviewNeeded,
+  };
 }
 
 function buildAttributionTouch() {
