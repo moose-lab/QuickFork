@@ -843,6 +843,11 @@ Evidence observed:
 - `npm test`: 22 files passed, 141 tests passed.
 - `npm run build`: TypeScript and Vite production build completed.
 - `git diff --check`: no whitespace errors.
+- PR #20 merged into `main` at merge commit `65735f96d65cc35010687c1d38f524264ac4817c`.
+- Main CI/CD run `26823339942` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production smoke passed: `https://seekersai.com/contact?intent=launch-package` returned HTTP 200.
+- Production pilot route smoke passed: `https://seekersai.com/product/repository-launch-package-pilot` returned HTTP 200.
+- Production bundle `/assets/index-Ct_v02I-.js` contains `Package model`, `Buying trigger`, `package_model`, `buying_trigger`, `single_launch`, and `launch_deadline`.
 
 Decision:
 
