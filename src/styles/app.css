@@ -2613,6 +2613,83 @@ blockquote {
   line-height: 1.45;
 }
 
+.marketingScorecardBoundary {
+  max-width: 760px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.marketingScorecardSummary {
+  min-height: 96px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  padding: 18px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.28fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.marketingScorecardSummary strong {
+  color: var(--orange);
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 0.95;
+}
+
+.marketingScorecardSummary span {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.marketingScorecardGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.marketingScorecardGrid article {
+  min-height: 300px;
+  padding: 18px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.marketingScorecardGrid span,
+.marketingScorecardGrid small {
+  color: var(--muted);
+  font: 650 11px/1.35 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.marketingScorecardGrid strong {
+  font-size: 21px;
+  line-height: 1.08;
+}
+
+.marketingScorecardGrid p,
+.marketingScorecardGrid li {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.42;
+}
+
+.marketingScorecardGrid ul {
+  margin: 0;
+  padding-left: 17px;
+  display: grid;
+  gap: 6px;
+}
+
 .marketingFaqGrid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -2983,13 +3060,15 @@ blockquote {
     padding: 20px;
   }
 
-  .marketingRelatedGrid {
+  .marketingRelatedGrid,
+  .marketingScorecardSummary {
     grid-template-columns: 1fr;
   }
 
   .marketingBenefitGrid,
   .marketingWorkflowList,
-  .marketingFaqGrid {
+  .marketingFaqGrid,
+  .marketingScorecardGrid {
     grid-template-columns: 1fr;
   }
 

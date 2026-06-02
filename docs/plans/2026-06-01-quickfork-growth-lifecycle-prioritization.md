@@ -669,3 +669,66 @@ Decision:
 Next action:
 
 - Run full verification, push the branch, open a PR, and after deploy smoke-test the production route, sitemap, and `llms.txt`.
+
+## 2026-06-02 Repo Launch Readiness Score Slice
+
+Hypothesis:
+
+- If a founder or maintainer can evaluate launch readiness through a source-backed scorecard, they will better understand why QuickFork asks for a repo URL and will be more likely to start the free studio flow.
+
+Lifecycle stage:
+
+- Discovery to Activation.
+
+Target user:
+
+- Founders, open-source maintainers, and AI/devtool builders preparing a public GitHub repository launch.
+
+Changed surface:
+
+- `/tools/github-repo-launch-readiness-score` now has a dedicated source-backed narrative instead of the generic tool template.
+- Added `src/marketing/launch-readiness-score.ts` as a typed 100-point readiness rubric.
+- Added scorecard rendering to `MarketingPage` for routes with `narrative.scorecard`.
+- Added `tool_page_viewed` analytics for tool routes.
+- Updated `public/llms.txt` to describe the score as README trust, repository preview, audience feedback, launch assets, and follow-up measurement.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-repo-launch-readiness-score.md`.
+- Added research synthesis at `docs/marketing/research/2026-06-02-repo-launch-readiness-score.md`.
+
+Primary CTA:
+
+- Start free tool.
+
+Primary metric:
+
+- `cta_clicked` where `cta_id=start_free_tool`, segmented by prior `tool_page_viewed` on `/tools/github-repo-launch-readiness-score`.
+
+Guardrail:
+
+- `generation_failed / generation_started` after visitors start the studio flow.
+- Do not claim the score predicts search performance, sales outcomes, launch results, Product Hunt performance, conversion lift, or willingness to pay.
+
+Evidence gap:
+
+- The route is source-backed but not validated demand. Production tool page views, CTA clicks, repo submissions, generation completions, and interviews are still required.
+
+Evidence observed:
+
+- RED model test failed first because `src/marketing/launch-readiness-score.ts` did not exist.
+- RED route test failed first because `/tools/github-repo-launch-readiness-score` still lacked 100-point scorecard content.
+- RED public-growth test failed first because `llms.txt` still exposed the generic tool description.
+- `npm test -- src/marketing/launch-readiness-score.test.ts`: 1 file passed, 3 tests passed.
+- `npm test -- src/App.test.tsx -t "repo launch readiness score"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/seo/public-growth.test.ts -t "machine-readable AI context"`: 1 file passed, 1 selected test passed.
+- Build verification caught a missing `AnalyticsEventName` entry for `tool_page_viewed`; the event type was added and covered by `src/lib/analytics.test.ts`.
+- `npm test -- src/lib/analytics.test.ts src/App.test.tsx -t "tool page views|repo launch readiness score"`: 2 files passed, 2 selected tests passed.
+- `npm test`: 20 files passed, 129 tests passed.
+- `npm run build`: TypeScript build and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Decision:
+
+- Treat this as a free-tool activation bridge, not validated demand. The scorecard makes the published tool route useful while the next proof still comes from production funnel behavior.
+
+Next action:
+
+- Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.

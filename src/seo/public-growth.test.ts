@@ -53,6 +53,11 @@ describe("public growth infrastructure", () => {
     expect(llms).toContain("source-backed README, social preview, Product Hunt, deck, outreach, and post-launch learning");
     expect(llms).toContain("https://seekersai.com/resources/github-repo-launch-demand-map");
     expect(llms).toContain("GitHub Repo Launch Demand");
+    expect(llms).toContain("https://seekersai.com/tools/github-repo-launch-readiness-score");
+    expect(llms).toContain("GitHub Repo Launch Readiness Score");
+    expect(llms).toContain(
+      "100-point source-backed readiness score for README trust, repository preview, audience feedback, launch assets, and follow-up measurement",
+    );
     expect(llms).toContain("https://seekersai.com/resources/github-project-marketing-card-guide");
     expect(llms).toContain("https://seekersai.com/compare/chatgpt-open-source-launch-copy");
     expect(llms).toContain("https://seekersai.com/examples/qwenlm-flashqla-launch-card");
