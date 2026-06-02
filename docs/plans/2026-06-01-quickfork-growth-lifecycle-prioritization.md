@@ -784,14 +784,20 @@ Evidence observed:
 - `npm test`: 21 files passed, 136 tests passed.
 - `npm run build`: TypeScript and Vite production build completed.
 - Local dev smoke: `http://localhost:5173/product/github-repo-to-launch-deck`, `/sitemap.xml`, and `/llms.txt` returned HTTP 200; `llms.txt` contains `GitHub Repository Pitch Deck Generator` and the deck-ready launch brief description.
+- PR #12 merged into `main` at merge commit `f5fcc5a37b7ea6c6884c2b5e3dba00914fb7869d`.
+- Main CI/CD run `26810312003` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production smoke: `https://seekersai.com/product/github-repo-to-launch-deck`, `/sitemap.xml`, and `/llms.txt` returned HTTP 200.
+- Production sitemap contains `https://seekersai.com/product/github-repo-to-launch-deck`.
+- Production `llms.txt` contains `GitHub Repository Pitch Deck Generator` and the deck-ready launch brief description.
+- Production JS bundle contains `GitHub Repository Pitch Deck Generator`, `github_repo_to_launch_deck`, `deck-ready launch brief`, `Product Hunt story`, and `source-backed launch decks`.
 
 Decision:
 
-- Treat this as a P4 activation-to-evaluation growth hypothesis and productization bridge, not validated demand or pricing proof.
+- Treat this as a published P4 activation-to-evaluation growth hypothesis and productization bridge, not validated demand or pricing proof.
 
 Next action:
 
-- PR/merge, production smoke, then compare route-level `page_view`, `cta_clicked`, `generation_started`, `generation_completed`, and deck artifact export behavior against `/product/github-repo-to-launch-package`.
+- Compare route-level `page_view`, `cta_clicked`, `generation_started`, `generation_completed`, and deck artifact export behavior against `/product/github-repo-to-launch-package`.
 
 ## 2026-06-02 Launch Package Intent Qualification Slice
 
