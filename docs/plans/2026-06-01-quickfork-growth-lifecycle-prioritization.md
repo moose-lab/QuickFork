@@ -444,3 +444,54 @@ Evidence observed:
 Next action:
 
 - After PR checks and deploy, compare this use-case route's page-view and CTA behavior against `/product/github-repo-to-launch-package`.
+
+## 2026-06-02 Landing Page Measurement Registry Slice
+
+Hypothesis:
+
+- If `/use-cases/ai-project-launch` gives AI builders a more specific job-to-be-done than `/product/github-repo-to-launch-package`, it should produce a higher qualified CTA rate without increasing low-quality generation starts or unsupported-claim risk.
+
+Lifecycle stage:
+
+- Validation.
+
+Target user:
+
+- AI project builders and open-source AI maintainers preparing a public repository launch.
+
+Changed surface:
+
+- Added `docs/marketing/data/growth-experiment-registry.csv` as the editable experiment inventory.
+- Added `src/marketing/growth-experiments.ts` as the typed registry mirror.
+- Added `src/marketing/growth-experiments.test.ts` to verify route references, CTA comparability, metric definitions, guardrails, and claim hygiene.
+- Added the implementation plan at `docs/superpowers/plans/2026-06-02-landing-page-growth-experiment-registry.md`.
+
+Primary CTA:
+
+- Generate free repo brief.
+
+Primary metric:
+
+- `cta_clicked_per_page_view` for `generate_launch_card`.
+
+Guardrail:
+
+- `generation_failed_per_generation_started`.
+- Unsupported-claim review flags during generated package review.
+
+Evidence gap:
+
+- The registry defines what must be compared. It does not prove the AI project launch route wins. A decision still needs at least 14 days of production `page_view`, `cta_clicked`, `generation_started`, and `generation_failed` data plus qualitative review of generated claims.
+
+Evidence observed:
+
+- RED test failed first because `src/marketing/growth-experiments.ts` did not exist.
+- `npm test -- src/marketing/growth-experiments.test.ts`: 1 file passed, 4 tests passed.
+- `npm test -- src/marketing/growth-experiments.test.ts src/seo/semantic-links.test.ts src/lib/analytics.test.ts`: 3 files passed, 20 tests passed.
+- `npm test`: 17 files passed, 114 tests passed.
+- `npm run build`: TypeScript build and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Next action:
+
+- Add a lightweight reporting surface or manual GA4 checklist that exports this registry into a route comparison table after enough production data exists.
