@@ -124,3 +124,35 @@ Follow-through evidence:
 - Production sitemap contains both product URLs.
 - Production `llms.txt` contains both page descriptions.
 - This evidence proves the measurement framework shipped, not that either page has validated demand.
+
+## Search And AI Baseline Contract
+
+The next evidence step now has a fixed prompt/query contract:
+
+- `docs/marketing/data/search-ai-baseline-prompts.csv`
+- `src/marketing/search-ai-baseline.ts`
+- `renderSearchAiBaselineRunbook(experimentId)`
+
+Baseline rows:
+
+- `source_backed_assets_control`: query `GitHub repo to launch package`, route `/product/github-repo-to-launch-package`.
+- `source_backed_assets_variant`: query `source backed launch assets`, route `/product/source-backed-launch-assets`.
+- `readme_cards_control`: query `GitHub repo to launch package`, route `/product/github-repo-to-launch-package`.
+- `readme_cards_variant`: query `README marketing cards`, route `/product/readme-marketing-cards`.
+
+Surfaces to check:
+
+- Google Search Console.
+- ChatGPT search.
+- Perplexity.
+- Google AI Overview.
+- Gemini.
+- Claude.
+
+False claims to flag:
+
+- Pricing, rankings, revenue, customer count, conversion lift, Product Hunt outcomes, guaranteed launch results, or validated AI citation wins.
+
+Current decision:
+
+- Prompt coverage only. No Search Console demand or AI-answer visibility has been observed yet.
