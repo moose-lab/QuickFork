@@ -242,6 +242,27 @@ export function MarketingPage({ link }: MarketingPageProps) {
           </section>
         ) : null}
 
+        {narrative.visualPackage ? (
+          <section className="marketingGrowthSection" aria-labelledby="marketing-visual-package-title">
+            <div className="marketingRelatedHead">
+              <span className="monoLabel">Visual explainer package</span>
+              <h2 id="marketing-visual-package-title">{narrative.visualPackage.title}</h2>
+              <p className="marketingVisualPackageBoundary">{narrative.visualPackage.claimBoundary}</p>
+            </div>
+            <div className="marketingVisualPackageGrid">
+              {narrative.visualPackage.outputs.map((output) => (
+                <article key={output.id}>
+                  <span>{output.lifecycleStage}</span>
+                  <strong>{output.title}</strong>
+                  <p>{output.projectQuestion}</p>
+                  <small>{output.quickForkSurface}</small>
+                  <em>{output.activationMetric}</em>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="marketingGrowthSection" aria-labelledby="marketing-faq-title">
           <div className="marketingRelatedHead">
             <span className="monoLabel">AI-search FAQ</span>

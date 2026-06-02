@@ -2690,6 +2690,52 @@ blockquote {
   gap: 6px;
 }
 
+.marketingVisualPackageBoundary {
+  max-width: 760px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.marketingVisualPackageGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.marketingVisualPackageGrid article {
+  min-height: 320px;
+  padding: 20px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.marketingVisualPackageGrid span,
+.marketingVisualPackageGrid em {
+  color: var(--muted);
+  font: 650 11px/1.35 var(--font-mono);
+  font-style: normal;
+  text-transform: uppercase;
+}
+
+.marketingVisualPackageGrid strong {
+  font-size: 22px;
+  line-height: 1.08;
+}
+
+.marketingVisualPackageGrid p,
+.marketingVisualPackageGrid small {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
 .marketingFaqGrid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -3068,7 +3114,8 @@ blockquote {
   .marketingBenefitGrid,
   .marketingWorkflowList,
   .marketingFaqGrid,
-  .marketingScorecardGrid {
+  .marketingScorecardGrid,
+  .marketingVisualPackageGrid {
     grid-template-columns: 1fr;
   }
 

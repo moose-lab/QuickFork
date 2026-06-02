@@ -732,3 +732,66 @@ Decision:
 Next action:
 
 - Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
+
+## 2026-06-02 Visual Project Explainer Page Slice
+
+Hypothesis:
+
+- If AI/devtool builders can see how QuickFork converts a repository into a visual story map, README hero card, GitHub social preview direction, and deck-ready slide outline, they will understand the project faster and be more likely to start the repo generation flow.
+
+Lifecycle stage:
+
+- Discovery to Activation, with P3 Visual Project Explainer evidence.
+
+Target user:
+
+- AI project builders, DevRel operators, open-source maintainers, and design/product leads preparing public repository launches.
+
+Changed surface:
+
+- Added `/product/github-repo-visual-explainer` to the semantic marketing link catalog and CSV inventory.
+- Added `src/marketing/visual-explainer-package.ts` as a typed source-backed package model for story map, README hero card, GitHub social preview, and deck-ready explainer slide outputs.
+- Added visual package rendering to `MarketingPage` for routes with `narrative.visualPackage`.
+- Added dedicated page narrative, source notes, metadata, sitemap entry, `llms.txt` line, and route tests.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-visual-project-explainer-page.md`.
+- Added research synthesis at `docs/marketing/research/2026-06-02-visual-project-explainer-page.md`.
+
+Primary CTA:
+
+- Generate free repo brief.
+
+Primary metric:
+
+- `cta_clicked` on `/product/github-repo-visual-explainer`, segmented by `page_view` where `intent_cluster=github_repo_visual_explainer`.
+
+Guardrail:
+
+- `generation_failed / generation_started`.
+- Unsupported visual identity review flags.
+- Do not claim rankings, revenue, Product Hunt results, customer acquisition, viral sharing, conversion lift, or willingness to pay.
+
+Evidence gap:
+
+- The route is source-backed but not validated demand. Production route views, CTA clicks, repo submissions, story-map copies, visual preview opens, image downloads, and interviews are still required.
+
+Evidence observed:
+
+- RED model test failed first because `src/marketing/visual-explainer-package.ts` did not exist.
+- RED route test failed first because `/product/github-repo-visual-explainer` rendered the homepage rather than a marketing route.
+- RED public-growth test failed first because sitemap and `llms.txt` did not include the route.
+- `npm test -- src/marketing/visual-explainer-package.test.ts`: 1 file passed, 3 tests passed.
+- `npm test -- src/App.test.tsx -t "GitHub repo visual explainer"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/seo/public-growth.test.ts -t "public growth|machine-readable AI context"`: 1 file passed, 6 tests passed.
+- `npm test -- src/seo/semantic-links.test.ts`: 1 file passed, 7 tests passed.
+- `npm test -- src/marketing/visual-explainer-package.test.ts src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts`: 4 files passed, 35 tests passed.
+- `npm test`: 21 files passed, 133 tests passed.
+- `npm run build`: TypeScript build and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Decision:
+
+- Treat this as a P3 visual explainer landing-page slice, not validated demand. The page now defines the visual package surface that production measurement can test.
+
+Next action:
+
+- Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
