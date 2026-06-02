@@ -55,6 +55,9 @@ describe("semantic marketing link inventory", () => {
       "https://seekersai.com/resources/github-project-marketing-card-guide",
     );
     expect(rows.map((row) => row.canonical_url)).toContain(
+      "https://seekersai.com/product/github-repo-to-launch-deck",
+    );
+    expect(rows.map((row) => row.canonical_url)).toContain(
       "https://seekersai.com/compare/chatgpt-open-source-launch-copy",
     );
   });
@@ -206,7 +209,23 @@ describe("typed semantic marketing link catalog", () => {
 
     expect(link?.slug).toBe("github-project-marketing-card-guide");
     expect(getMarketingLinkByPath("/use-cases/ai-project-launch")?.slug).toBe("ai-project-launch");
+    expect(getMarketingLinkByPath("/product/github-repo-to-launch-deck")).toEqual(
+      expect.objectContaining({
+        intentCluster: "github_repo_to_launch_deck",
+        primaryKeyword: "github repository pitch deck generator",
+      }),
+    );
     expect(getMarketingLinkByPath("/contact")).toBeUndefined();
+  });
+
+  it("publishes a source-backed repo-to-deck brief page contract", () => {
+    const link = getMarketingLinkByPath("/product/github-repo-to-launch-deck");
+
+    expect(link).toBeDefined();
+    expect(getMarketingPageTitle(link!)).toContain("GitHub Repository Pitch Deck Generator");
+    expect(getMarketingPageHeadline(link!)).toContain("GitHub Repository Pitch Deck Generator");
+    expect(getMarketingPageDescription(link!)).toContain("deck-ready launch brief");
+    expect(getMarketingPageDescription(link!)).not.toMatch(/funding|guaranteed|rankings|revenue/i);
   });
 });
 

@@ -733,6 +733,66 @@ Next action:
 
 - Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
 
+## 2026-06-02 Repo Launch Deck Brief Slice
+
+Hypothesis:
+
+- If QuickFork publishes a source-backed repo-to-launch-deck brief page, AI project founders and DevRel operators will better understand the value of turning one repository URL into deck-ready launch structure before requesting a full launch package.
+
+Lifecycle stage:
+
+- Activation to Evaluation, P4.
+
+Target user:
+
+- AI project founders, indie technical founders, open-source maintainers, and DevRel operators preparing Product Hunt, demo-day, internal, or community launch decks from a GitHub-backed product.
+
+Changed surface:
+
+- Added `/product/github-repo-to-launch-deck` as a published product route in the semantic marketing catalog and CSV inventory.
+- Added route-specific title, description, headline, definition block, target user, JTBD, evidence boundary, benefits, workflow, FAQ, source notes, and last-updated date.
+- Updated sitemap and `llms.txt` so crawlers and AI-search systems can discover the deck brief route.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-repo-launch-deck-brief.md`.
+- Added research synthesis at `docs/marketing/research/2026-06-02-repo-launch-deck-brief.md`.
+
+Primary CTA:
+
+- Generate free repo brief.
+
+Primary metric:
+
+- `cta_clicked` on `/product/github-repo-to-launch-deck`, segmented by `page_view` where `intent_cluster=github_repo_to_launch_deck`.
+
+Guardrail:
+
+- Do not publish claims about funding, rankings, revenue, customers, benchmark lift, Product Hunt results, guaranteed launch performance, or exact pricing.
+- Route visitors to reviewable repo brief generation, not automatic publishing.
+
+Evidence gap:
+
+- Search Console demand for deck-related repo queries.
+- Route-level CTA and repo generation starts from `/product/github-repo-to-launch-deck`.
+- Export/copy/download rate for deck artifacts from the launch brief.
+- Willingness-to-pay interviews for full launch-package deck review.
+
+Evidence observed:
+
+- Baseline `npm test`: 21 files passed, 135 tests passed.
+- RED focused tests failed first because `/product/github-repo-to-launch-deck`, sitemap, `llms.txt`, and catalog entries did not exist.
+- `npm test -- src/seo/semantic-links.test.ts src/seo/public-growth.test.ts`: 2 files passed, 14 tests passed.
+- `git diff --check`: no whitespace errors.
+- `npm test`: 21 files passed, 136 tests passed.
+- `npm run build`: TypeScript and Vite production build completed.
+- Local dev smoke: `http://localhost:5173/product/github-repo-to-launch-deck`, `/sitemap.xml`, and `/llms.txt` returned HTTP 200; `llms.txt` contains `GitHub Repository Pitch Deck Generator` and the deck-ready launch brief description.
+
+Decision:
+
+- Treat this as a P4 activation-to-evaluation growth hypothesis and productization bridge, not validated demand or pricing proof.
+
+Next action:
+
+- PR/merge, production smoke, then compare route-level `page_view`, `cta_clicked`, `generation_started`, `generation_completed`, and deck artifact export behavior against `/product/github-repo-to-launch-package`.
+
 ## 2026-06-02 Launch Package Intent Qualification Slice
 
 Hypothesis:
