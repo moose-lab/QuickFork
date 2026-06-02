@@ -34,6 +34,7 @@ describe("public growth infrastructure", () => {
     }
     expect(sitemap).toContain("<loc>https://seekersai.com/product/github-repo-visual-explainer</loc>");
     expect(sitemap).toContain("<loc>https://seekersai.com/product/github-repo-to-launch-deck</loc>");
+    expect(sitemap).toContain("<loc>https://seekersai.com/product/github-repo-to-product-outreach</loc>");
     expect(sitemap).toContain("<loc>https://seekersai.com/product/repository-launch-package-pilot</loc>");
     expect(sitemap).toContain("<loc>https://seekersai.com/use-cases/ai-project-launch</loc>");
     expect(sitemap).toContain("<loc>https://seekersai.com/resources/github-repo-launch-demand-map</loc>");
@@ -58,6 +59,11 @@ describe("public growth infrastructure", () => {
     expect(llms).toContain("GitHub Repository Pitch Deck Generator");
     expect(llms).toContain(
       "deck-ready launch brief, slide outline, Product Hunt story, and outreach narrative from repository evidence",
+    );
+    expect(llms).toContain("https://seekersai.com/product/github-repo-to-product-outreach");
+    expect(llms).toContain("GitHub Repo Product Outreach");
+    expect(llms).toContain(
+      "source-backed outreach brief, launch email sequence, community post angle, partner note, and human review checklist from repository evidence",
     );
     expect(llms).toContain("https://seekersai.com/product/repository-launch-package-pilot");
     expect(llms).toContain("Repository Launch Package Pilot");

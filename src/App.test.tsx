@@ -572,6 +572,62 @@ describe("App", () => {
     expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key/i);
   }, 10000);
 
+  it("renders the GitHub repo product outreach page as a source-backed product route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/github-repo-to-product-outreach?utm_source=google");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /GitHub Repo Product Outreach/i })).toBeInTheDocument();
+    expect(screen.getAllByText(/source-backed outreach package/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Launch email draft/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Community feedback post/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Partner or newsletter note/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Human review checklist/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: /Open Source Guides finding users/i })).toHaveAttribute(
+      "href",
+      "https://opensource.guide/finding-users/",
+    );
+    expect(screen.getByRole("link", { name: /FTC CAN-SPAM compliance guide/i })).toHaveAttribute(
+      "href",
+      "https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business",
+    );
+    expect(screen.getByRole("link", { name: /Hacker News guidelines/i })).toHaveAttribute(
+      "href",
+      "https://news.ycombinator.com/newsguidelines.html",
+    );
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("GitHub Repo Product Outreach | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps github repo product outreach demand into a source-backed outreach brief, launch email sequence, community post angle, partner note, and human review checklist from repository evidence.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/github-repo-to-product-outreach",
+    );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/product/github-repo-to-product-outreach",
+          page_type: "product",
+          buyer_stage: "consideration",
+          intent_cluster: "github_repo_product_outreach",
+          utm_source: "google",
+        }),
+      ]),
+    );
+    expect(document.body.textContent).not.toMatch(
+      /\b(scraped leads|automatic sending|guaranteed|reply rate|deliverability|revenue|customers|rankings|viral)\b/i,
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key/i);
+  }, 10000);
+
   it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");
