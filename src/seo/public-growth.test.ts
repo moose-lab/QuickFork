@@ -50,6 +50,16 @@ describe("public growth infrastructure", () => {
     expect(llms).toContain("GitHub repository");
     expect(llms).toBe(renderLlmsTxt());
     expect(llms).toContain("https://seekersai.com/product/github-repo-to-launch-package");
+    expect(llms).toContain("https://seekersai.com/product/source-backed-launch-assets");
+    expect(llms).toContain("Source Backed Launch Assets");
+    expect(llms).toContain(
+      "reviewable README, social, deck, outreach, and visual materials generated from repository evidence",
+    );
+    expect(llms).toContain("https://seekersai.com/product/readme-marketing-cards");
+    expect(llms).toContain("README Marketing Cards");
+    expect(llms).toContain(
+      "README-first hero cards, GitHub social preview direction, and launch visuals grounded in repository evidence",
+    );
     expect(llms).toContain("https://seekersai.com/product/github-repo-visual-explainer");
     expect(llms).toContain("GitHub Repo Visual Explainer");
     expect(llms).toContain(

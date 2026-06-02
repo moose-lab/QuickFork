@@ -148,6 +148,188 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
       },
     ],
   },
+  source_backed_launch_assets: {
+    definition:
+      "Source-backed launch assets are reviewable README, social, deck, outreach, and visual materials generated from repository evidence, source maps, and human-approved claims. QuickFork uses the repo as the source boundary so technical teams can explain a project across launch channels without starting from a blank prompt.",
+    targetUser:
+      "Product marketers, DevRel operators, AI project builders, open-source maintainers, and technical founders.",
+    jobToBeDone:
+      "When a working repository is ready for public launch, help the team turn source evidence into channel-ready assets without inventing claims, visuals, or proof.",
+    evidenceBoundary:
+      "Claims should come from README content, repository metadata, linked docs, official assets, generated quality reports, or explicit user input. Unsupported claims stay out of public launch materials.",
+    benefits: [
+      {
+        title: "Replace a blank prompt with a source map",
+        body: "Start from repository evidence, official links, README details, and explicit human input before asking a model to draft launch materials.",
+      },
+      {
+        title: "Keep launch claims reviewable",
+        body: "Separate repository facts, source-backed proof, human notes, and hypotheses so every asset can be checked before publishing.",
+      },
+      {
+        title: "Align every launch channel",
+        body: "Use one source-backed brief for README copy, social posts, deck flow, product outreach, and visual explainer directions.",
+      },
+      {
+        title: "Make AI answers extract the right story",
+        body: "Give search and AI crawlers a clear definition, workflow, FAQ, source notes, and CTA tied to QuickFork's repo-to-launch package wedge.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Read the repository evidence",
+        body: "QuickFork starts with the public repo URL, README, metadata, topics, official links, and any explicit user notes.",
+      },
+      {
+        title: "Build the source map",
+        body: "The launch brief records what is supported, which claims need review, which audience is likely, and which channels need assets.",
+      },
+      {
+        title: "Generate channel assets",
+        body: "Draft README, social, deck, outreach, and visual material from the same source-backed story instead of separate prompts.",
+      },
+      {
+        title: "Review and measure",
+        body: "Humans approve the assets, then QuickFork measures CTA clicks, generation starts, artifact exports, and full-package requests.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What are source-backed launch assets?",
+        answer:
+          "They are reviewable README, social, deck, outreach, and visual materials generated from repository evidence, source maps, and human-approved claims rather than unsupported marketing copy.",
+      },
+      {
+        question: "Why should a launch workflow start from a repository?",
+        answer:
+          "The repository contains the product's public evidence: README language, metadata, topics, official links, identity assets, implementation context, and reviewable proof boundaries.",
+      },
+      {
+        question: "What claims can QuickFork use?",
+        answer:
+          "QuickFork should use README evidence, repository metadata, linked docs, official assets, generated quality reports, or explicit user input. Everything else needs human review or should be removed.",
+      },
+      {
+        question: "Are source-backed launch assets published automatically?",
+        answer:
+          "No. QuickFork generates launch drafts and review artifacts. Humans still approve claims, visuals, examples, pricing language, and any public publishing decision.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub treats the README as the project explanation surface, making it the first source for launch asset evidence.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "GitHub Docs social preview",
+        body: "GitHub social preview customization makes shared-link visuals a concrete part of repository launch packaging.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides connects audience discovery, messaging, and feedback loops to open-source launch work.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation makes concise story, media choices, maker context, and launch-day copy concrete review surfaces.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+  },
+  readme_marketing_cards: {
+    definition:
+      "README marketing cards are README-first hero cards, GitHub social preview direction, and launch visuals grounded in repository evidence and human review. They help visitors understand what a technical project does before reading the full README, code, benchmark notes, or launch announcement.",
+    targetUser:
+      "Design leads, open-source maintainers, AI project builders, DevRel operators, and technical founders.",
+    jobToBeDone:
+      "When a repository needs a stronger first impression, help the team turn README evidence into a visual hierarchy that makes the project scannable and shareable.",
+    evidenceBoundary:
+      "Visual claims should come from README content, repository metadata, official identity assets, linked docs, generated quality reports, or explicit user input. Do not invent logos, proof, or public outcomes.",
+    benefits: [
+      {
+        title: "Make the README scannable before the code",
+        body: "Use a hero card and visual story to explain what the repo does, who it helps, and why it matters before visitors parse implementation detail.",
+      },
+      {
+        title: "Connect README visuals to launch channels",
+        body: "Carry the same source-backed visual direction into GitHub social preview, Product Hunt gallery, deck intro, and social launch posts.",
+      },
+      {
+        title: "Keep visual identity source-backed",
+        body: "Prefer official assets, repository images, GitHub avatars, and explicit human constraints instead of random generated marks.",
+      },
+      {
+        title: "Route visual interest into activation",
+        body: "Use the page to move visitors from visual curiosity into a free repo brief, artifact preview, or full launch package request.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Audit the README story",
+        body: "Review the problem, target user, workflow, setup path, proof limits, and visual identity signals already present in the repository.",
+      },
+      {
+        title: "Choose the card hierarchy",
+        body: "Decide which project promise, workflow, source evidence, and CTA should appear in the README hero and shared preview.",
+      },
+      {
+        title: "Draft preview and launch visuals",
+        body: "Map the same story into README card copy, GitHub social preview direction, deck-ready visual language, and launch image prompts.",
+      },
+      {
+        title: "Generate and review",
+        body: "Use QuickFork to generate the source-backed brief and visual direction, then approve identity, claims, and channel fit before publishing.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is a README marketing card?",
+        answer:
+          "It is a README-first visual and copy block that explains a repository's value, source evidence, target user, and launch CTA before visitors read the full technical README.",
+      },
+      {
+        question: "How is this different from a README banner generator?",
+        answer:
+          "A banner generator usually focuses on a single image. QuickFork connects README evidence, GitHub social preview direction, launch copy, deck context, and human review into one package.",
+      },
+      {
+        question: "What source assets does QuickFork use?",
+        answer:
+          "QuickFork should use README content, repository metadata, linked docs, official identity assets, GitHub avatars, generated quality reports, and explicit user input.",
+      },
+      {
+        question: "Does a README marketing card replace documentation?",
+        answer:
+          "No. The card helps people understand and share the project faster. The README still needs setup instructions, technical details, caveats, and source-backed proof.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub positions the README as the first explanation surface for a repository, so the card must respect README evidence.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "GitHub Docs social preview",
+        body: "GitHub social preview customization connects README-facing visuals to the image people see when repository links are shared.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides frames user discovery and feedback as part of open-source growth, which should shape the card audience.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation makes visual gallery choices and concise project story part of the public launch package.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+  },
   ai_project_launch: {
     definition:
       "A source-backed launch package for an AI repository turns README evidence, model or workflow context, benchmarks, caveats, visuals, and distribution copy into reviewable materials for a cold-start launch. It helps builders explain what the project does before audiences read the code.",
@@ -916,6 +1098,12 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   if (link.intentCluster === "github_repo_to_launch_package") {
     return "GitHub Repo To Launch Package for cold-start technical launches.";
   }
+  if (link.intentCluster === "source_backed_launch_assets") {
+    return "Source Backed Launch Assets for repository evidence-driven launches.";
+  }
+  if (link.intentCluster === "readme_marketing_cards") {
+    return "README Marketing Cards for source-backed repository visuals.";
+  }
   if (link.intentCluster === "ai_project_launch") {
     return "AI Project Launch for source-backed technical launches.";
   }
@@ -969,6 +1157,12 @@ export function getMarketingPageHeadline(link: MarketingLink) {
 export function getMarketingPageDescription(link: MarketingLink) {
   if (link.intentCluster === "github_repo_to_launch_package") {
     return "QuickFork maps github repo to launch package demand into source-backed README, social, deck, outreach, and visual explainer assets for cold-start technical launches.";
+  }
+  if (link.intentCluster === "source_backed_launch_assets") {
+    return "QuickFork maps source backed launch assets demand into reviewable README, social, deck, outreach, and visual materials generated from repository evidence, source maps, and human-approved claims.";
+  }
+  if (link.intentCluster === "readme_marketing_cards") {
+    return "QuickFork maps readme marketing cards demand into README-first hero cards, GitHub social preview direction, and launch visuals grounded in repository evidence and human review.";
   }
   if (link.intentCluster === "ai_project_launch") {
     return "QuickFork maps AI project launch demand into source-backed README, social, deck, outreach, and visual launch assets for cold-start AI repositories.";

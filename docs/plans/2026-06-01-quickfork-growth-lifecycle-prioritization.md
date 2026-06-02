@@ -1291,3 +1291,56 @@ Decision:
 Next action:
 
 - Review actual full launch package lead quality before changing public package or pricing language.
+
+## 2026-06-02 Source-Backed And README Product Page Refresh Slice
+
+Hypothesis:
+
+- If `/product/source-backed-launch-assets` and `/product/readme-marketing-cards` explain QuickFork's source-backed repo-to-launch package workflow with unique definitions, target users, workflows, FAQs, source notes, and AI-readable descriptions, search and AI-search visitors will understand the product wedge before starting the generator.
+
+Lifecycle stage:
+
+- Discovery and Validation.
+
+Target user:
+
+- Product marketers, DevRel operators, AI project builders, open-source maintainers, design leads, and technical founders preparing repository-backed launch assets.
+
+Changed surface:
+
+- `/product/source-backed-launch-assets`
+- `/product/readme-marketing-cards`
+- `src/marketing/page-content.ts`
+- `public/llms.txt`
+- `src/App.test.tsx`
+- `src/seo/public-growth.test.ts`
+- `src/seo/semantic-links.test.ts`
+- `docs/marketing/research/2026-06-02-source-backed-readme-page-refresh.md`
+
+Metric:
+
+- `page_view` and `cta_clicked` by `intent_cluster`, followed by repo URL submissions, generation completions, and artifact exports.
+
+Guardrail:
+
+- Do not claim rankings, revenue, customer count, Product Hunt outcomes, conversion lift, exact pricing, or willingness to pay.
+- Keep browser analytics free of email, raw repo text, tokens, secrets, raw artifact bodies, pricing claims, rankings, revenue, or unsupported proof.
+
+Evidence observed:
+
+- RED App tests failed first because both product routes still used fallback generic copy instead of source-backed/README-specific content.
+- RED public-growth test failed first because `public/llms.txt` still exposed generic fallback descriptions.
+- RED semantic-link tests failed first because `getMarketingPageDescription()` still returned fallback descriptions for both intent clusters.
+- GREEN focused verification passed: `npm test -- src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts -t "source-backed launch assets|README marketing cards|machine-readable AI context|semantic marketing"` returned 3 files passed and 15 selected tests passed.
+- Targeted verification passed: `npm test -- src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts` returned 3 files passed and 41 tests passed.
+- Full verification passed: `npm test` returned 23 files passed and 146 tests passed.
+- Build verification passed: `npm run build` completed TypeScript build and Vite production build.
+- Diff hygiene passed: `git diff --check` returned no whitespace errors.
+
+Decision:
+
+- Treat this as a P1 landing page quality and AI/GEO extraction improvement, not validated demand. The pages are now suitable for production smoke, Search Console review, AI-answer checks, and interview follow-up.
+
+Next action:
+
+- PR/merge, production route smoke, production `llms.txt`/sitemap checks, then compare CTA and generation behavior for these routes against the broader repo-to-launch-package page.
