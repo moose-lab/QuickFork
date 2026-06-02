@@ -1127,6 +1127,98 @@ blockquote {
   line-height: 1.4;
 }
 
+.launchMaterialsMap {
+  border: 1px solid var(--border);
+  display: grid;
+  background: #f7fbf8;
+}
+
+.launchMaterialsMapHead {
+  padding: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.launchMaterialsMapHead strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.launchMaterialsMapHead small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.launchMaterialsMapChannels {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  list-style: none;
+}
+
+.launchMaterialsMapChannels li {
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 8px;
+}
+
+.launchMaterialsMapChannels li:last-child {
+  border-bottom: 0;
+}
+
+.launchMaterialsMapChannels span {
+  width: fit-content;
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--muted);
+  font: 700 11px/1.2 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.launchMaterialsMapChannels strong {
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.launchMaterialsMapChannels dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.launchMaterialsMapChannels div {
+  min-width: 0;
+}
+
+.launchMaterialsMapChannels dt {
+  color: var(--muted);
+  font: 700 10px/1.2 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.launchMaterialsMapChannels dd {
+  margin: 3px 0 0;
+  color: var(--fg);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.launchMaterialsMapChannels small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .launchArtifactList {
   border: 1px solid var(--border);
   display: grid;
@@ -3289,6 +3381,8 @@ blockquote {
   .launchAudienceDiscoveryHead,
   .launchAudienceDiscoverySignals dl,
   .launchStoryMapHead,
+  .launchMaterialsMapHead,
+  .launchMaterialsMapChannels dl,
   .launchArtifactIntro,
   .launchArtifactRow,
   .launchPackageCta,

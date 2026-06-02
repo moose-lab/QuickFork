@@ -1,12 +1,12 @@
 # Product Marketing Context
 
-*Last updated: 2026-05-15*
+*Last updated: 2026-06-03*
 
 ## Product Overview
 
 **One-liner:** QuickFork turns a GitHub repository into a launch-ready story and shareable marketing asset package.
 
-**What it does:** QuickFork accepts a GitHub repository URL, extracts repository and README evidence, builds a curated project brief, generates aligned launch copy, and produces prompt/image/quality artifacts for README pages, slide decks, and social distribution. The product emphasizes traceability: generated claims, metrics, identity assets, and visual prompts should come from repository evidence or explicit user input.
+**What it does:** QuickFork accepts a GitHub repository URL, extracts repository and README evidence, builds a curated project brief, maps launch materials across README/social/deck/visual/outreach channels, generates aligned launch copy, and produces prompt/image/quality artifacts for README pages, slide decks, and social distribution. The product emphasizes traceability: generated claims, metrics, identity assets, channel mappings, and visual prompts should come from repository evidence or explicit user input.
 
 **Product category:** GitHub-to-launch asset generator; developer marketing automation; open-source launch storytelling tool.
 
@@ -25,12 +25,14 @@
 **Jobs to be done:**
 - Turn a repository into a clear public-facing project story.
 - Produce launch visuals and copy for README, PPT, X/LinkedIn, and social posts.
+- Map each launch material to the target user, source evidence, review question, and success signal before publishing.
 - Preserve evidence, identity assets, metrics, and locale alignment so generated marketing can be reviewed before publishing.
 
 **Use cases:**
 - Launch a GitHub project with README cover imagery and concise positioning.
 - Prepare multilingual launch copy in English, Chinese, and Japanese.
 - Generate a marketing-card prompt and visual output with source-backed identity rules.
+- Create a launch materials map for README, social, deck, visual, and outreach channels from one repository brief.
 - Create project showcase pages from successful generations.
 - Build reusable proof and case-study content from generated launch packages.
 
@@ -117,7 +119,7 @@
 - "Repo URL in, shareable project assets out."
 - "A traceable marketing-card workflow for open-source projects."
 
-**Words to use:** GitHub repository, launch-ready story, source-backed, traceable, curated brief, README cover, launch package, marketing card, localized copy, artifact manifest, quality report, official logo, GitHub avatar.
+**Words to use:** GitHub repository, launch-ready story, source-backed, traceable, curated brief, launch materials map, README cover, launch package, marketing card, localized copy, artifact manifest, quality report, official logo, GitHub avatar.
 
 **Words to avoid:** Magic, fake proof, random logo, one-click publish, guaranteed rankings, autonomous launch, invented metrics.
 
@@ -126,6 +128,7 @@
 | Term | Meaning |
 | --- | --- |
 | Launch package | The combined brief, copy, prompt, image, QA, and manifest artifacts created from a repo |
+| Launch materials map | A channel plan that assigns README, social, deck, visual, and outreach materials to target users, source evidence, review questions, and success signals |
 | Curated brief | A compact source-backed summary used as the factual base for generated assets |
 | Marketing card | A visual project explainer suitable for README, PPT, and social distribution |
 | Identity asset | Official project logo, README asset, homepage asset, or GitHub avatar used to represent the project |
@@ -155,6 +158,7 @@
 | Theme | Proof |
 | --- | --- |
 | Repo-to-story speed | Current app accepts GitHub URL and runs `/api/generations` to produce launch artifacts |
+| Channel planning | The generated launch brief includes a source-backed launch materials map for README, social, deck, visual, and outreach outputs |
 | Traceability | Workflow stores brief, prompt, image, quality report, and manifest paths |
 | Brand safety | Identity rules prefer official assets or GitHub avatar and forbid random generated logos |
 | Multilingual readiness | Current workflow supports English, Chinese, and Japanese output slots |

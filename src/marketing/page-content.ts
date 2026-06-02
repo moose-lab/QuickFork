@@ -330,6 +330,97 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
     ],
     lastUpdated: "June 2, 2026",
   },
+  github_repo_launch_materials_map: {
+    definition:
+      "A GitHub repo launch materials map is a source-backed channel plan that maps one repository URL into README, social, deck, visual, and outreach assets. Each channel names the target user, artifact, source evidence, review question, and success signal so builders can review launch materials before publishing.",
+    targetUser:
+      "AI project builders, open-source maintainers, technical founders, DevRel operators, and product marketers preparing a cold-start repository launch.",
+    jobToBeDone:
+      "When a generated repo brief produces multiple launch artifacts, help the builder decide which material belongs on which channel, who it is for, what source evidence supports it, and what activation signal to watch next.",
+    evidenceBoundary:
+      "The map should use repository metadata, README evidence, linked docs, official identity assets, generated quality reports, or explicit user input. It should not promise search placement, financial outcomes, adoption, Product Hunt outcomes, exact pricing, or automated publishing.",
+    benefits: [
+      {
+        title: "Map every material to a job",
+        body: "Tie README, social, deck, visual, and outreach outputs to a target user, job-to-be-done, artifact, source evidence, review question, and success signal.",
+      },
+      {
+        title: "Keep cold-start launch work reviewable",
+        body: "Show which source-backed claim belongs in each channel before the builder copies, downloads, or requests a full package.",
+      },
+      {
+        title: "Measure activation by artifact behavior",
+        body: "Track copy and download behavior by artifact type so QuickFork can learn which materials create value before adding pricing or scale.",
+      },
+      {
+        title: "Make the product workflow AI-readable",
+        body: "Expose the materials map as a crawlable product page with definition, FAQ, source notes, and CTA back to the generator.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Start from one repository URL",
+        body: "QuickFork reads README, metadata, topics, source references, identity assets, and explicit user notes.",
+      },
+      {
+        title: "Build the free repo launch brief",
+        body: "The generation flow creates target-user discovery, a story map, source references, and channel artifacts.",
+      },
+      {
+        title: "Map artifacts to channels",
+        body: "The materials map assigns README, social, deck, visual, and outreach outputs to users, jobs, review questions, and success signals.",
+      },
+      {
+        title: "Copy, download, and validate",
+        body: "Builders export the useful artifacts, then compare page source, generation, copy, download, and full-package request behavior.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is a GitHub repo launch materials map?",
+        answer:
+          "It is a source-backed channel plan that maps one repository URL into README, social, deck, visual, and outreach assets, with target user, artifact, source evidence, review question, and success signal for each channel.",
+      },
+      {
+        question: "How does the materials map help cold-start launches?",
+        answer:
+          "It keeps every launch material tied to a specific user job and source boundary before the project has mature public proof, so builders can review and ship the most useful channels first.",
+      },
+      {
+        question: "What does QuickFork measure after generating the map?",
+        answer:
+          "QuickFork can measure launch brief views, materials-map copies, artifact copies and downloads, generation completions, and full launch package requests without sending raw README text or artifact bodies to browser analytics.",
+      },
+      {
+        question: "Does the materials map publish assets automatically?",
+        answer:
+          "No. It is a review and planning surface. Humans still approve claims, visuals, examples, pricing language, and public publishing choices.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub treats the README as the primary repository explanation surface, so a channel map should start with README evidence.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "GitHub Docs social preview",
+        body: "GitHub social preview customization makes shared-link visuals a concrete material in repository launch planning.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides connects audience discovery and feedback loops to open-source launch work.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation makes story, media, maker context, and launch-day copy practical review surfaces.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+    ],
+    lastUpdated: "June 3, 2026",
+  },
   readme_marketing_cards: {
     definition:
       "README marketing cards are README-first hero cards, GitHub social preview direction, and launch visuals grounded in repository evidence and human review. They help visitors understand what a technical project does before reading the full README, code, benchmark notes, or launch announcement.",
@@ -1195,6 +1286,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   if (link.intentCluster === "cold_start_launch_materials") {
     return "Cold Start Launch Materials From A GitHub Repo.";
   }
+  if (link.intentCluster === "github_repo_launch_materials_map") {
+    return "GitHub Repo Launch Materials Map for source-backed channel planning.";
+  }
   if (link.intentCluster === "readme_marketing_cards") {
     return "README Marketing Cards for source-backed repository visuals.";
   }
@@ -1257,6 +1351,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "cold_start_launch_materials") {
     return "QuickFork maps cold start launch materials demand into source-backed README, social, deck, visual, and outreach drafts generated from one public GitHub repository URL.";
+  }
+  if (link.intentCluster === "github_repo_launch_materials_map") {
+    return "QuickFork maps github repo launch materials map demand into a source-backed channel plan for README, social, deck, visual, and outreach assets from one repository URL.";
   }
   if (link.intentCluster === "readme_marketing_cards") {
     return "QuickFork maps readme marketing cards demand into README-first hero cards, GitHub social preview direction, and launch visuals grounded in repository evidence and human review.";

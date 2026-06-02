@@ -1518,3 +1518,67 @@ Decision:
 Next action:
 
 - Run the manual baseline using the four prompt rows, then fill evidence rows only after real Search Console exports and AI-answer observations exist.
+
+## 2026-06-03 Launch Materials Map Product Activation Slice
+
+Hypothesis:
+
+- If QuickFork adds a source-backed launch materials map to the generated brief and gives the same intent a crawlable product route, AI project builders can understand which launch material belongs on README, social, deck, visual, and outreach channels before requesting a full package.
+
+Lifecycle stage:
+
+- Activation and Validation.
+
+Target user:
+
+- AI project builders preparing a cold-start repository launch.
+- Open-source maintainers who need source-backed README, social, and visual materials.
+- DevRel operators and product marketers who need traceable channel assets.
+- Technical founders evaluating whether a reviewed launch package is worth requesting.
+
+Changed surface:
+
+- `src/server/generation/types.ts`
+- `src/server/generation/launch-brief.ts`
+- `src/components/landing/HeroSection.tsx`
+- `src/lib/analytics.ts`
+- `src/styles/app.css`
+- `src/marketing/link-catalog.ts`
+- `src/marketing/page-content.ts`
+- `public/sitemap.xml`
+- `public/llms.txt`
+- `docs/marketing/data/semantic-link-inventory.csv`
+- `docs/superpowers/plans/2026-06-03-launch-materials-map.md`
+- `docs/marketing/research/2026-06-03-launch-materials-map.md`
+
+Metric:
+
+- Primary: `launch_materials_map_copied`.
+- Supporting: page views, CTA clicks, repo submissions, generation completions, artifact copy/download events, and full launch package requests by `intent_cluster=github_repo_launch_materials_map`.
+
+Guardrail:
+
+- Do not claim search placement, financial outcomes, adoption, Product Hunt outcomes, exact pricing, automatic publishing, or willingness to pay.
+- Do not send raw README text, artifact bodies, source notes, secrets, tokens, email, or private launch notes to browser analytics.
+
+Evidence observed:
+
+- Baseline `npm test` passed before changes: 24 test files, 158 tests passed.
+- RED generation test failed first because the launch brief did not include `launchMaterialsMap` or a `materials_map` artifact.
+- GREEN focused generation verification passed: `npm test -- src/server/generation/generation.test.ts -t "source-backed free repo launch brief"`.
+- GREEN focused UI verification passed: `npm test -- src/App.test.tsx -t "Hero generator"`.
+- RED route tests failed first because `/product/github-repo-launch-materials-map` was not in the marketing catalog, sitemap, or `llms.txt`.
+- GREEN route verification passed: `npm test -- src/App.test.tsx -t "launch materials map"`.
+- GREEN semantic-link verification passed: `npm test -- src/seo/semantic-links.test.ts -t "launch materials map|canonical page paths"`.
+- GREEN public-growth verification passed: `npm test -- src/seo/public-growth.test.ts -t "sitemap|machine-readable AI context"`.
+- Full verification passed: `npm test` returned 24 files passed and 160 tests passed.
+- Build verification passed: `npm run build` completed TypeScript build and Vite production build.
+- Diff hygiene passed: `git diff --check` returned no whitespace errors.
+
+Decision:
+
+- Treat this as a product activation and validation slice, not validated demand. The materials map is ready for production smoke, Search Console review, AI-answer checks, and artifact-behavior comparison.
+
+Next action:
+
+- Run full verification, merge, production smoke, then compare `/product/github-repo-launch-materials-map` behavior against `/product/github-repo-to-launch-package` and `/product/cold-start-launch-materials` over a 14-day window.

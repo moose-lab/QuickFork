@@ -17,6 +17,7 @@ export type AnalyticsEventName =
   | "launch_brief_copied"
   | "launch_audience_map_copied"
   | "launch_story_map_copied"
+  | "launch_materials_map_copied"
   | "launch_artifact_copied"
   | "launch_artifact_downloaded"
   | "generated_image_preview_opened"

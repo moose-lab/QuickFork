@@ -228,7 +228,27 @@ export interface RepoLaunchStoryMap {
   nodes: RepoLaunchStoryMapNode[];
 }
 
-export type RepoLaunchBriefArtifactType = "audience" | "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
+export type RepoLaunchMaterialChannelType = "readme" | "social" | "deck" | "visual" | "outreach";
+
+export interface RepoLaunchMaterialChannel {
+  type: RepoLaunchMaterialChannelType;
+  label: string;
+  primaryUser: string;
+  jobToBeDone: string;
+  artifactLabel: string;
+  channelFit: string;
+  source: string;
+  reviewQuestion: string;
+  successSignal: string;
+}
+
+export interface RepoLaunchMaterialsMap {
+  title: string;
+  summary: string;
+  channels: RepoLaunchMaterialChannel[];
+}
+
+export type RepoLaunchBriefArtifactType = "audience" | "story_map" | "materials_map" | "readme" | "social" | "deck" | "outreach" | "visual";
 
 export interface RepoLaunchBriefArtifact {
   type: RepoLaunchBriefArtifactType;
@@ -243,6 +263,7 @@ export interface RepoLaunchBrief {
   audienceHypothesis: string;
   audienceDiscovery: RepoLaunchAudienceDiscovery;
   storyMap: RepoLaunchStoryMap;
+  launchMaterialsMap: RepoLaunchMaterialsMap;
   readmeChecklist: RepoLaunchBriefChecklistItem[];
   launchAngles: RepoLaunchBriefAngle[];
   socialPost: string;

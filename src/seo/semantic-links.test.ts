@@ -225,6 +225,12 @@ describe("typed semantic marketing link catalog", () => {
         primaryCta: "generate_launch_card",
       }),
     );
+    expect(getMarketingLinkByPath("/product/github-repo-launch-materials-map")).toEqual(
+      expect.objectContaining({
+        intentCluster: "github_repo_launch_materials_map",
+        primaryKeyword: "github repo launch materials map",
+      }),
+    );
     expect(getMarketingLinkByPath("/product/readme-marketing-cards")).toEqual(
       expect.objectContaining({
         intentCluster: "readme_marketing_cards",
@@ -265,6 +271,16 @@ describe("typed semantic marketing link catalog", () => {
     expect(getMarketingPageTitle(link!)).toContain("Cold Start Launch Materials");
     expect(getMarketingPageHeadline(link!)).toContain("Cold Start Launch Materials");
     expect(getMarketingPageDescription(link!)).toContain("README, social, deck, visual, and outreach drafts");
+    expect(getMarketingPageDescription(link!)).not.toMatch(/guaranteed|rankings|revenue|customers|viral/i);
+  });
+
+  it("publishes a GitHub repo launch materials map product page contract", () => {
+    const link = getMarketingLinkByPath("/product/github-repo-launch-materials-map");
+
+    expect(link).toBeDefined();
+    expect(getMarketingPageTitle(link!)).toContain("GitHub Repo Launch Materials Map");
+    expect(getMarketingPageHeadline(link!)).toContain("GitHub Repo Launch Materials Map");
+    expect(getMarketingPageDescription(link!)).toContain("source-backed channel plan");
     expect(getMarketingPageDescription(link!)).not.toMatch(/guaranteed|rankings|revenue|customers|viral/i);
   });
 

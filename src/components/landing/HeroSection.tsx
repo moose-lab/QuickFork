@@ -86,6 +86,7 @@ interface RepoLaunchBriefSummary {
   audienceHypothesis: string;
   audienceDiscovery?: RepoLaunchAudienceDiscoverySummary;
   storyMap?: RepoLaunchStoryMapSummary;
+  launchMaterialsMap?: RepoLaunchMaterialsMapSummary;
   readmeChecklist: Array<{
     item: string;
     source: string;
@@ -134,8 +135,26 @@ interface RepoLaunchStoryMapNodeSummary {
   source: string;
 }
 
+interface RepoLaunchMaterialsMapSummary {
+  title: string;
+  summary: string;
+  channels: RepoLaunchMaterialChannelSummary[];
+}
+
+interface RepoLaunchMaterialChannelSummary {
+  type: "readme" | "social" | "deck" | "visual" | "outreach";
+  label: string;
+  primaryUser: string;
+  jobToBeDone: string;
+  artifactLabel: string;
+  channelFit: string;
+  source: string;
+  reviewQuestion: string;
+  successSignal: string;
+}
+
 interface RepoLaunchBriefArtifactSummary {
-  type: "audience" | "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
+  type: "audience" | "story_map" | "materials_map" | "readme" | "social" | "deck" | "outreach" | "visual";
   label: string;
   fileName: string;
   body: string;
@@ -472,6 +491,19 @@ function LaunchBriefPanel({
     });
   };
 
+  const handleCopyMaterialsMap = async () => {
+    if (!brief.launchMaterialsMap) return;
+    await navigator.clipboard?.writeText(serializeLaunchMaterialsMap(brief.launchMaterialsMap));
+    setCopyStatus("Copied launch materials map");
+    trackEvent("launch_materials_map_copied", {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      channel_count: brief.launchMaterialsMap.channels.length,
+      artifact_type_count: getLaunchMaterialArtifactTypeCount(brief.launchMaterialsMap),
+      source_reference_count: brief.sourceReferences.length,
+    });
+  };
+
   const handleCopyArtifact = async (artifact: RepoLaunchBriefArtifactSummary) => {
     await navigator.clipboard?.writeText(artifact.body);
     setCopyStatus(`Copied ${artifact.label}`);
@@ -591,6 +623,55 @@ function LaunchBriefPanel({
           </ol>
         </section>
       ) : null}
+      {brief.launchMaterialsMap ? (
+        <section className="launchMaterialsMap" aria-label="Launch materials map">
+          <div className="launchMaterialsMapHead">
+            <div>
+              <strong>Launch materials map</strong>
+              <small>{brief.launchMaterialsMap.summary}</small>
+            </div>
+            <button className="secondaryButton" onClick={() => void handleCopyMaterialsMap()} type="button">
+              <Copy aria-hidden="true" size={15} />
+              Copy launch materials map
+            </button>
+          </div>
+          <ul className="launchMaterialsMapChannels">
+            {brief.launchMaterialsMap.channels.map((channel) => (
+              <li key={channel.type}>
+                <span>{channel.type}</span>
+                <strong>{channel.label}</strong>
+                <dl>
+                  <div>
+                    <dt>User</dt>
+                    <dd>{channel.primaryUser}</dd>
+                  </div>
+                  <div>
+                    <dt>Job</dt>
+                    <dd>{channel.jobToBeDone}</dd>
+                  </div>
+                  <div>
+                    <dt>Artifact</dt>
+                    <dd>{channel.artifactLabel}</dd>
+                  </div>
+                  <div>
+                    <dt>Fit</dt>
+                    <dd>{channel.channelFit}</dd>
+                  </div>
+                  <div>
+                    <dt>Review</dt>
+                    <dd>{channel.reviewQuestion}</dd>
+                  </div>
+                  <div>
+                    <dt>Signal</dt>
+                    <dd>{channel.successSignal}</dd>
+                  </div>
+                </dl>
+                <small>{channel.source}</small>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       {brief.artifacts?.length ? (
         <div className="launchArtifactList" aria-label="Launch artifact exports">
           <div className="launchArtifactIntro">
@@ -681,7 +762,7 @@ function LaunchBriefPanel({
 }
 
 function getLaunchBriefSectionCount(brief: RepoLaunchBriefSummary) {
-  return 6 + (brief.audienceDiscovery ? 1 : 0) + (brief.storyMap ? 1 : 0);
+  return 6 + (brief.audienceDiscovery ? 1 : 0) + (brief.storyMap ? 1 : 0) + (brief.launchMaterialsMap ? 1 : 0);
 }
 
 function getArtifactDownloadHref(artifact: RepoLaunchBriefArtifactSummary) {
@@ -708,6 +789,7 @@ function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: strin
     "",
     ...(brief.audienceDiscovery ? [serializeAudienceDiscovery(brief.audienceDiscovery), ""] : []),
     ...(brief.storyMap ? [serializeStoryMap(brief.storyMap), ""] : []),
+    ...(brief.launchMaterialsMap ? [serializeLaunchMaterialsMap(brief.launchMaterialsMap), ""] : []),
     "README checklist:",
     ...brief.readmeChecklist.map((item) => `- ${item.item} (${item.source})`),
     "",
@@ -761,8 +843,34 @@ function serializeStoryMap(storyMap: RepoLaunchStoryMapSummary) {
   ].join("\n");
 }
 
+function serializeLaunchMaterialsMap(launchMaterialsMap: RepoLaunchMaterialsMapSummary) {
+  return [
+    `Launch materials map: ${launchMaterialsMap.title}`,
+    "",
+    launchMaterialsMap.summary,
+    "",
+    ...launchMaterialsMap.channels.map((channel, index) =>
+      [
+        `${index + 1}. ${channel.label}`,
+        `   Channel: ${channel.type}`,
+        `   Primary user: ${channel.primaryUser}`,
+        `   Job to be done: ${channel.jobToBeDone}`,
+        `   Artifact: ${channel.artifactLabel}`,
+        `   Channel fit: ${channel.channelFit}`,
+        `   Review question: ${channel.reviewQuestion}`,
+        `   Success signal: ${channel.successSignal}`,
+        `   Source: ${channel.source}`,
+      ].join("\n"),
+    ),
+  ].join("\n");
+}
+
 function getAudienceChannelCount(audienceDiscovery: RepoLaunchAudienceDiscoverySummary) {
   return new Set(audienceDiscovery.signals.map((signal) => signal.whereToFind)).size;
+}
+
+function getLaunchMaterialArtifactTypeCount(launchMaterialsMap: RepoLaunchMaterialsMapSummary) {
+  return new Set(launchMaterialsMap.channels.map((channel) => channel.type)).size;
 }
 
 function ProductAnimationPanel() {

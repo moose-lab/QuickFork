@@ -354,6 +354,56 @@ describe("App", () => {
     expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key|raw|readme/i);
   }, 10000);
 
+  it("renders the GitHub repo launch materials map as a product activation route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/github-repo-launch-materials-map?utm_source=google");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /GitHub Repo Launch Materials Map/i })).toBeInTheDocument();
+    expect(screen.getAllByText(/channel plan for README, social, deck, visual, and outreach/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/target user, artifact, source evidence, review question, and success signal/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Map every material to a job/i)).toBeInTheDocument();
+    expect(screen.getByText(/Measure activation by artifact behavior/i)).toBeInTheDocument();
+    expect(screen.getByText(/What is a GitHub repo launch materials map/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /GitHub Docs About READMEs/i })).toHaveAttribute(
+      "href",
+      "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+    );
+    expect(screen.getByRole("link", { name: /Product Hunt launch guide/i })).toHaveAttribute(
+      "href",
+      "https://www.producthunt.com/launch/preparing-for-launch",
+    );
+    expect(screen.getByText("Last updated: June 3, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("GitHub Repo Launch Materials Map | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps github repo launch materials map demand into a source-backed channel plan for README, social, deck, visual, and outreach assets from one repository URL.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/github-repo-launch-materials-map",
+    );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/product/github-repo-launch-materials-map",
+          page_type: "product",
+          buyer_stage: "consideration",
+          intent_cluster: "github_repo_launch_materials_map",
+          utm_source: "google",
+        }),
+      ]),
+    );
+    expect(document.body.textContent).not.toMatch(/\b(guaranteed|rankings|revenue|customers|viral|autonomous)\b/i);
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key|raw|readme/i);
+  }, 10000);
+
   it("renders source-backed launch assets as a high-intent product route", () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/product/source-backed-launch-assets?utm_source=perplexity");
@@ -1178,6 +1228,34 @@ describe("App", () => {
                 },
               ],
             },
+            launchMaterialsMap: {
+              title: "QwenLM/FlashQLA launch materials map",
+              summary: "Channel plan for README, social, deck, visual, and outreach launch materials.",
+              channels: [
+                {
+                  type: "readme",
+                  label: "README launch section",
+                  primaryUser: "Open-source adopters",
+                  jobToBeDone: "Understand FlashQLA before reading implementation details.",
+                  artifactLabel: "README launch brief",
+                  channelFit: "GitHub visitors need source-backed context above the fold.",
+                  source: "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+                  reviewQuestion: "Which source-backed claim belongs in the README hero?",
+                  successSignal: "README artifact copied or downloaded.",
+                },
+                {
+                  type: "visual",
+                  label: "Visual project explainer",
+                  primaryUser: "AI project builders",
+                  jobToBeDone: "Understand the workflow without parsing the full README.",
+                  artifactLabel: "Visual explainer prompt",
+                  channelFit: "README, social preview, and deck channels need one consistent visual metaphor.",
+                  source: "Audience hypothesis from repo metadata and topics.",
+                  reviewQuestion: "Does the visual direction preserve identity assets and avoid fake logos?",
+                  successSignal: "Visual prompt copied or image preview opened.",
+                },
+              ],
+            },
             readmeChecklist: [
               {
                 item: "Lead with a one-sentence README value proposition.",
@@ -1222,6 +1300,13 @@ describe("App", () => {
                 label: "Project story map",
                 fileName: "qwenlm-flashqla-project-story-map.md",
                 body: "## Project story map\n\nSource-backed visual interpretation.",
+                sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
+              },
+              {
+                type: "materials_map",
+                label: "Launch materials map",
+                fileName: "qwenlm-flashqla-launch-materials-map.md",
+                body: "## Launch materials map\n\nREADME and visual channel plan.",
                 sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
               },
               {
@@ -1293,10 +1378,17 @@ describe("App", () => {
     expect(within(storyMapRegion).getByText(/Project story map/i)).toBeInTheDocument();
     expect(within(storyMapRegion).getByText(/Source-backed visual interpretation/i)).toBeInTheDocument();
     expect(within(storyMapRegion).getByText(/Install to benchmark/i)).toBeInTheDocument();
+    const materialsMapRegion = within(briefRegion).getByRole("region", { name: /launch materials map/i });
+    expect(within(materialsMapRegion).getByText(/^Launch materials map$/i)).toBeInTheDocument();
+    expect(within(materialsMapRegion).getByText(/Channel plan for README, social, deck, visual, and outreach/i)).toBeInTheDocument();
+    expect(within(materialsMapRegion).getByText(/README launch section/i)).toBeInTheDocument();
+    expect(within(materialsMapRegion).getByText(/Which source-backed claim belongs in the README hero/i)).toBeInTheDocument();
+    expect(within(materialsMapRegion).getByText(/Visual project explainer/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Lead with a one-sentence README value proposition/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Launch angle 1/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Create a ai_kernel_infra visual explainer/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Export artifacts/i)).toBeInTheDocument();
+    expect(within(materialsMapRegion).getByRole("button", { name: /copy launch materials map/i })).toBeInTheDocument();
     expect(within(briefRegion).getByRole("button", { name: /copy README launch brief/i })).toBeInTheDocument();
     expect(within(briefRegion).getByRole("link", { name: /download README launch brief/i })).toHaveAttribute(
       "download",
@@ -1335,11 +1427,11 @@ describe("App", () => {
           has_image_url: true,
         }),
         expect.objectContaining({
-          event: "launch_brief_viewed",
-          repo_full_name: "QwenLM/FlashQLA",
-          generation_id: "gen_qwenlm_flashqla_test",
-          brief_sections: 8,
-        }),
+            event: "launch_brief_viewed",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            brief_sections: 9,
+          }),
       ]),
     );
 
@@ -1353,6 +1445,8 @@ describe("App", () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Target user discovery"));
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy story map/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Project story map"));
+    fireEvent.click(within(materialsMapRegion).getByRole("button", { name: /copy launch materials map/i }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Launch materials map"));
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy README launch brief/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("README checklist"));
     fireEvent.click(within(briefRegion).getByRole("link", { name: /download README launch brief/i }));
@@ -1382,6 +1476,14 @@ describe("App", () => {
             source_reference_count: 1,
           }),
           expect.objectContaining({
+            event: "launch_materials_map_copied",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            channel_count: 2,
+            artifact_type_count: 2,
+            source_reference_count: 1,
+          }),
+          expect.objectContaining({
             event: "launch_artifact_copied",
             repo_full_name: "QwenLM/FlashQLA",
             generation_id: "gen_qwenlm_flashqla_test",
@@ -1404,13 +1506,14 @@ describe("App", () => {
             cta_id: "request_full_launch_package",
             cta_location: "launch_brief_panel",
             lifecycle_stage: "monetization",
-            artifact_count: 4,
+            artifact_count: 5,
           }),
         ]),
       ),
     );
     expect(JSON.stringify(window.dataLayer)).not.toContain("README checklist");
     expect(JSON.stringify(window.dataLayer)).not.toContain("Which repository evidence");
+    expect(JSON.stringify(window.dataLayer)).not.toContain("Which source-backed claim belongs in the README hero");
 
     fireEvent.click(previewImage);
     const previewDialog = await screen.findByRole("dialog", { name: /generated image preview/i });
