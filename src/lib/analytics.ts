@@ -6,6 +6,7 @@ export type AnalyticsEventName =
   | "outbound_link_clicked"
   | "resource_page_viewed"
   | "example_page_viewed"
+  | "tool_page_viewed"
   | "tool_started"
   | "tool_result_viewed"
   | "hero_repo_url_entered"

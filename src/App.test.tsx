@@ -399,6 +399,68 @@ describe("App", () => {
     expect(JSON.stringify(window.dataLayer)).not.toMatch(/ranking|revenue|customers|guaranteed|token|secret|api_key/i);
   }, 10000);
 
+  it("renders the repo launch readiness score as a source-backed free tool route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/tools/github-repo-launch-readiness-score?utm_source=product_hunt");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /GitHub Repo Launch Readiness Score/i })).toBeInTheDocument();
+    expect(screen.getAllByText(/100-point source-backed scorecard/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/100 total points/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/README trust/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Repository preview/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Audience and feedback/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Launch assets/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Measurement and follow-up/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: /GitHub Docs About READMEs/i })).toHaveAttribute(
+      "href",
+      "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+    );
+    expect(screen.getByRole("link", { name: /GitHub Docs social preview/i })).toHaveAttribute(
+      "href",
+      expect.stringContaining("docs.github.com"),
+    );
+    expect(screen.getByRole("link", { name: /Open Source Guides finding users/i })).toHaveAttribute(
+      "href",
+      "https://opensource.guide/finding-users/",
+    );
+    expect(screen.getByRole("link", { name: /Product Hunt launch guide/i })).toHaveAttribute(
+      "href",
+      "https://www.producthunt.com/launch/preparing-for-launch",
+    );
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /start free tool/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#studio");
+    expect(document.title).toBe("GitHub Repo Launch Readiness Score | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps github repo launch readiness score demand into a 100-point source-backed readiness score for README trust, repository preview, audience feedback, launch assets, and follow-up measurement.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/tools/github-repo-launch-readiness-score",
+    );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "tool_page_viewed",
+          tool_slug: "github-repo-launch-readiness-score",
+          tool_type: "scorecard",
+          buyer_stage: "consideration",
+          page_type: "tool",
+          intent_cluster: "launch_readiness_score",
+          utm_source: "product_hunt",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(
+      /email|token|secret|api_key|ranking|revenue|customers|guaranteed|viral/i,
+    );
+  }, 10000);
+
   it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");

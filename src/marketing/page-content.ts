@@ -1,4 +1,5 @@
 import type { MarketingBuyerStage, MarketingLink, MarketingPageType, MarketingPrimaryCta } from "./link-catalog";
+import { launchReadinessScorecard, type LaunchReadinessScorecard } from "./launch-readiness-score";
 
 export interface MarketingPageNarrative {
   definition: string;
@@ -23,6 +24,7 @@ export interface MarketingPageNarrative {
     url: string;
   }>;
   lastUpdated?: string;
+  scorecard?: LaunchReadinessScorecard;
 }
 
 const pageTypeLabels: Record<MarketingPageType, string> = {
@@ -391,6 +393,101 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
       },
     ],
   },
+  launch_readiness_score: {
+    definition:
+      "A GitHub repo launch readiness score is a 100-point source-backed scorecard that checks README trust, repository preview, audience feedback, launch assets, and follow-up measurement before a team generates or publishes a cold-start launch package.",
+    targetUser: "Founders, open-source maintainers, and AI/devtool builders preparing a public GitHub repository launch.",
+    jobToBeDone:
+      "When a project is close to launch, help the builder identify which repository signals are ready, which launch assets are missing, and whether QuickFork should generate a repo brief, visual explainer, and channel-specific launch package next.",
+    evidenceBoundary:
+      "This tool uses public launch guidance and QuickFork's own funnel contract as a planning rubric. It does not predict search performance, sales outcomes, launch results, or willingness to pay.",
+    benefits: [
+      {
+        title: "Find launch gaps before generating assets",
+        body: "Score the repository's README, preview, audience, launch assets, and measurement loop before asking a model to write public copy.",
+      },
+      {
+        title: "Turn abstract launch readiness into a checklist",
+        body: "Translate public launch guidance into concrete signals a builder can review inside a source-backed workflow.",
+      },
+      {
+        title: "Route the visitor into one studio action",
+        body: "Use the scorecard to explain why the next step is a free repo scan, not a generic content form.",
+      },
+      {
+        title: "Keep the score honest",
+        body: "Frame the score as a planning aid and activation signal, not a promise about traffic, sales, or launch success.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Check README trust",
+        body: "Confirm the repo explains the problem, audience, workflow, evidence, setup path, and unsupported claims before creating launch copy.",
+      },
+      {
+        title: "Check repository preview",
+        body: "Review whether shared repo links have a clear visual identity and preview that helps strangers understand the project quickly.",
+      },
+      {
+        title: "Check audience and feedback",
+        body: "Name likely users, communities, and questions before turning launch assets into public distribution.",
+      },
+      {
+        title: "Check launch assets",
+        body: "Map the repo brief into README/social visuals, Product Hunt copy, deck outline, social posts, and outreach drafts.",
+      },
+      {
+        title: "Check measurement and follow-up",
+        body: "Tie the launch package to repo brief starts, artifact exports, checklist requests, and follow-up interviews.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is a GitHub repo launch readiness score?",
+        answer:
+          "It is a 100-point source-backed scorecard that reviews README trust, repository preview, audience feedback, launch assets, and follow-up measurement before generating a launch package from one repository URL.",
+      },
+      {
+        question: "Who should use the launch readiness score?",
+        answer:
+          "It is for founders, open-source maintainers, and AI/devtool builders preparing a public GitHub repository launch who need a quick pre-launch review before creating README, social, deck, and outreach assets.",
+      },
+      {
+        question: "What happens after the scorecard?",
+        answer:
+          "The next action is to start the QuickFork studio, paste a public GitHub repo, and generate a source-backed brief, visual explainer, channel assets, quality report, and artifact manifest for review.",
+      },
+      {
+        question: "Does the score prove launch success?",
+        answer:
+          "No. The score is a planning rubric. It should not be used as proof of search performance, sales outcomes, Product Hunt results, conversion lift, or willingness to pay.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub positions the README as a key repository explanation surface, so README trust is the first score category.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "GitHub Docs social preview",
+        body: "GitHub social preview customization makes shared repo previews a concrete visual launch-readiness signal.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides ties open-source growth to audience discovery, messaging, community feedback, and user finding.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation turns launch assets, gallery decisions, maker context, and launch-day copy into concrete review work.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+    scorecard: launchReadinessScorecard,
+  },
 };
 
 export function getMarketingPageTitle(link: MarketingLink) {
@@ -409,6 +506,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   }
   if (link.intentCluster === "github_repo_launch_demand_map") {
     return "GitHub Repo Launch Demand for source-backed package prioritization.";
+  }
+  if (link.intentCluster === "launch_readiness_score") {
+    return "GitHub Repo Launch Readiness Score for source-backed pre-launch reviews.";
   }
 
   const keyword = formatMarketingLabel(link.primaryKeyword);
@@ -445,6 +545,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "github_repo_launch_demand_map") {
     return "QuickFork maps github repo launch demand into public-source signals for README, social, Product Hunt, deck, outreach, and paid launch-package tests.";
+  }
+  if (link.intentCluster === "launch_readiness_score") {
+    return "QuickFork maps github repo launch readiness score demand into a 100-point source-backed readiness score for README trust, repository preview, audience feedback, launch assets, and follow-up measurement.";
   }
 
   const audience = formatMarketingLabel(link.persona.replace(/_/g, " "));

@@ -149,6 +149,50 @@ describe("analytics", () => {
     });
   });
 
+  it("tracks tool page views while filtering PII and secret-like properties", () => {
+    window.dataLayer = [];
+    window.gtag = vi.fn();
+    window.history.pushState(
+      {},
+      "",
+      "/tools/github-repo-launch-readiness-score?utm_source=product_hunt&utm_campaign=repo_launch&token=secret",
+    );
+
+    trackEvent("tool_page_viewed", {
+      tool_slug: "github-repo-launch-readiness-score",
+      tool_type: "scorecard",
+      buyer_stage: "consideration",
+      page_type: "tool",
+      intent_cluster: "launch_readiness_score",
+      email: "founder@example.dev",
+      raw_query: "utm_source=product_hunt&token=secret",
+    });
+
+    expect(window.dataLayer).toEqual([
+      {
+        event: "tool_page_viewed",
+        tool_slug: "github-repo-launch-readiness-score",
+        tool_type: "scorecard",
+        buyer_stage: "consideration",
+        page_type: "tool",
+        intent_cluster: "launch_readiness_score",
+        utm_source: "product_hunt",
+        utm_campaign: "repo_launch",
+      },
+    ]);
+    expect(JSON.stringify(window.dataLayer)).not.toContain("founder@example.dev");
+    expect(JSON.stringify(window.dataLayer)).not.toContain("token=secret");
+    expect(window.gtag).toHaveBeenCalledWith("event", "tool_page_viewed", {
+      tool_slug: "github-repo-launch-readiness-score",
+      tool_type: "scorecard",
+      buyer_stage: "consideration",
+      page_type: "tool",
+      intent_cluster: "launch_readiness_score",
+      utm_source: "product_hunt",
+      utm_campaign: "repo_launch",
+    });
+  });
+
   it("adds page intent metadata for current and future SEO routes without preserving raw query strings", () => {
     Object.defineProperty(document, "referrer", {
       configurable: true,

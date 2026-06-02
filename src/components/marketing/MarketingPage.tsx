@@ -54,6 +54,16 @@ export function MarketingPage({ link }: MarketingPageProps) {
         intent_cluster: link.intentCluster,
       });
     }
+
+    if (link.pageType === "tool") {
+      trackEvent("tool_page_viewed", {
+        tool_slug: link.slug,
+        tool_type: getToolType(link),
+        buyer_stage: link.buyerStage,
+        page_type: link.pageType,
+        intent_cluster: link.intentCluster,
+      });
+    }
   }, [link]);
 
   function handlePrimaryCtaClick() {
@@ -201,6 +211,37 @@ export function MarketingPage({ link }: MarketingPageProps) {
           </section>
         ) : null}
 
+        {narrative.scorecard ? (
+          <section className="marketingGrowthSection" aria-labelledby="marketing-scorecard-title">
+            <div className="marketingRelatedHead">
+              <span className="monoLabel">Launch readiness rubric</span>
+              <h2 id="marketing-scorecard-title">{narrative.scorecard.title}</h2>
+              <p className="marketingScorecardBoundary">{narrative.scorecard.claimBoundary}</p>
+            </div>
+            <div className="marketingScorecardSummary" aria-label="Launch readiness score total">
+              <strong>{narrative.scorecard.totalLabel}</strong>
+              <span>Use the rubric to decide what the repo needs before the studio generates public launch assets.</span>
+            </div>
+            <div className="marketingScorecardGrid">
+              {narrative.scorecard.categories.map((category) => (
+                <article key={category.id}>
+                  <span>{category.points} pts</span>
+                  <strong>{category.title}</strong>
+                  <p>{category.quickForkOutput}</p>
+                  <ul>
+                    {category.signals.map((signal) => (
+                      <li key={signal}>{signal}</li>
+                    ))}
+                  </ul>
+                  <small>
+                    {category.lifecycleStage} / {category.activationMetric}
+                  </small>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="marketingGrowthSection" aria-labelledby="marketing-faq-title">
           <div className="marketingRelatedHead">
             <span className="monoLabel">AI-search FAQ</span>
@@ -331,6 +372,11 @@ function getResourceType(link: MarketingLink) {
   if (link.slug.includes("checklist")) return "checklist";
   if (link.slug.includes("template") || link.slug.includes("prompt")) return "template";
   return "guide";
+}
+
+function getToolType(link: MarketingLink) {
+  if (link.slug.includes("readiness")) return "scorecard";
+  return "tool";
 }
 
 function getExampleRepoName(link: MarketingLink) {
