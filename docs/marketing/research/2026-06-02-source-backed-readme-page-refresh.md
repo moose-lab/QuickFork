@@ -81,6 +81,17 @@ Hypothesis.
 
 The page contracts are now stronger, but demand is not validated until production traffic, CTA behavior, repo-generation behavior, search impressions, AI visibility checks, and interview feedback show that these two page intents bring qualified users into the launch package workflow.
 
+## Deployment Evidence
+
+- PR #24 merged into `main` at merge commit `0c4c0d5df0582850b62ac267cf838bf9eddee480`.
+- Main CI/CD run `26827158704` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production route smoke passed: `https://seekersai.com/product/source-backed-launch-assets` returned HTTP 200.
+- Production route smoke passed: `https://seekersai.com/product/readme-marketing-cards` returned HTTP 200.
+- Production `llms.txt` contains the refreshed Source Backed Launch Assets and README Marketing Cards descriptions.
+- Production sitemap contains both product URLs.
+- Production bundle `/assets/index-B6QRBO8n.js` contains `Source-backed launch assets are reviewable`, `README marketing cards are README-first`, `source_backed_launch_assets`, and `readme_marketing_cards`.
+- Remote branch `feature/launch-growth-next` was deleted after merge.
+
 ## Next Validation Step
 
-After merge and deployment, smoke test both production URLs, verify `llms.txt` and sitemap include the refreshed descriptions, then add these routes to the next AI-answer and Search Console baseline review.
+Add these routes to the next AI-answer and Search Console baseline review, then compare CTA and generation behavior against `/product/github-repo-to-launch-package`.
