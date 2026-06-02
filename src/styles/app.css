@@ -2783,6 +2783,52 @@ blockquote {
   gap: 10px;
 }
 
+.leadQualificationFields {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 0.6fr);
+  gap: 12px;
+  align-items: start;
+  padding-top: 2px;
+}
+
+.leadQualificationFields fieldset {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.leadQualificationFields legend {
+  padding: 0 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.leadQualificationFields fieldset label,
+.leadCaptureCheckbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--fg);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.leadQualificationFields input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--fg);
+}
+
+.leadCaptureNotes {
+  grid-column: 1 / -1;
+}
+
 .leadCaptureStatus {
   grid-column: 2 / -1;
   min-height: 20px;
@@ -2864,7 +2910,8 @@ blockquote {
   .marketingBodyGrid,
   .marketingPersonaList,
   .leadCaptureForm,
-  .leadCaptureFields {
+  .leadCaptureFields,
+  .leadQualificationFields {
     grid-template-columns: 1fr;
   }
 

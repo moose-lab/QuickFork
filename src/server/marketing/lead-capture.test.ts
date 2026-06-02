@@ -97,6 +97,66 @@ describe("lead capture", () => {
     );
   });
 
+  it("preserves full launch package qualification in sales contact CRM activity", async () => {
+    const crm = new MockCrmAdapter({ now: () => "2026-06-02T09:00:00.000Z" });
+
+    const result = await captureLead(
+      {
+        intent: "sales_contact",
+        email: "founder@example.dev",
+        companyDomain: "example.dev",
+        roleSegment: "founder",
+        requestType: "full_launch_package",
+        contactReason: "full_launch_package",
+        crmCampaign: "2026_q2_full_launch_package",
+        qualification: {
+          repoUrl: " https://github.com/moose-lab/QuickFork ",
+          launchTimeline: "within_30_days",
+          packageScope: ["readme", "social", "deck", "outreach", "visual_explainer"],
+          humanReviewNeeded: true,
+          notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",
+        },
+        firstTouch: {
+          source: "quickfork",
+          medium: "product",
+          campaign: "full_launch_package",
+          content: "artifact_review_cta",
+          landingPage: "https://seekersai.com/contact",
+          capturedAt: "2026-06-02T08:55:00.000Z",
+        },
+        lastTouch: {
+          source: "quickfork",
+          medium: "product",
+          campaign: "full_launch_package",
+          content: "artifact_review_cta",
+          landingPage: "https://seekersai.com/contact",
+          capturedAt: "2026-06-02T08:58:00.000Z",
+        },
+      },
+      { crm },
+    );
+
+    expect(result.lifecycleStage).toBe("sales_qualified_lead");
+    expect(crm.listActivities()[0]).toEqual(
+      expect.objectContaining({
+        type: "sales_contact_requested",
+        properties: expect.objectContaining({
+          requestType: "full_launch_package",
+          contactReason: "full_launch_package",
+          qualification: {
+            repoUrl: "https://github.com/moose-lab/QuickFork",
+            repoHost: "github.com",
+            repoFullName: "moose-lab/QuickFork",
+            launchTimeline: "within_30_days",
+            packageScope: ["readme", "social", "deck", "outreach", "visual_explainer"],
+            humanReviewNeeded: true,
+            notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",
+          },
+        }),
+      }),
+    );
+  });
+
   it("rejects missing or malformed lead capture input before CRM sync", () => {
     expect(() => normalizeLeadCaptureInput({ intent: "resource", email: "not-an-email" })).toThrow(
       "email must be a valid email address.",

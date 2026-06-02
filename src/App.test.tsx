@@ -708,6 +708,19 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: /full launch package/i })).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText(/work email/i), { target: { value: "founder@example.dev" } });
     fireEvent.change(screen.getByLabelText(/company domain/i), { target: { value: "example.dev" } });
+    fireEvent.change(screen.getByLabelText(/github repository url/i), {
+      target: { value: "https://github.com/moose-lab/QuickFork" },
+    });
+    fireEvent.change(screen.getByLabelText(/launch timeline/i), { target: { value: "within_30_days" } });
+    fireEvent.click(screen.getByLabelText(/^README$/i));
+    fireEvent.click(screen.getByLabelText(/^Social$/i));
+    fireEvent.click(screen.getByLabelText(/^Deck$/i));
+    fireEvent.click(screen.getByLabelText(/^Outreach$/i));
+    fireEvent.click(screen.getByLabelText(/^Visual explainer$/i));
+    fireEvent.click(screen.getByLabelText(/human review needed/i));
+    fireEvent.change(screen.getByLabelText(/launch notes/i), {
+      target: { value: "Launching an AI repo and need source-backed README, deck, and outreach review." },
+    });
     fireEvent.click(screen.getByRole("button", { name: /request full launch package/i }));
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
@@ -719,6 +732,15 @@ describe("App", () => {
       requestType: "full_launch_package",
       contactReason: "full_launch_package",
       crmCampaign: "2026_q2_full_launch_package",
+      qualification: {
+        repoUrl: "https://github.com/moose-lab/QuickFork",
+        repoHost: "github.com",
+        repoFullName: "moose-lab/QuickFork",
+        launchTimeline: "within_30_days",
+        packageScope: ["readme", "social", "deck", "outreach", "visual_explainer"],
+        humanReviewNeeded: true,
+        notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",
+      },
       firstTouch: expect.objectContaining({
         source: "product",
         landingPage: "http://localhost:3000/contact",
@@ -733,10 +755,15 @@ describe("App", () => {
           company_domain: "example.dev",
           role_segment: "founder",
           utm_source: "product",
+          launch_timeline: "within_30_days",
+          package_scope_count: 5,
+          human_review_needed: true,
         }),
       ]),
     );
     expect(JSON.stringify(window.dataLayer)).not.toContain("founder@example.dev");
+    expect(JSON.stringify(window.dataLayer)).not.toContain("https://github.com/moose-lab/QuickFork");
+    expect(JSON.stringify(window.dataLayer)).not.toContain("Launching an AI repo");
   });
 
   it("renders help and legal footer routes with public metadata", () => {

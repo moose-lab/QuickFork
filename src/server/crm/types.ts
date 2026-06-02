@@ -72,7 +72,7 @@ export interface CrmActivityInput {
   leadId: string;
   type: CrmActivityType;
   occurredAt: string;
-  properties?: Record<string, string | number | boolean | null | undefined>;
+  properties?: Record<string, unknown>;
 }
 
 export interface CrmActivityRecord extends CrmActivityInput {

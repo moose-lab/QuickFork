@@ -733,6 +733,64 @@ Next action:
 
 - Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
 
+## 2026-06-02 Launch Package Intent Qualification Slice
+
+Hypothesis:
+
+- If a full launch package request asks for repo URL, launch timeline, package scope, and review needs, QuickFork can distinguish qualified paid-intent requests from generic contact submissions before publishing exact pricing.
+
+Lifecycle stage:
+
+- Monetization learning, P4/P5.
+
+Target user:
+
+- Founders, open-source maintainers, DevRel operators, and design/product leads requesting a full package after reviewing a free brief, demand map, readiness score, visual explainer, or pilot page.
+
+Changed surface:
+
+- `/contact?intent=launch-package` now asks for GitHub repository URL, launch timeline, package scope, human review need, and launch notes.
+- Browser analytics only receives safe summary fields: `launch_timeline`, `package_scope_count`, and `human_review_needed`.
+- Server-side lead capture normalizes repo URL into `repoHost` and `repoFullName`, then stores structured qualification metadata in the CRM activity.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-launch-package-intent-qualification.md`.
+- Added research synthesis at `docs/marketing/research/2026-06-02-launch-package-intent-qualification.md`.
+
+Primary CTA:
+
+- Request full launch package.
+
+Primary metric:
+
+- `sales_contact_requested` where `contact_reason=full_launch_package` and `request_type=full_launch_package`.
+
+Guardrail:
+
+- Browser analytics must not include email, name, raw repo URL, raw notes, tokens, secrets, price claims, revenue claims, or guaranteed launch outcomes.
+
+Evidence gap:
+
+- Real request quality, launch urgency, scope distribution, and willingness-to-pay interview outcomes are still missing.
+
+Evidence observed:
+
+- Baseline `npm test`: 21 files passed, 134 tests passed.
+- RED frontend test failed first because `/contact?intent=launch-package` did not include `GitHub repository URL`.
+- RED server test failed first because `qualification` was not present in CRM activity properties.
+- `npm test -- src/App.test.tsx -t "full launch package contact"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/server/marketing/lead-capture.test.ts -t "qualification"`: 1 file passed, 1 selected test passed.
+- Build verification caught a TypeScript narrowing issue for `packageScope`; the array filter was changed to an explicit string type guard.
+- `git diff --check`: no whitespace errors.
+- `npm test`: 21 files passed, 135 tests passed.
+- `npm run build`: TypeScript and Vite production build completed.
+
+Decision:
+
+- Treat this as a lead-quality and paid-intent qualification improvement, not validated demand or pricing proof.
+
+Next action:
+
+- Run full verification, push/open PR, production smoke the contact route, then review real launch-package request quality before publishing exact pricing.
+
 ## 2026-06-02 Launch Package Pilot Page Slice
 
 Hypothesis:
