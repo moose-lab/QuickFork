@@ -33,6 +33,7 @@ describe("public growth infrastructure", () => {
       expect(sitemap).toContain(`<loc>${link.canonicalUrl}</loc>`);
     }
     expect(sitemap).toContain("<loc>https://seekersai.com/product/cold-start-launch-materials</loc>");
+    expect(sitemap).toContain("<loc>https://seekersai.com/product/github-repo-launch-materials-map</loc>");
     expect(sitemap).toContain("<loc>https://seekersai.com/product/github-repo-visual-explainer</loc>");
     expect(sitemap).toContain("<loc>https://seekersai.com/product/github-repo-to-launch-deck</loc>");
     expect(sitemap).toContain("<loc>https://seekersai.com/product/github-repo-to-product-outreach</loc>");
@@ -60,6 +61,11 @@ describe("public growth infrastructure", () => {
     expect(llms).toContain("Cold Start Launch Materials");
     expect(llms).toContain(
       "source-backed README, social, deck, visual, and outreach drafts generated from one public GitHub repository URL",
+    );
+    expect(llms).toContain("https://seekersai.com/product/github-repo-launch-materials-map");
+    expect(llms).toContain("GitHub Repo Launch Materials Map");
+    expect(llms).toContain(
+      "source-backed channel plan for README, social, deck, visual, and outreach assets from one repository URL",
     );
     expect(llms).toContain("https://seekersai.com/product/readme-marketing-cards");
     expect(llms).toContain("README Marketing Cards");

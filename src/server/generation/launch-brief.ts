@@ -8,6 +8,7 @@ import type {
   RepoLaunchBriefAngle,
   RepoLaunchBriefArtifact,
   RepoLaunchBriefChecklistItem,
+  RepoLaunchMaterialsMap,
   RepoLaunchStoryMap,
   VisualDirection,
 } from "./types.js";
@@ -65,12 +66,26 @@ export function buildRepoLaunchBrief(input: {
     sourceReferences,
     visualCategory: input.visualDirection.category,
   });
+  const launchMaterialsMap = buildLaunchMaterialsMap({
+    repoFullName: input.metadata.fullName,
+    summary: input.brief.subtitle,
+    audience,
+    audienceDiscovery,
+    storyMap,
+    readmeChecklist,
+    launchAngles,
+    socialPost,
+    deckOutline,
+    sourceReferences,
+    visualCategory: input.visualDirection.category,
+  });
 
   return {
     summary: input.brief.subtitle,
     audienceHypothesis: audience,
     audienceDiscovery,
     storyMap,
+    launchMaterialsMap,
     readmeChecklist,
     launchAngles,
     socialPost,
@@ -84,6 +99,7 @@ export function buildRepoLaunchBrief(input: {
       audienceHypothesis: audience,
       audienceDiscovery,
       storyMap,
+      launchMaterialsMap,
       readmeChecklist,
       launchAngles,
       socialPost,
@@ -101,6 +117,7 @@ function buildLaunchBriefArtifacts(input: {
   audienceHypothesis: string;
   audienceDiscovery: RepoLaunchAudienceDiscovery;
   storyMap: RepoLaunchStoryMap;
+  launchMaterialsMap: RepoLaunchMaterialsMap;
   readmeChecklist: RepoLaunchBriefChecklistItem[];
   launchAngles: RepoLaunchBriefAngle[];
   socialPost: string;
@@ -125,6 +142,13 @@ function buildLaunchBriefArtifacts(input: {
       label: "Project story map",
       fileName: `${slug}-project-story-map.md`,
       body: formatStoryMap(input.storyMap, sourceBlock),
+      sourceReferences: input.sourceReferences,
+    },
+    {
+      type: "materials_map",
+      label: "Launch materials map",
+      fileName: `${slug}-launch-materials-map.md`,
+      body: formatLaunchMaterialsMap(input.launchMaterialsMap, sourceBlock),
       sourceReferences: input.sourceReferences,
     },
     {
@@ -236,6 +260,91 @@ function buildAudienceDiscovery(input: {
   };
 }
 
+function buildLaunchMaterialsMap(input: {
+  repoFullName: string;
+  summary: string;
+  audience: string;
+  audienceDiscovery: RepoLaunchAudienceDiscovery;
+  storyMap: RepoLaunchStoryMap;
+  readmeChecklist: RepoLaunchBriefChecklistItem[];
+  launchAngles: RepoLaunchBriefAngle[];
+  socialPost: string;
+  deckOutline: string[];
+  sourceReferences: string[];
+  visualCategory: VisualDirection["category"];
+}): RepoLaunchMaterialsMap {
+  const primarySource = input.sourceReferences[0] ?? "Repository evidence is limited; review generated claims before publishing.";
+  const secondarySource = input.sourceReferences[1] ?? primarySource;
+  const adopterSignal = input.audienceDiscovery.signals.find((signal) => signal.id === "open_source_adopters");
+  const reviewerSignal = input.audienceDiscovery.signals.find((signal) => signal.id === "launch_reviewers");
+  const technicalSignal = input.audienceDiscovery.signals.find((signal) => signal.id === "technical_builders");
+  const topAngle = input.launchAngles[0]?.body ?? input.summary;
+  const firstChecklistItem = input.readmeChecklist[0]?.item ?? "Lead with a source-backed README value proposition.";
+  const workflowNode = input.storyMap.nodes.find((node) => node.id === "workflow");
+
+  return {
+    title: `${input.repoFullName} launch materials map`,
+    summary: `Channel plan for README, social, deck, visual, and outreach launch materials from ${input.summary}`,
+    channels: [
+      {
+        type: "readme",
+        label: "README launch section",
+        primaryUser: adopterSignal?.segment ?? "Open-source adopters and README visitors",
+        jobToBeDone: `Help visitors understand ${input.repoFullName} before reading implementation details.`,
+        artifactLabel: "README launch brief",
+        channelFit: `Use the README section to surface "${firstChecklistItem}" before lower-level repository detail.`,
+        source: primarySource,
+        reviewQuestion: "Which source-backed claim belongs in the README hero without overstating proof?",
+        successSignal: "README artifact copied or downloaded; visitor continues into generation or full package request.",
+      },
+      {
+        type: "social",
+        label: "Social launch post",
+        primaryUser: reviewerSignal?.segment ?? "Launch reviewers and technical social followers",
+        jobToBeDone: "Decide whether the project is worth clicking before opening GitHub.",
+        artifactLabel: "Social launch post",
+        channelFit: `Lead with "${input.socialPost.split("\n")[0]}" and keep the repo URL visible.`,
+        source: secondarySource,
+        reviewQuestion: "Does the post explain the project without invented traction, adoption, or pricing?",
+        successSignal: "Social artifact copied or downloaded; campaign UTM drives generation_started.",
+      },
+      {
+        type: "deck",
+        label: "Launch deck outline",
+        primaryUser: "Technical founders, demo reviewers, and DevRel operators",
+        jobToBeDone: "Turn the repository story into a short launch narrative for demos, internal review, or Product Hunt prep.",
+        artifactLabel: "Pitch deck outline",
+        channelFit: `Anchor the deck around ${input.deckOutline.length} source-backed slides and the workflow ${workflowNode?.detail ?? "from repo evidence"}.`,
+        source: secondarySource,
+        reviewQuestion: "Which deck slide needs the strongest source citation before sharing outside the team?",
+        successSignal: "Deck artifact copied or downloaded; full launch package CTA clicked after artifact review.",
+      },
+      {
+        type: "visual",
+        label: "Visual project explainer",
+        primaryUser: technicalSignal?.segment ?? input.audience,
+        jobToBeDone: "Understand the project workflow and proof boundary without parsing the full README.",
+        artifactLabel: "Visual explainer prompt",
+        channelFit: `Use the ${input.visualCategory} direction to keep README, social preview, and deck visuals aligned.`,
+        source: primarySource,
+        reviewQuestion: "Does the visual direction preserve identity assets and avoid fake logos or unsupported diagrams?",
+        successSignal: "Visual prompt copied, generated image preview opened, or image downloaded.",
+      },
+      {
+        type: "outreach",
+        label: "Product outreach draft",
+        primaryUser: "DevRel operators, partner editors, and launch communities",
+        jobToBeDone: "Ask for feedback or distribution using a human-reviewed source-backed note.",
+        artifactLabel: "Product outreach draft",
+        channelFit: `Use a short outreach note centered on "${topAngle}" and keep it reviewable before sending.`,
+        source: primarySource,
+        reviewQuestion: "Which recipient segment should review this outreach draft before public distribution?",
+        successSignal: "Outreach artifact copied or downloaded; qualified contact request references launch review.",
+      },
+    ],
+  };
+}
+
 function buildStoryMap(input: {
   repoFullName: string;
   summary: string;
@@ -325,6 +434,32 @@ function formatStoryMap(storyMap: RepoLaunchStoryMap, sourceBlock: string) {
     storyMap.summary,
     "",
     ...storyMap.nodes.map((node, index) => [`${index + 1}. ${node.label}: ${node.title}`, `   Detail: ${node.detail}`, `   Source: ${node.source}`].join("\n")),
+    "",
+    sourceBlock,
+  ].join("\n");
+}
+
+function formatLaunchMaterialsMap(launchMaterialsMap: RepoLaunchMaterialsMap, sourceBlock: string) {
+  return [
+    `# ${launchMaterialsMap.title}`,
+    "",
+    "## Launch materials map",
+    "",
+    launchMaterialsMap.summary,
+    "",
+    ...launchMaterialsMap.channels.map((channel, index) =>
+      [
+        `${index + 1}. ${channel.label}`,
+        `   Channel: ${channel.type}`,
+        `   Primary user: ${channel.primaryUser}`,
+        `   Job to be done: ${channel.jobToBeDone}`,
+        `   Artifact: ${channel.artifactLabel}`,
+        `   Channel fit: ${channel.channelFit}`,
+        `   Review question: ${channel.reviewQuestion}`,
+        `   Success signal: ${channel.successSignal}`,
+        `   Source: ${channel.source}`,
+      ].join("\n"),
+    ),
     "",
     sourceBlock,
   ].join("\n");

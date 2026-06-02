@@ -542,9 +542,36 @@ describe("project launch generation backend", () => {
         }),
       );
       expect(result.launchBrief.storyMap.nodes[2]?.detail).toContain("->");
+      expect(result.launchBrief.launchMaterialsMap.title).toContain("nexu-io/open-design");
+      expect(result.launchBrief.launchMaterialsMap.channels.map((channel) => channel.type)).toEqual([
+        "readme",
+        "social",
+        "deck",
+        "visual",
+        "outreach",
+      ]);
+      expect(result.launchBrief.launchMaterialsMap.channels[0]).toEqual(
+        expect.objectContaining({
+          type: "readme",
+          label: "README launch section",
+          primaryUser: expect.stringContaining("Open-source"),
+          jobToBeDone: expect.stringContaining("understand"),
+          reviewQuestion: expect.stringContaining("source"),
+          successSignal: expect.stringContaining("README"),
+          source: expect.stringContaining("README or repo metadata includes"),
+        }),
+      );
+      expect(result.launchBrief.launchMaterialsMap.channels[3]).toEqual(
+        expect.objectContaining({
+          type: "visual",
+          artifactLabel: "Visual explainer prompt",
+          reviewQuestion: expect.stringContaining("identity"),
+        }),
+      );
       expect(result.launchBrief.artifacts.map((artifact) => artifact.type)).toEqual([
         "audience",
         "story_map",
+        "materials_map",
         "readme",
         "social",
         "deck",
@@ -565,6 +592,13 @@ describe("project launch generation backend", () => {
             label: "Project story map",
             fileName: "nexu-io-open-design-project-story-map.md",
             body: expect.stringContaining("## Project story map"),
+            sourceReferences: expect.arrayContaining([expect.stringContaining("README or repo metadata includes")]),
+          }),
+          expect.objectContaining({
+            type: "materials_map",
+            label: "Launch materials map",
+            fileName: "nexu-io-open-design-launch-materials-map.md",
+            body: expect.stringContaining("## Launch materials map"),
             sourceReferences: expect.arrayContaining([expect.stringContaining("README or repo metadata includes")]),
           }),
           expect.objectContaining({
