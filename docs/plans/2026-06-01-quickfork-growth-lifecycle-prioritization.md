@@ -847,6 +847,12 @@ Evidence observed:
 - Local route smoke passed: `http://127.0.0.1:5177/examples/qwenlm-flashqla-launch-card` returned HTTP 200.
 - Local `llms.txt` contains the new source-backed launch package example description.
 - Built bundle contains `QwenLM FlashQLA Launch Card as a source-backed launch package example`, `source-backed launch package example`, and `qwenlm_flashqla_launch_card`.
+- PR #18 merged into `main` at merge commit `53ae3fcb86a252e174a8edc2f13b6107cf012816`.
+- Main CI/CD run `26821810970` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production route smoke passed: `https://seekersai.com/examples/qwenlm-flashqla-launch-card` returned HTTP 200.
+- Production `llms.txt` contains the source-backed launch package example description.
+- Production sitemap contains `https://seekersai.com/examples/qwenlm-flashqla-launch-card`.
+- Production bundle `/assets/index-t2d_KMc9.js` contains the example heading, source-backed example copy, and `qwenlm_flashqla_launch_card`.
 
 Decision:
 
