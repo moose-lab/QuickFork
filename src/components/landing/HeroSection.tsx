@@ -84,6 +84,7 @@ interface GenerationSummary {
 interface RepoLaunchBriefSummary {
   summary: string;
   audienceHypothesis: string;
+  audienceDiscovery?: RepoLaunchAudienceDiscoverySummary;
   storyMap?: RepoLaunchStoryMapSummary;
   readmeChecklist: Array<{
     item: string;
@@ -102,6 +103,23 @@ interface RepoLaunchBriefSummary {
   artifacts?: RepoLaunchBriefArtifactSummary[];
 }
 
+interface RepoLaunchAudienceDiscoverySummary {
+  title: string;
+  summary: string;
+  signals: RepoLaunchAudienceSignalSummary[];
+}
+
+interface RepoLaunchAudienceSignalSummary {
+  id: "technical_builders" | "open_source_adopters" | "launch_reviewers";
+  segment: string;
+  jobToBeDone: string;
+  trigger: string;
+  whereToFind: string;
+  validationQuestion: string;
+  source: string;
+  priority: "high" | "medium";
+}
+
 interface RepoLaunchStoryMapSummary {
   title: string;
   summary: string;
@@ -117,7 +135,7 @@ interface RepoLaunchStoryMapNodeSummary {
 }
 
 interface RepoLaunchBriefArtifactSummary {
-  type: "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
+  type: "audience" | "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
   label: string;
   fileName: string;
   body: string;
@@ -429,6 +447,19 @@ function LaunchBriefPanel({
     });
   };
 
+  const handleCopyAudienceDiscovery = async () => {
+    if (!brief.audienceDiscovery) return;
+    await navigator.clipboard?.writeText(serializeAudienceDiscovery(brief.audienceDiscovery));
+    setCopyStatus("Copied target user map");
+    trackEvent("launch_audience_map_copied", {
+      ...getRepoAnalyticsProperties(repoUrl),
+      generation_id: generationId,
+      segment_count: brief.audienceDiscovery.signals.length,
+      channel_count: getAudienceChannelCount(brief.audienceDiscovery),
+      validation_question_count: brief.audienceDiscovery.signals.filter((signal) => signal.validationQuestion).length,
+    });
+  };
+
   const handleCopyStoryMap = async () => {
     if (!brief.storyMap) return;
     await navigator.clipboard?.writeText(serializeStoryMap(brief.storyMap));
@@ -495,6 +526,47 @@ function LaunchBriefPanel({
           <b>{copyStatus}</b>
         </span>
       </div>
+      {brief.audienceDiscovery ? (
+        <section className="launchAudienceDiscovery" aria-label="Target user discovery">
+          <div className="launchAudienceDiscoveryHead">
+            <div>
+              <strong>Target user discovery</strong>
+              <small>{brief.audienceDiscovery.summary}</small>
+            </div>
+            <button className="secondaryButton" onClick={() => void handleCopyAudienceDiscovery()} type="button">
+              <Copy aria-hidden="true" size={15} />
+              Copy target user map
+            </button>
+          </div>
+          <ul className="launchAudienceDiscoverySignals">
+            {brief.audienceDiscovery.signals.map((signal) => (
+              <li key={signal.id}>
+                <span>{signal.priority} priority</span>
+                <strong>{signal.segment}</strong>
+                <dl>
+                  <div>
+                    <dt>Job</dt>
+                    <dd>{signal.jobToBeDone}</dd>
+                  </div>
+                  <div>
+                    <dt>Trigger</dt>
+                    <dd>{signal.trigger}</dd>
+                  </div>
+                  <div>
+                    <dt>Where</dt>
+                    <dd>{signal.whereToFind}</dd>
+                  </div>
+                  <div>
+                    <dt>Ask</dt>
+                    <dd>{signal.validationQuestion}</dd>
+                  </div>
+                </dl>
+                <small>{signal.source}</small>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       {brief.storyMap ? (
         <section className="launchStoryMap" aria-label="Project story map">
           <div className="launchStoryMapHead">
@@ -609,7 +681,7 @@ function LaunchBriefPanel({
 }
 
 function getLaunchBriefSectionCount(brief: RepoLaunchBriefSummary) {
-  return brief.storyMap ? 7 : 6;
+  return 6 + (brief.audienceDiscovery ? 1 : 0) + (brief.storyMap ? 1 : 0);
 }
 
 function getArtifactDownloadHref(artifact: RepoLaunchBriefArtifactSummary) {
@@ -634,6 +706,7 @@ function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: strin
     `Summary: ${brief.summary}`,
     `Audience hypothesis: ${brief.audienceHypothesis}`,
     "",
+    ...(brief.audienceDiscovery ? [serializeAudienceDiscovery(brief.audienceDiscovery), ""] : []),
     ...(brief.storyMap ? [serializeStoryMap(brief.storyMap), ""] : []),
     "README checklist:",
     ...brief.readmeChecklist.map((item) => `- ${item.item} (${item.source})`),
@@ -658,6 +731,26 @@ function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: strin
   ].join("\n");
 }
 
+function serializeAudienceDiscovery(audienceDiscovery: RepoLaunchAudienceDiscoverySummary) {
+  return [
+    `Target user discovery: ${audienceDiscovery.title}`,
+    "",
+    audienceDiscovery.summary,
+    "",
+    ...audienceDiscovery.signals.map((signal, index) =>
+      [
+        `${index + 1}. ${signal.segment}`,
+        `   Priority: ${signal.priority}`,
+        `   Job to be done: ${signal.jobToBeDone}`,
+        `   Trigger: ${signal.trigger}`,
+        `   Where to find: ${signal.whereToFind}`,
+        `   Validation question: ${signal.validationQuestion}`,
+        `   Source: ${signal.source}`,
+      ].join("\n"),
+    ),
+  ].join("\n");
+}
+
 function serializeStoryMap(storyMap: RepoLaunchStoryMapSummary) {
   return [
     `Project story map: ${storyMap.title}`,
@@ -666,6 +759,10 @@ function serializeStoryMap(storyMap: RepoLaunchStoryMapSummary) {
     "",
     ...storyMap.nodes.map((node, index) => `${index + 1}. ${node.label}: ${node.title}\n   Detail: ${node.detail}\n   Source: ${node.source}`),
   ].join("\n");
+}
+
+function getAudienceChannelCount(audienceDiscovery: RepoLaunchAudienceDiscoverySummary) {
+  return new Set(audienceDiscovery.signals.map((signal) => signal.whereToFind)).size;
 }
 
 function ProductAnimationPanel() {

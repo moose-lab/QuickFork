@@ -497,6 +497,22 @@ describe("project launch generation backend", () => {
       expect(result).toHaveProperty("launchBrief");
       expect(result.launchBrief.summary).toContain("Open-source Claude Design alternative");
       expect(result.launchBrief.audienceHypothesis).toContain("Open-source maintainers");
+      expect(result.launchBrief.audienceDiscovery.title).toContain("nexu-io/open-design");
+      expect(result.launchBrief.audienceDiscovery.signals.map((signal) => signal.id)).toEqual([
+        "technical_builders",
+        "open_source_adopters",
+        "launch_reviewers",
+      ]);
+      expect(result.launchBrief.audienceDiscovery.signals[0]).toEqual(
+        expect.objectContaining({
+          segment: expect.stringContaining("Open-source maintainers"),
+          trigger: expect.stringContaining("launch"),
+          whereToFind: expect.stringContaining("GitHub"),
+          validationQuestion: expect.stringContaining("repository"),
+          source: expect.stringContaining("README or repo metadata includes"),
+          priority: "high",
+        }),
+      );
       expect(result.launchBrief.readmeChecklist).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -527,6 +543,7 @@ describe("project launch generation backend", () => {
       );
       expect(result.launchBrief.storyMap.nodes[2]?.detail).toContain("->");
       expect(result.launchBrief.artifacts.map((artifact) => artifact.type)).toEqual([
+        "audience",
         "story_map",
         "readme",
         "social",
@@ -536,6 +553,13 @@ describe("project launch generation backend", () => {
       ]);
       expect(result.launchBrief.artifacts).toEqual(
         expect.arrayContaining([
+          expect.objectContaining({
+            type: "audience",
+            label: "Target user discovery map",
+            fileName: "nexu-io-open-design-target-user-discovery.md",
+            body: expect.stringContaining("## Target user discovery map"),
+            sourceReferences: expect.arrayContaining([expect.stringContaining("README or repo metadata includes")]),
+          }),
           expect.objectContaining({
             type: "story_map",
             label: "Project story map",

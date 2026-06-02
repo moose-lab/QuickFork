@@ -15,6 +15,7 @@ export type AnalyticsEventName =
   | "generation_failed"
   | "launch_brief_viewed"
   | "launch_brief_copied"
+  | "launch_audience_map_copied"
   | "launch_story_map_copied"
   | "launch_artifact_copied"
   | "launch_artifact_downloaded"

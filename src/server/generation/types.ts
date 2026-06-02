@@ -192,6 +192,26 @@ export interface RepoLaunchBriefAngle {
   source: string;
 }
 
+export type RepoLaunchAudienceSignalId = "technical_builders" | "open_source_adopters" | "launch_reviewers";
+export type RepoLaunchAudiencePriority = "high" | "medium";
+
+export interface RepoLaunchAudienceSignal {
+  id: RepoLaunchAudienceSignalId;
+  segment: string;
+  jobToBeDone: string;
+  trigger: string;
+  whereToFind: string;
+  validationQuestion: string;
+  source: string;
+  priority: RepoLaunchAudiencePriority;
+}
+
+export interface RepoLaunchAudienceDiscovery {
+  title: string;
+  summary: string;
+  signals: RepoLaunchAudienceSignal[];
+}
+
 export type RepoLaunchStoryMapNodeId = "source" | "audience" | "workflow" | "proof" | "launch";
 
 export interface RepoLaunchStoryMapNode {
@@ -208,7 +228,7 @@ export interface RepoLaunchStoryMap {
   nodes: RepoLaunchStoryMapNode[];
 }
 
-export type RepoLaunchBriefArtifactType = "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
+export type RepoLaunchBriefArtifactType = "audience" | "story_map" | "readme" | "social" | "deck" | "outreach" | "visual";
 
 export interface RepoLaunchBriefArtifact {
   type: RepoLaunchBriefArtifactType;
@@ -221,6 +241,7 @@ export interface RepoLaunchBriefArtifact {
 export interface RepoLaunchBrief {
   summary: string;
   audienceHypothesis: string;
+  audienceDiscovery: RepoLaunchAudienceDiscovery;
   storyMap: RepoLaunchStoryMap;
   readmeChecklist: RepoLaunchBriefChecklistItem[];
   launchAngles: RepoLaunchBriefAngle[];
