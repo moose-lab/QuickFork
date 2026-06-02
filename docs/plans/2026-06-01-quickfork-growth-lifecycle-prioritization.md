@@ -1336,6 +1336,13 @@ Evidence observed:
 - Full verification passed: `npm test` returned 23 files passed and 146 tests passed.
 - Build verification passed: `npm run build` completed TypeScript build and Vite production build.
 - Diff hygiene passed: `git diff --check` returned no whitespace errors.
+- PR #24 merged into `main` at merge commit `0c4c0d5df0582850b62ac267cf838bf9eddee480`.
+- Main CI/CD run `26827158704` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production route smoke passed: `https://seekersai.com/product/source-backed-launch-assets` returned HTTP 200.
+- Production route smoke passed: `https://seekersai.com/product/readme-marketing-cards` returned HTTP 200.
+- Production `llms.txt` contains the refreshed Source Backed Launch Assets and README Marketing Cards descriptions.
+- Production sitemap contains both product URLs.
+- Production bundle `/assets/index-B6QRBO8n.js` contains `Source-backed launch assets are reviewable`, `README marketing cards are README-first`, `source_backed_launch_assets`, and `readme_marketing_cards`.
 
 Decision:
 
@@ -1343,4 +1350,4 @@ Decision:
 
 Next action:
 
-- PR/merge, production route smoke, production `llms.txt`/sitemap checks, then compare CTA and generation behavior for these routes against the broader repo-to-launch-package page.
+- Add both routes to the next AI-answer and Search Console baseline review, then compare CTA and generation behavior against `/product/github-repo-to-launch-package`.
