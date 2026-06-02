@@ -733,6 +733,67 @@ Next action:
 
 - Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
 
+## 2026-06-02 Launch Package Pilot Page Slice
+
+Hypothesis:
+
+- If activated or evaluating builders see a clear full launch package pilot offer after free repo brief, readiness score, demand map, and visual explainer pages, they will signal paid intent by requesting a scoped launch package before QuickFork publishes exact pricing.
+
+Lifecycle stage:
+
+- Monetization learning, P4/P5 bridge.
+
+Target user:
+
+- Founders, open-source maintainers, DevRel operators, and design/product leads with a real launch deadline, repeated launch packaging needs, or a review workflow that the free repo brief cannot cover.
+
+Changed surface:
+
+- Added `/product/repository-launch-package-pilot` to the semantic marketing link catalog and CSV inventory.
+- Added a bottom-funnel decision page narrative that routes `request_launch_package` to `/contact?intent=launch-package`.
+- Updated sitemap and `llms.txt` to expose the productized pilot route.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-launch-package-pilot-page.md`.
+- Added research synthesis at `docs/marketing/research/2026-06-02-launch-package-pilot-page.md`.
+
+Primary CTA:
+
+- Request full launch package.
+
+Primary metric:
+
+- `cta_clicked` on `/product/repository-launch-package-pilot`, segmented by `page_view` where `intent_cluster=repository_launch_package_pilot`.
+
+Guardrail:
+
+- Contact form spam or unqualified requests.
+- `generation_failed / generation_started` after visitors start the studio flow.
+- Unsupported claims in requested launch materials.
+- Do not publish exact prices or claims about rankings, revenue, customer acquisition, Product Hunt results, conversion lift, customer count, viral sharing, or guaranteed launch outcomes.
+
+Evidence gap:
+
+- No pricing research, checkout starts, qualified pilot requests, or willingness-to-pay interviews exist yet.
+
+Evidence observed:
+
+- Baseline `npm test`: 21 files passed, 133 tests passed.
+- RED route test failed first because `/product/repository-launch-package-pilot` rendered the homepage instead of a product route.
+- RED public-growth test failed first because sitemap and `llms.txt` did not include the pilot page.
+- `npm test -- src/App.test.tsx -t "repository launch package pilot"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/seo/public-growth.test.ts -t "public growth|machine-readable AI context"`: 1 file passed, 6 tests passed.
+- `npm test -- src/seo/semantic-links.test.ts`: 1 file passed, 7 tests passed.
+- `git diff --check`: no whitespace errors.
+- `npm test`: 21 files passed, 134 tests passed.
+- `npm run build`: TypeScript and Vite production build completed.
+
+Decision:
+
+- Treat this as a paid-intent learning page, not validated demand. The page makes the full package request measurable while pricing and package shape remain unvalidated.
+
+Next action:
+
+- Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
+
 ## 2026-06-02 Visual Project Explainer Page Slice
 
 Hypothesis:

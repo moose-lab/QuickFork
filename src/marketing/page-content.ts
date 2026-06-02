@@ -299,6 +299,74 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
     lastUpdated: "June 2, 2026",
     visualPackage: visualExplainerPackage,
   },
+  repository_launch_package_pilot: {
+    definition:
+      "A repository launch package pilot is a source-backed request path for teams that need a complete launch package across README, social, deck, outreach, visual explainer, review, and measurement work before QuickFork publishes fixed pricing.",
+    targetUser: "Founders, open-source maintainers, DevRel operators, and design/product leads with a real launch deadline.",
+    jobToBeDone:
+      "When a free repo brief or visual explainer is useful but incomplete for a launch deadline, help the team request a full package review without pretending pricing or demand is already validated.",
+    evidenceBoundary:
+      "This page collects paid-intent learning. It should not publish prices, promise launch outcomes, claim ranking lift, imply automated publishing, or describe willingness to pay as proven.",
+    benefits: [
+      {
+        title: "Request the package after proof of need",
+        body: "Use the pilot request when a repo brief, story map, or launch readiness score shows that the team needs channel-specific assets and human review.",
+      },
+      {
+        title: "Package every launch surface together",
+        body: "Frame README, social, deck, outreach, visual explainer, review, and measurement work as one source-backed package instead of scattered prompts.",
+      },
+      {
+        title: "Do not publish prices yet",
+        body: "Keep the public offer focused on qualification and scope while pricing research, pilot requests, and interviews determine the paid package shape.",
+      },
+      {
+        title: "Preserve the evidence boundary",
+        body: "Keep repository facts, explicit user input, uncertainty labels, and human review ahead of public claims or launch distribution.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Start with a public repo or existing brief",
+        body: "Use the repository URL, README evidence, generated brief, visual explainer, or readiness score to scope what the launch package needs.",
+      },
+      {
+        title: "Choose the launch surfaces",
+        body: "Identify whether the pilot needs README patches, social posts, Product Hunt copy, deck outline, outreach sequence, visual directions, or measurement setup.",
+      },
+      {
+        title: "Request a scoped package",
+        body: "Send the request through the launch-package contact intent so QuickFork can qualify urgency, repo fit, review needs, and source evidence.",
+      },
+      {
+        title: "Use the request as monetization evidence",
+        body: "Compare pilot requests with route views, CTA clicks, artifact exports, generation starts, and interviews before treating this as validated demand.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What does the repository launch package pilot include?",
+        answer:
+          "The pilot request scopes a source-backed package for README, social, deck, outreach, visual explainer, review, and measurement work from one repository or generated brief.",
+      },
+      {
+        question: "Who should request a full launch package?",
+        answer:
+          "Founders, maintainers, DevRel operators, and design/product leads should request it when they have a real launch deadline, repeated launch work, or a review need that the free repo brief cannot cover.",
+      },
+      {
+        question: "Why not publish fixed pricing now?",
+        answer:
+          "QuickFork needs pricing research, pilot qualification, package scope, and willingness-to-pay interviews before public price points are credible.",
+      },
+      {
+        question: "Does the pilot replace human review?",
+        answer:
+          "No. It packages source-backed launch materials for review. Humans still approve claims, visuals, examples, pricing language, and public publishing choices.",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+  },
   open_source_launch_checklist: {
     definition:
       "An open-source launch checklist helps maintainers turn a public GitHub repository into source-backed README, social preview, Product Hunt, deck, and outreach launch materials while keeping every claim tied to repo evidence, public context, or explicit human input.",
@@ -597,6 +665,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   if (link.intentCluster === "github_repo_visual_explainer") {
     return "GitHub Repo Visual Explainer for source-backed project understanding.";
   }
+  if (link.intentCluster === "repository_launch_package_pilot") {
+    return "Repository Launch Package Pilot for source-backed paid-intent learning.";
+  }
   if (link.intentCluster === "open_source_launch_checklist") {
     return "Open Source Launch Checklist for source-backed repository launches.";
   }
@@ -638,6 +709,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "github_repo_visual_explainer") {
     return "QuickFork maps github repo visual explainer demand into source-backed story maps, README hero cards, GitHub social previews, and deck-ready visual launch assets for technical repositories.";
+  }
+  if (link.intentCluster === "repository_launch_package_pilot") {
+    return "QuickFork maps repository launch package pilot demand into a full launch package pilot for README, social, deck, outreach, visual explainer, review, and measurement work.";
   }
   if (link.intentCluster === "open_source_launch_checklist") {
     return "QuickFork maps open source launch checklist demand into source-backed README, social preview, Product Hunt, deck, outreach, and post-launch learning steps for public GitHub repository launches.";
