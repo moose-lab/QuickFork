@@ -520,6 +520,58 @@ describe("App", () => {
     );
   }, 10000);
 
+  it("renders the repository launch package pilot page as a paid-intent hypothesis", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/repository-launch-package-pilot?utm_source=linkedin");
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: /Repository Launch Package Pilot for source-backed paid-intent learning/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/full launch package pilot/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/README, social, deck, outreach, visual explainer/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Founders, open-source maintainers, DevRel operators/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Request the package after proof of need/i)).toBeInTheDocument();
+    expect(screen.getByText(/Do not publish prices yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/What does the repository launch package pilot include/i)).toBeInTheDocument();
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /request full launch package/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/contact?intent=launch-package");
+    expect(document.title).toBe("Repository Launch Package Pilot | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps repository launch package pilot demand into a full launch package pilot for README, social, deck, outreach, visual explainer, review, and measurement work.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/repository-launch-package-pilot",
+    );
+    const schema = JSON.parse(document.querySelector('script[data-quickfork-marketing-schema]')?.textContent ?? "{}");
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity[0].name).toContain("What does the repository launch package pilot include");
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/product/repository-launch-package-pilot",
+          page_type: "product",
+          buyer_stage: "decision",
+          intent_cluster: "repository_launch_package_pilot",
+          utm_source: "linkedin",
+        }),
+      ]),
+    );
+    expect(document.body.textContent).not.toMatch(
+      /\b(guaranteed|rankings|revenue|customers|Product Hunt #1|\$[0-9]|viral|fully autonomous)\b/i,
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key/i);
+  }, 10000);
+
   it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");

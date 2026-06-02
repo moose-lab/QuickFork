@@ -33,6 +33,7 @@ QuickFork should use repository evidence, official project assets, README conten
 - Source Backed Launch Assets | QuickFork: https://seekersai.com/product/source-backed-launch-assets - Product, Consideration. QuickFork maps source backed launch assets into a source-backed product path for Product Marketer, with campaign attribution and a clear next action.
 - README Marketing Cards | QuickFork: https://seekersai.com/product/readme-marketing-cards - Product, Consideration. QuickFork maps readme marketing cards into a source-backed product path for Design Lead, with campaign attribution and a clear next action.
 - GitHub Repo Visual Explainer | QuickFork: https://seekersai.com/product/github-repo-visual-explainer - Product, Consideration. QuickFork maps github repo visual explainer demand into source-backed story maps, README hero cards, GitHub social previews, and deck-ready visual launch assets for technical repositories.
+- Repository Launch Package Pilot | QuickFork: https://seekersai.com/product/repository-launch-package-pilot - Product, Decision. QuickFork maps repository launch package pilot demand into a full launch package pilot for README, social, deck, outreach, visual explainer, review, and measurement work.
 
 ### Use Cases
 
