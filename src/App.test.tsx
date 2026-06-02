@@ -886,6 +886,32 @@ describe("App", () => {
           launchBrief: {
             summary: "CUDA kernels for faster attention inference.",
             audienceHypothesis: "AI project builders, open-source maintainers, and technical founders evaluating launch readiness.",
+            audienceDiscovery: {
+              title: "QwenLM/FlashQLA target user discovery map",
+              summary: "Source-backed target user discovery for CUDA attention launch planning.",
+              signals: [
+                {
+                  id: "technical_builders",
+                  segment: "AI project builders",
+                  jobToBeDone: "Understand whether FlashQLA can reduce inference bottlenecks.",
+                  trigger: "Preparing a benchmark, launch post, or README update for an AI infrastructure repo.",
+                  whereToFind: "GitHub topics, README discussions, CUDA and inference communities.",
+                  validationQuestion: "Which repository evidence would make you trust this kernel enough to try it?",
+                  source: "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
+                  priority: "high",
+                },
+                {
+                  id: "launch_reviewers",
+                  segment: "Technical founders",
+                  jobToBeDone: "Package the repository story for a public launch.",
+                  trigger: "Product Hunt, demo day, or community feedback deadline.",
+                  whereToFind: "Product Hunt launch prep, founder communities, and DevRel newsletters.",
+                  validationQuestion: "Which launch channel needs the clearest source-backed proof first?",
+                  source: "Audience hypothesis from repo metadata and topics.",
+                  priority: "medium",
+                },
+              ],
+            },
             storyMap: {
               title: "QwenLM/FlashQLA launch story map",
               summary: "Source-backed visual interpretation for CUDA attention kernels.",
@@ -945,6 +971,13 @@ describe("App", () => {
               "README or repo metadata includes: Optimizes attention kernels for lower latency inference.",
             ],
             artifacts: [
+              {
+                type: "audience",
+                label: "Target user discovery map",
+                fileName: "qwenlm-flashqla-target-user-discovery.md",
+                body: "## Target user discovery map\n\nSource-backed target user discovery.",
+                sourceReferences: ["README or repo metadata includes: Optimizes attention kernels."],
+              },
               {
                 type: "story_map",
                 label: "Project story map",
@@ -1012,6 +1045,11 @@ describe("App", () => {
     );
     const briefRegion = await screen.findByRole("region", { name: /free repo launch brief/i });
     expect(within(briefRegion).getByText(/AI project builders, open-source maintainers/i)).toBeInTheDocument();
+    const audienceRegion = within(briefRegion).getByRole("region", { name: /target user discovery/i });
+    expect(within(audienceRegion).getByText(/^Target user discovery$/i)).toBeInTheDocument();
+    expect(within(audienceRegion).getByText(/Source-backed target user discovery/i)).toBeInTheDocument();
+    expect(within(audienceRegion).getByText(/AI project builders/i)).toBeInTheDocument();
+    expect(within(audienceRegion).getByText(/which repository evidence would make you trust/i)).toBeInTheDocument();
     const storyMapRegion = within(briefRegion).getByRole("region", { name: /project story map/i });
     expect(within(storyMapRegion).getByText(/Project story map/i)).toBeInTheDocument();
     expect(within(storyMapRegion).getByText(/Source-backed visual interpretation/i)).toBeInTheDocument();
@@ -1061,7 +1099,7 @@ describe("App", () => {
           event: "launch_brief_viewed",
           repo_full_name: "QwenLM/FlashQLA",
           generation_id: "gen_qwenlm_flashqla_test",
-          brief_sections: 7,
+          brief_sections: 8,
         }),
       ]),
     );
@@ -1072,6 +1110,8 @@ describe("App", () => {
     });
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy launch brief/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Free repo launch brief"));
+    fireEvent.click(within(briefRegion).getByRole("button", { name: /copy target user map/i }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Target user discovery"));
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy story map/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Project story map"));
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy README launch brief/i }));
@@ -1086,6 +1126,14 @@ describe("App", () => {
             repo_full_name: "QwenLM/FlashQLA",
             generation_id: "gen_qwenlm_flashqla_test",
             artifact_type: "free_repo_launch_brief",
+          }),
+          expect.objectContaining({
+            event: "launch_audience_map_copied",
+            repo_full_name: "QwenLM/FlashQLA",
+            generation_id: "gen_qwenlm_flashqla_test",
+            segment_count: 2,
+            channel_count: 2,
+            validation_question_count: 2,
           }),
           expect.objectContaining({
             event: "launch_story_map_copied",
@@ -1117,12 +1165,13 @@ describe("App", () => {
             cta_id: "request_full_launch_package",
             cta_location: "launch_brief_panel",
             lifecycle_stage: "monetization",
-            artifact_count: 3,
+            artifact_count: 4,
           }),
         ]),
       ),
     );
     expect(JSON.stringify(window.dataLayer)).not.toContain("README checklist");
+    expect(JSON.stringify(window.dataLayer)).not.toContain("Which repository evidence");
 
     fireEvent.click(previewImage);
     const previewDialog = await screen.findByRole("dialog", { name: /generated image preview/i });

@@ -4,6 +4,7 @@ import type {
   ProjectBrief,
   ReadmeContext,
   RepoLaunchBrief,
+  RepoLaunchAudienceDiscovery,
   RepoLaunchBriefAngle,
   RepoLaunchBriefArtifact,
   RepoLaunchBriefChecklistItem,
@@ -47,6 +48,14 @@ export function buildRepoLaunchBrief(input: {
   ];
   const outreachDraft = `Hi, I found ${input.brief.title} and put together a source-backed launch brief from ${repoUrl}. The draft focuses on ${insights[0]}.`;
   const visualExplainerPrompt = `Create a ${input.visualDirection.category} visual explainer as a workflow_diagram. Use ${input.visualDirection.layout.join(", ")} and keep the GitHub strip as ${repoUrl}.`;
+  const audienceDiscovery = buildAudienceDiscovery({
+    repoFullName: input.metadata.fullName,
+    audience,
+    summary: input.brief.subtitle,
+    sourceReferences,
+    topics: input.metadata.topics,
+    language: input.metadata.language,
+  });
   const storyMap = buildStoryMap({
     repoFullName: input.metadata.fullName,
     summary: input.brief.subtitle,
@@ -60,6 +69,7 @@ export function buildRepoLaunchBrief(input: {
   return {
     summary: input.brief.subtitle,
     audienceHypothesis: audience,
+    audienceDiscovery,
     storyMap,
     readmeChecklist,
     launchAngles,
@@ -72,6 +82,7 @@ export function buildRepoLaunchBrief(input: {
       repoFullName: input.metadata.fullName,
       summary: input.brief.subtitle,
       audienceHypothesis: audience,
+      audienceDiscovery,
       storyMap,
       readmeChecklist,
       launchAngles,
@@ -88,6 +99,7 @@ function buildLaunchBriefArtifacts(input: {
   repoFullName: string;
   summary: string;
   audienceHypothesis: string;
+  audienceDiscovery: RepoLaunchAudienceDiscovery;
   storyMap: RepoLaunchStoryMap;
   readmeChecklist: RepoLaunchBriefChecklistItem[];
   launchAngles: RepoLaunchBriefAngle[];
@@ -101,6 +113,13 @@ function buildLaunchBriefArtifacts(input: {
   const sourceBlock = formatSourceReferences(input.sourceReferences);
 
   return [
+    {
+      type: "audience",
+      label: "Target user discovery map",
+      fileName: `${slug}-target-user-discovery.md`,
+      body: formatAudienceDiscovery(input.audienceDiscovery, sourceBlock),
+      sourceReferences: input.sourceReferences,
+    },
     {
       type: "story_map",
       label: "Project story map",
@@ -165,6 +184,58 @@ function buildLaunchBriefArtifacts(input: {
   ];
 }
 
+function buildAudienceDiscovery(input: {
+  repoFullName: string;
+  audience: string;
+  summary: string;
+  sourceReferences: string[];
+  topics: string[];
+  language: string | null;
+}): RepoLaunchAudienceDiscovery {
+  const primarySource = input.sourceReferences[0] ?? "Repository evidence is limited; validate the target users before publishing.";
+  const secondarySource = input.sourceReferences[1] ?? primarySource;
+  const topicSummary = input.topics.length ? input.topics.slice(0, 4).join(", ") : input.language ?? "repository signals";
+  const isAiProject = /ai|agent|model|llm|inference|cuda/i.test(`${input.summary} ${topicSummary}`);
+  const technicalSegment = isAiProject ? "AI project builders" : input.audience.split(",")[0]?.trim() || "Technical builders";
+
+  return {
+    title: `${input.repoFullName} target user discovery map`,
+    summary: `Source-backed target user discovery for ${input.summary}`,
+    signals: [
+      {
+        id: "technical_builders",
+        segment: input.audience,
+        jobToBeDone: `Understand whether ${input.repoFullName} is useful before reading the full repository.`,
+        trigger: "Preparing a launch, README rewrite, benchmark post, demo day, or technical community share.",
+        whereToFind: `GitHub README, release notes, issues, and communities around ${topicSummary}.`,
+        validationQuestion: "Which repository evidence would make this target user trust the project enough to try it?",
+        source: primarySource,
+        priority: "high",
+      },
+      {
+        id: "open_source_adopters",
+        segment: "Open-source adopters and maintainers",
+        jobToBeDone: "Decide whether the project is credible, usable, and worth sharing with a technical audience.",
+        trigger: "A visitor lands on the repo, compares alternatives, or asks whether the project is ready for adoption.",
+        whereToFind: "GitHub stars/watchers, README readers, issue discussions, docs pages, and open-source launch communities.",
+        validationQuestion: "What setup path, example, or proof boundary would help adopters understand the project faster?",
+        source: secondarySource,
+        priority: "medium",
+      },
+      {
+        id: "launch_reviewers",
+        segment: `${technicalSegment}, founders, DevRel operators, and launch reviewers`,
+        jobToBeDone: "Turn the repository story into channel-ready launch material without unsupported claims.",
+        trigger: "Product Hunt preparation, funding/demo update, partner outreach, newsletter mention, or first public showcase.",
+        whereToFind: "Product Hunt launch prep, founder communities, DevRel newsletters, technical social posts, and partner channels.",
+        validationQuestion: "Which launch channel needs the clearest source-backed proof before the team should scale distribution?",
+        source: primarySource,
+        priority: "medium",
+      },
+    ],
+  };
+}
+
 function buildStoryMap(input: {
   repoFullName: string;
   summary: string;
@@ -219,6 +290,30 @@ function buildStoryMap(input: {
       },
     ],
   };
+}
+
+function formatAudienceDiscovery(audienceDiscovery: RepoLaunchAudienceDiscovery, sourceBlock: string) {
+  return [
+    `# ${audienceDiscovery.title}`,
+    "",
+    "## Target user discovery map",
+    "",
+    audienceDiscovery.summary,
+    "",
+    ...audienceDiscovery.signals.map((signal, index) =>
+      [
+        `${index + 1}. ${signal.segment}`,
+        `   Priority: ${signal.priority}`,
+        `   Job to be done: ${signal.jobToBeDone}`,
+        `   Trigger: ${signal.trigger}`,
+        `   Where to find: ${signal.whereToFind}`,
+        `   Validation question: ${signal.validationQuestion}`,
+        `   Source: ${signal.source}`,
+      ].join("\n"),
+    ),
+    "",
+    sourceBlock,
+  ].join("\n");
 }
 
 function formatStoryMap(storyMap: RepoLaunchStoryMap, sourceBlock: string) {

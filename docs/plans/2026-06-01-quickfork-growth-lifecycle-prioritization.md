@@ -393,6 +393,62 @@ Next action:
 
 - Compare story-map copy/download behavior against README/social/deck/outreach exports, then decide whether the next activation slice should be a visual preview export, signup-gated saves, or a source-backed showcase example.
 
+## 2026-06-02 Repo Audience Discovery Map Slice
+
+Hypothesis:
+
+- If the generated launch brief names likely target users, launch triggers, channels, and validation questions, builders will understand QuickFork as a launch strategy workflow rather than a generic asset generator.
+
+Lifecycle stage:
+
+- Discovery to Activation.
+
+Target user:
+
+- AI project builders, open-source maintainers, indie technical founders, DevRel operators, and studios preparing public launches from GitHub-backed products.
+
+Changed surface:
+
+- `RepoLaunchBrief` now includes a deterministic `audienceDiscovery` map.
+- The generated launch brief panel now renders a `Target user discovery` section before the project story map.
+- Users can copy the target user map as markdown.
+- `launchBrief.artifacts` now includes an `audience` markdown export before story map, README, social, deck, outreach, and visual artifacts.
+- Analytics tracks `launch_audience_map_copied` with repo, generation, segment count, channel count, and validation question count only.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-repo-audience-discovery-map.md`.
+- Added research synthesis at `docs/marketing/research/2026-06-02-repo-audience-discovery-map.md`.
+
+Primary CTA:
+
+- Copy target user map.
+
+Primary metric:
+
+- `launch_audience_map_copied`.
+- `launch_artifact_copied` and `launch_artifact_downloaded` where `artifact_type=audience`.
+
+Guardrail:
+
+- Do not send raw README, raw target-user text, raw artifact body, emails, tokens, secrets, unsupported customer proof, pricing, ranking, revenue, or guaranteed-growth claims to browser analytics.
+
+Evidence gap:
+
+- Repo tests prove the audience discovery contract, UI, and analytics hygiene. Production validation still needs real copy/export rates and interviews about whether the target user map helps users find launch audiences.
+
+Evidence observed:
+
+- Backend RED test failed first because `launchBrief.audienceDiscovery` did not exist.
+- Frontend RED test failed first because the generated brief did not render a `Target user discovery` region.
+- `npm test -- src/server/generation/generation.test.ts -t "source-backed free repo launch brief"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/App.test.tsx -t "submits the Hero generator form"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/server/generation/generation.test.ts src/App.test.tsx src/lib/analytics.test.ts`: 3 files passed, 63 tests passed.
+- `npm test`: 22 files passed, 140 tests passed.
+- `npm run build`: TypeScript and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Next action:
+
+- Run full verification, PR/merge, production smoke, then compare `launch_audience_map_copied` and `artifact_type=audience` export behavior against story map and README/social/deck/outreach exports.
+
 ## 2026-06-02 AI Project Launch Use Case Page Slice
 
 Hypothesis:
