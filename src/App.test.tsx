@@ -299,6 +299,61 @@ describe("App", () => {
     );
   });
 
+  it("renders cold-start launch materials as the full product value-unit route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/product/cold-start-launch-materials?utm_source=google");
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: /Cold Start Launch Materials From A GitHub Repo/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/README, social, deck, visual, and outreach/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/AI project builders, open-source maintainers/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Turn one repo into a launch-materials brief/i)).toBeInTheDocument();
+    expect(screen.getByText(/Package four launch channels together/i)).toBeInTheDocument();
+    expect(screen.getByText(/What are cold-start launch materials/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Product Hunt launch guide/i })).toHaveAttribute(
+      "href",
+      expect.stringContaining("producthunt.com"),
+    );
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /generate free repo brief/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#hero");
+    expect(document.title).toBe("Cold Start Launch Materials | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps cold start launch materials demand into source-backed README, social, deck, visual, and outreach drafts generated from one public GitHub repository URL.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/product/cold-start-launch-materials",
+    );
+    const schema = JSON.parse(document.querySelector('script[data-quickfork-marketing-schema]')?.textContent ?? "{}");
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity[0].name).toContain("What are cold-start launch materials");
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/product/cold-start-launch-materials",
+          page_type: "product",
+          buyer_stage: "consideration",
+          intent_cluster: "cold_start_launch_materials",
+          utm_source: "google",
+        }),
+      ]),
+    );
+    expect(document.body.textContent).not.toMatch(
+      /\b(guaranteed|rankings|revenue|customers|viral|fully autonomous)\b/i,
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key|raw|readme/i);
+  }, 10000);
+
   it("renders source-backed launch assets as a high-intent product route", () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/product/source-backed-launch-assets?utm_source=perplexity");

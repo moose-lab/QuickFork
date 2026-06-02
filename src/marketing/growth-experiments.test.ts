@@ -83,6 +83,24 @@ describe("growth experiment registry", () => {
     );
   });
 
+  it("adds the cold-start launch materials hub to page intent validation", () => {
+    expect(getGrowthExperimentById("2026_q2_cold_start_materials_intent_validation")).toEqual(
+      expect.objectContaining({
+        status: "active",
+        lifecycleStage: "validation",
+        targetUser: "ai_project_builder",
+        controlPath: "/product/github-repo-to-launch-package",
+        variantPath: "/product/cold-start-launch-materials",
+        primaryCta: "generate_launch_card",
+        primaryMetric: "cta_clicked_per_page_view",
+        guardrailMetric: "generation_failed_per_generation_started",
+        minimumWindow: "14_days",
+        evidenceRequired:
+          "ga4_page_view_and_cta_clicked_and_generation_started_and_generation_failed_and_search_console_query_baseline_and_ai_answer_audit",
+      }),
+    );
+  });
+
   it("mirrors the editable CSV registry", () => {
     const { headers, rows } = parseRegistry();
 

@@ -239,6 +239,97 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
     ],
     lastUpdated: "June 2, 2026",
   },
+  cold_start_launch_materials: {
+    definition:
+      "Cold-start launch materials are source-backed README, social, deck, visual, and outreach drafts generated from one public GitHub repository URL. QuickFork uses repository evidence as the source boundary so AI builders can explain a project before mature adoption proof exists.",
+    targetUser:
+      "AI project builders, open-source maintainers, indie technical founders, and DevRel teams preparing a first public launch.",
+    jobToBeDone:
+      "When a working repository is ready to share, help the builder generate launch materials across README, social, deck, visual, and outreach surfaces from the same source-backed project brief.",
+    evidenceBoundary:
+      "Launch material claims should come from repository metadata, README content, linked docs, official identity assets, generated quality reports, or explicit user input. Outcome claims, public pricing, and publishing decisions still need human review and measured evidence.",
+    benefits: [
+      {
+        title: "Turn one repo into a launch-materials brief",
+        body: "Use README evidence, repo metadata, topics, official links, and explicit notes to create the factual base before drafting public-facing assets.",
+      },
+      {
+        title: "Package four launch channels together",
+        body: "Keep README updates, social posts, deck structure, and product outreach aligned while preserving a visual explainer direction for the same project story.",
+      },
+      {
+        title: "Make the project understandable before the code",
+        body: "Translate workflow, audience, proof limits, and setup context into launch copy that helps strangers understand why the repo matters.",
+      },
+      {
+        title: "Route launch urgency into activation",
+        body: "Move visitors from the product hub into the free repo brief, artifact export behavior, Search Console baselines, and AI-answer audits.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Capture repository evidence",
+        body: "Start with one public GitHub URL and normalize README content, repo metadata, topics, official assets, links, and user-provided launch notes.",
+      },
+      {
+        title: "Build the launch-materials map",
+        body: "Separate source-backed facts, audience hypotheses, workflow steps, channel needs, and unsupported claims before asking models to draft.",
+      },
+      {
+        title: "Draft channel-specific assets",
+        body: "Generate README recommendations, social launch copy, deck outline, visual explainer prompt, and outreach draft from the same project brief.",
+      },
+      {
+        title: "Review, export, and measure",
+        body: "Humans approve claims and visuals, then QuickFork measures CTA clicks, generation starts, artifact exports, and full-package requests.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What are cold-start launch materials?",
+        answer:
+          "They are reviewable README, social, deck, visual, and outreach drafts generated from one public GitHub repository URL before a project has mature public launch proof.",
+      },
+      {
+        question: "Why generate launch materials from a GitHub repository?",
+        answer:
+          "The repository contains the strongest public evidence for a technical project: README language, metadata, topics, official links, implementation context, identity assets, and proof boundaries.",
+      },
+      {
+        question: "Which launch channels should QuickFork cover first?",
+        answer:
+          "The first package should cover README improvements, GitHub/social preview copy, a deck-ready story outline, a visual explainer prompt, and product outreach drafts for human review.",
+      },
+      {
+        question: "Does QuickFork promise launch results?",
+        answer:
+          "No. QuickFork creates source-backed launch drafts and measurement surfaces. Public outcomes still need analytics, interviews, and post-launch evidence before they can be treated as proven.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub treats the README as the primary repository explanation surface, so cold-start launch material should begin with README evidence.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "GitHub Docs social preview",
+        body: "GitHub documents repository social previews, making shared-link visuals a concrete part of repository launch packaging.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides frames user discovery and feedback as part of launch work, which should shape audience and outreach drafts.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation makes tagline, media, maker context, and launch-day copy practical review surfaces for a launch package.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+  },
   readme_marketing_cards: {
     definition:
       "README marketing cards are README-first hero cards, GitHub social preview direction, and launch visuals grounded in repository evidence and human review. They help visitors understand what a technical project does before reading the full README, code, benchmark notes, or launch announcement.",
@@ -1101,6 +1192,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   if (link.intentCluster === "source_backed_launch_assets") {
     return "Source Backed Launch Assets for repository evidence-driven launches.";
   }
+  if (link.intentCluster === "cold_start_launch_materials") {
+    return "Cold Start Launch Materials From A GitHub Repo.";
+  }
   if (link.intentCluster === "readme_marketing_cards") {
     return "README Marketing Cards for source-backed repository visuals.";
   }
@@ -1160,6 +1254,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "source_backed_launch_assets") {
     return "QuickFork maps source backed launch assets demand into reviewable README, social, deck, outreach, and visual materials generated from repository evidence, source maps, and human-approved claims.";
+  }
+  if (link.intentCluster === "cold_start_launch_materials") {
+    return "QuickFork maps cold start launch materials demand into source-backed README, social, deck, visual, and outreach drafts generated from one public GitHub repository URL.";
   }
   if (link.intentCluster === "readme_marketing_cards") {
     return "QuickFork maps readme marketing cards demand into README-first hero cards, GitHub social preview direction, and launch visuals grounded in repository evidence and human review.";
