@@ -22,6 +22,7 @@ export interface MarketingPageNarrative {
     body: string;
     url: string;
   }>;
+  lastUpdated?: string;
 }
 
 const pageTypeLabels: Record<MarketingPageType, string> = {
@@ -203,6 +204,104 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
       },
     ],
   },
+  open_source_launch_checklist: {
+    definition:
+      "An open-source launch checklist helps maintainers turn a public GitHub repository into source-backed README, social preview, Product Hunt, deck, and outreach launch materials while keeping every claim tied to repo evidence, public context, or explicit human input.",
+    targetUser: "Open-source maintainers and AI/devtool builders preparing a public repository launch.",
+    jobToBeDone:
+      "When a project is close to launch, help the maintainer check the README story, repository preview, audience language, launch-channel assets, and post-launch learning loop before asking people to try the repo.",
+    evidenceBoundary:
+      "This checklist uses public launch guidance as discovery evidence. It does not prove QuickFork demand, pricing, ranking lift, revenue, customer count, Product Hunt success, or conversion lift.",
+    benefits: [
+      {
+        title: "README trust before launch assets",
+        body: "Use the README as the source of truth for what the project does, who it serves, what proof exists, and which claims still need review.",
+      },
+      {
+        title: "Repository preview is a real launch surface",
+        body: "Treat GitHub social preview imagery as part of the launch package because shared repository links need a clear visual explanation.",
+      },
+      {
+        title: "Audience language before scaled promotion",
+        body: "Map the maintainer's target users, communities, feedback requests, and launch questions before publishing generic AI marketing copy.",
+      },
+      {
+        title: "Channel assets from one repo brief",
+        body: "Convert the same source-backed project story into Product Hunt copy, deck flow, outreach snippets, and social posts for review.",
+      },
+      {
+        title: "Post-launch learning stays measurable",
+        body: "Keep the checklist connected to CTA, resource request, repo brief generation, interviews, and follow-up evidence instead of assuming the page is validated.",
+      },
+    ],
+    workflow: [
+      {
+        title: "README trust pass",
+        body: "Confirm the README explains the problem, target user, workflow, setup path, proof limits, and source-backed claims before creating external assets.",
+      },
+      {
+        title: "Repository preview pass",
+        body: "Check whether the repo has a social preview, visible project identity, and a shareable explanation for people who first see the GitHub link.",
+      },
+      {
+        title: "Audience and feedback pass",
+        body: "Name the communities, likely users, buyer triggers, and questions to ask so the launch is a validation loop, not a one-way announcement.",
+      },
+      {
+        title: "Launch asset pass",
+        body: "Draft Product Hunt copy, README/social card direction, deck outline, outreach copy, and social posts from the same source-backed brief.",
+      },
+      {
+        title: "Post-launch learning pass",
+        body: "Track checklist requests, repo brief starts, generated packages, downloads, follow-up replies, and interviews before scaling the content program.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is an open-source launch checklist?",
+        answer:
+          "It is a source-backed pre-launch review that checks README trust, repository preview, audience feedback, launch assets, and post-launch learning before an open-source or AI/devtool repo is promoted publicly.",
+      },
+      {
+        question: "Who should use this checklist?",
+        answer:
+          "It is for open-source maintainers and AI/devtool builders preparing a public GitHub repository launch who need credible README, social preview, Product Hunt, deck, outreach, and follow-up materials.",
+      },
+      {
+        question: "What can QuickFork generate from the checklist?",
+        answer:
+          "QuickFork can turn one repository URL into a source-backed launch brief, README checklist, social copy, deck outline, outreach draft, visual prompt, quality report, and artifact manifest for human review.",
+      },
+      {
+        question: "What remains unvalidated on this page?",
+        answer:
+          "The page is still a hypothesis until production analytics, lead quality, checklist requests, repo brief generation, interviews, and AI-search visibility show which maintainers actually use it.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides frames finding users as audience, messaging, community, and feedback work that starts before broad promotion.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "GitHub Docs About READMEs",
+        body: "GitHub positions READMEs as the first place people look to understand a repository, making README trust the first launch-readiness pass.",
+        url: "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+      },
+      {
+        label: "GitHub Docs social preview",
+        body: "GitHub documents repository social preview customization, which makes preview imagery a concrete launch surface for shared repo links.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation depends on checklist steps, maker-facing copy, gallery assets, first-comment context, and launch-day choices.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+    ],
+    lastUpdated: "June 2, 2026",
+  },
   github_repo_launch_demand_map: {
     definition:
       "A GitHub repo launch demand map turns public launch-prep sources into a priority map for source-backed launch packages. It links repository social previews, open-source audience work, Product Hunt assets, and community launch prep to QuickFork surfaces and paid-intent signals.",
@@ -305,6 +404,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   if (link.intentCluster === "ai_project_launch") {
     return "AI Project Launch for source-backed technical launches.";
   }
+  if (link.intentCluster === "open_source_launch_checklist") {
+    return "Open Source Launch Checklist for source-backed repository launches.";
+  }
   if (link.intentCluster === "github_repo_launch_demand_map") {
     return "GitHub Repo Launch Demand for source-backed package prioritization.";
   }
@@ -337,6 +439,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "ai_project_launch") {
     return "QuickFork maps AI project launch demand into source-backed README, social, deck, outreach, and visual launch assets for cold-start AI repositories.";
+  }
+  if (link.intentCluster === "open_source_launch_checklist") {
+    return "QuickFork maps open source launch checklist demand into source-backed README, social preview, Product Hunt, deck, outreach, and post-launch learning steps for public GitHub repository launches.";
   }
   if (link.intentCluster === "github_repo_launch_demand_map") {
     return "QuickFork maps github repo launch demand into public-source signals for README, social, Product Hunt, deck, outreach, and paid launch-package tests.";

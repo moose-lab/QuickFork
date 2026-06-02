@@ -2379,6 +2379,13 @@ blockquote {
   line-height: 1.45;
 }
 
+.marketingUpdated {
+  margin-top: -8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
 .marketingActions {
   display: flex;
   flex-wrap: wrap;

@@ -41,7 +41,7 @@ QuickFork should use repository evidence, official project assets, README conten
 
 ### Resources
 
-- Open Source Launch Checklist | QuickFork: https://seekersai.com/resources/open-source-launch-checklist - Resource, Awareness. QuickFork maps open source launch checklist into a source-backed resource path for Open Source Maintainer, with campaign attribution and a clear next action.
+- Open Source Launch Checklist | QuickFork: https://seekersai.com/resources/open-source-launch-checklist - Resource, Awareness. QuickFork maps open source launch checklist demand into source-backed README, social preview, Product Hunt, deck, outreach, and post-launch learning steps for public GitHub repository launches.
 - GitHub Project Marketing Card | QuickFork: https://seekersai.com/resources/github-project-marketing-card-guide - Resource, Awareness. QuickFork maps github project marketing card into a source-backed resource path for Open Source Maintainer, with campaign attribution and a clear next action.
 - GitHub Repo Launch Demand | QuickFork: https://seekersai.com/resources/github-repo-launch-demand-map - Resource, Consideration. QuickFork maps github repo launch demand into public-source signals for README, social, Product Hunt, deck, outreach, and paid launch-package tests.
 - README Cover Prompt Guide | QuickFork: https://seekersai.com/resources/readme-cover-prompt-guide - Resource, Implementation. QuickFork maps readme cover prompt guide into a source-backed resource path for Design Lead, with campaign attribution and a clear next action.

@@ -6,7 +6,7 @@ import {
   getMarketingPageTypeLabel,
 } from "../marketing/page-content";
 
-export const seoAssetLastModified = "2026-06-01";
+export const seoAssetLastModified = "2026-06-02";
 
 interface SitemapEntry {
   loc: string;

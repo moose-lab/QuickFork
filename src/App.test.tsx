@@ -337,6 +337,68 @@ describe("App", () => {
     expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key/i);
   }, 10000);
 
+  it("renders the open-source launch checklist as a source-backed resource route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/resources/open-source-launch-checklist?utm_source=x");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /Open Source Launch Checklist/i })).toBeInTheDocument();
+    expect(
+      screen.getByText(/source-backed README, social preview, Product Hunt, deck, and outreach/i),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/Open-source maintainers and AI\/devtool builders/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/README trust pass/i)).toBeInTheDocument();
+    expect(screen.getByText(/Repository preview pass/i)).toBeInTheDocument();
+    expect(screen.getByText(/Audience and feedback pass/i)).toBeInTheDocument();
+    expect(screen.getByText(/Launch asset pass/i)).toBeInTheDocument();
+    expect(screen.getByText(/Post-launch learning pass/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Open Source Guides finding users/i })).toHaveAttribute(
+      "href",
+      "https://opensource.guide/finding-users/",
+    );
+    expect(screen.getByRole("link", { name: /GitHub Docs About READMEs/i })).toHaveAttribute(
+      "href",
+      "https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+    );
+    expect(screen.getByRole("link", { name: /GitHub Docs social preview/i })).toHaveAttribute(
+      "href",
+      expect.stringContaining("docs.github.com"),
+    );
+    expect(screen.getByRole("link", { name: /Product Hunt launch guide/i })).toHaveAttribute(
+      "href",
+      "https://www.producthunt.com/launch/preparing-for-launch",
+    );
+    expect(screen.getByText("Last updated: June 2, 2026")).toBeInTheDocument();
+    const primaryCta = screen
+      .getAllByRole("link", { name: /request checklist/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/#studio");
+    expect(document.title).toBe("Open Source Launch Checklist | QuickFork");
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
+      "content",
+      "QuickFork maps open source launch checklist demand into source-backed README, social preview, Product Hunt, deck, outreach, and post-launch learning steps for public GitHub repository launches.",
+    );
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/resources/open-source-launch-checklist",
+    );
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "resource_page_viewed",
+          resource_slug: "open-source-launch-checklist",
+          resource_type: "checklist",
+          buyer_stage: "awareness",
+          page_type: "resource",
+          intent_cluster: "open_source_launch_checklist",
+          utm_source: "x",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/ranking|revenue|customers|guaranteed|token|secret|api_key/i);
+  }, 10000);
+
   it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");

@@ -48,6 +48,9 @@ describe("public growth infrastructure", () => {
     expect(llms).toContain("https://seekersai.com/product/github-repo-to-launch-package");
     expect(llms).toContain("https://seekersai.com/use-cases/ai-project-launch");
     expect(llms).toContain("AI project launch");
+    expect(llms).toContain("https://seekersai.com/resources/open-source-launch-checklist");
+    expect(llms).toContain("Open Source Launch Checklist");
+    expect(llms).toContain("source-backed README, social preview, Product Hunt, deck, outreach, and post-launch learning");
     expect(llms).toContain("https://seekersai.com/resources/github-repo-launch-demand-map");
     expect(llms).toContain("GitHub Repo Launch Demand");
     expect(llms).toContain("https://seekersai.com/resources/github-project-marketing-card-guide");
