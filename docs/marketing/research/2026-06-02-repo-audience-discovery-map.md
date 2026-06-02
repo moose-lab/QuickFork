@@ -73,6 +73,10 @@ Guardrail:
 - Full test suite passed: `npm test` returned 22 files passed, 140 tests passed.
 - Production build passed: `npm run build` completed TypeScript and Vite production build.
 - `git diff --check`: no whitespace errors.
+- PR #16 merged into `main` at merge commit `a116ba67d50b1096898122ea74c3a9a2f940fe1f`.
+- Main CI/CD run `26820012405` completed successfully: `Test and build` passed and `Deploy production to Vercel` passed.
+- Production smoke passed: `https://seekersai.com` returned HTTP 200.
+- Production bundle `/assets/index-DmGop2Ki.js` contains `Target user discovery`, `launch_audience_map_copied`, and `audienceDiscovery`.
 
 ## Evidence Gap
 
