@@ -793,6 +793,65 @@ Next action:
 
 - Run full verification, push/open PR, then smoke-test production route, `llms.txt`, sitemap, and deployed bundle.
 
+## 2026-06-02 Paid-Intent Package Qualification Slice
+
+Hypothesis:
+
+- If the full launch package request asks for package model and buying trigger in addition to repo URL, launch timeline, package scope, and human review needs, QuickFork can distinguish real monetization intent from generic contact before publishing exact prices.
+
+Lifecycle stage:
+
+- Monetization learning.
+
+Target user:
+
+- Founders, open-source maintainers, DevRel operators, and studios with a launch deadline, Product Hunt preparation, investor/demo-day need, client handoff, or repeat repository launch workflow.
+
+Changed surface:
+
+- `/contact?intent=launch-package`
+- `src/components/marketing/LeadCaptureForm.tsx`
+- `src/server/marketing/lead-capture.ts`
+- `src/App.test.tsx`
+- `src/server/marketing/lead-capture.test.ts`
+- `docs/superpowers/plans/2026-06-02-paid-intent-package-qualification.md`
+
+Primary CTA:
+
+- Request full launch package.
+
+Primary metric:
+
+- `sales_contact_requested`, segmented by `package_model`, `buying_trigger`, `launch_timeline`, `package_scope_count`, and `human_review_needed`.
+
+Guardrail:
+
+- Do not publish exact pricing until pricing research, qualified pilot requests, and willingness-to-pay interviews exist.
+- Browser analytics must not include raw email, name, repository URL, launch notes, raw artifact bodies, tokens, secrets, unsupported customer proof, ranking, revenue, or guaranteed-launch claims.
+
+Evidence gap:
+
+- Field capture and CRM preservation prove instrumentation, not willingness to pay. This still needs qualified requests, interviews, route-level CTA behavior, and package-scope analysis.
+
+Evidence observed:
+
+- Frontend RED test failed first because the full launch package form did not expose `Package model`.
+- Server RED test failed first because CRM activity qualification did not preserve `packageModel` or `buyingTrigger`.
+- `npm test -- src/App.test.tsx -t "full launch package contact"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/server/marketing/lead-capture.test.ts -t "full launch package qualification"`: 1 file passed, 1 selected test passed.
+- `npm test -- src/App.test.tsx src/server/marketing/lead-capture.test.ts src/seo/public-growth.test.ts`: 3 files passed, 33 tests passed.
+- `npm test`: 22 files passed, 141 tests passed.
+- `npm run build`: TypeScript and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Decision:
+
+- Treat this as a monetization qualification improvement, not validated pricing. The request path now captures which paid package shape users ask for without turning the public page into a pricing claim.
+
+Next action:
+
+- Run full verification, push/open PR, merge, then production-smoke the contact route and monitor `sales_contact_requested` quality before changing packaging or prices.
+
 ## 2026-06-02 Source-Backed Launch Package Example Slice
 
 Hypothesis:

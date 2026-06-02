@@ -112,6 +112,8 @@ describe("lead capture", () => {
         qualification: {
           repoUrl: " https://github.com/moose-lab/QuickFork ",
           launchTimeline: "within_30_days",
+          packageModel: "single_launch",
+          buyingTrigger: "launch_deadline",
           packageScope: ["readme", "social", "deck", "outreach", "visual_explainer"],
           humanReviewNeeded: true,
           notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",
@@ -148,6 +150,8 @@ describe("lead capture", () => {
             repoHost: "github.com",
             repoFullName: "moose-lab/QuickFork",
             launchTimeline: "within_30_days",
+            packageModel: "single_launch",
+            buyingTrigger: "launch_deadline",
             packageScope: ["readme", "social", "deck", "outreach", "visual_explainer"],
             humanReviewNeeded: true,
             notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",

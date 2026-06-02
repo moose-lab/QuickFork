@@ -31,6 +31,8 @@ interface LeadQualificationInput {
   repoHost?: string;
   repoFullName?: string;
   launchTimeline?: string;
+  packageModel?: string;
+  buyingTrigger?: string;
   packageScope?: string[];
   humanReviewNeeded?: boolean;
   notes?: string;
@@ -209,6 +211,8 @@ function normalizeQualification(value: unknown): LeadQualificationInput | undefi
     repoHost: repoReference.repoHost,
     repoFullName: repoReference.repoFullName,
     launchTimeline: normalizeOptionalString(source.launchTimeline, "qualification.launchTimeline"),
+    packageModel: normalizeOptionalString(source.packageModel, "qualification.packageModel"),
+    buyingTrigger: normalizeOptionalString(source.buyingTrigger, "qualification.buyingTrigger"),
     packageScope,
     humanReviewNeeded: normalizeOptionalBoolean(source.humanReviewNeeded, "qualification.humanReviewNeeded"),
     notes: normalizeOptionalString(source.notes, "qualification.notes"),

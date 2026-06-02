@@ -840,6 +840,8 @@ describe("App", () => {
       target: { value: "https://github.com/moose-lab/QuickFork" },
     });
     fireEvent.change(screen.getByLabelText(/launch timeline/i), { target: { value: "within_30_days" } });
+    fireEvent.change(screen.getByLabelText(/package model/i), { target: { value: "single_launch" } });
+    fireEvent.change(screen.getByLabelText(/buying trigger/i), { target: { value: "launch_deadline" } });
     fireEvent.click(screen.getByLabelText(/^README$/i));
     fireEvent.click(screen.getByLabelText(/^Social$/i));
     fireEvent.click(screen.getByLabelText(/^Deck$/i));
@@ -865,6 +867,8 @@ describe("App", () => {
         repoHost: "github.com",
         repoFullName: "moose-lab/QuickFork",
         launchTimeline: "within_30_days",
+        packageModel: "single_launch",
+        buyingTrigger: "launch_deadline",
         packageScope: ["readme", "social", "deck", "outreach", "visual_explainer"],
         humanReviewNeeded: true,
         notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",
@@ -884,6 +888,8 @@ describe("App", () => {
           role_segment: "founder",
           utm_source: "product",
           launch_timeline: "within_30_days",
+          package_model: "single_launch",
+          buying_trigger: "launch_deadline",
           package_scope_count: 5,
           human_review_needed: true,
         }),

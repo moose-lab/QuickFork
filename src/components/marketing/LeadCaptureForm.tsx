@@ -15,6 +15,8 @@ export function LeadCaptureForm({ link }: LeadCaptureFormProps) {
   const [companyDomain, setCompanyDomain] = useState("");
   const [repoUrl, setRepoUrl] = useState("");
   const [launchTimeline, setLaunchTimeline] = useState("");
+  const [packageModel, setPackageModel] = useState("");
+  const [buyingTrigger, setBuyingTrigger] = useState("");
   const [packageScope, setPackageScope] = useState<string[]>([]);
   const [humanReviewNeeded, setHumanReviewNeeded] = useState(false);
   const [notes, setNotes] = useState("");
@@ -37,6 +39,8 @@ export function LeadCaptureForm({ link }: LeadCaptureFormProps) {
       companyDomain,
       repoUrl,
       launchTimeline,
+      packageModel,
+      buyingTrigger,
       packageScope,
       humanReviewNeeded,
       notes,
@@ -61,6 +65,8 @@ export function LeadCaptureForm({ link }: LeadCaptureFormProps) {
       setCompanyDomain("");
       setRepoUrl("");
       setLaunchTimeline("");
+      setPackageModel("");
+      setBuyingTrigger("");
       setPackageScope([]);
       setHumanReviewNeeded(false);
       setNotes("");
@@ -128,6 +134,27 @@ export function LeadCaptureForm({ link }: LeadCaptureFormProps) {
               <option value="exploring">Exploring</option>
             </select>
           </label>
+          <label>
+            Package model
+            <select value={packageModel} onChange={(event) => setPackageModel(event.target.value)}>
+              <option value="">Select package model</option>
+              <option value="single_launch">Single launch package</option>
+              <option value="recurring_launches">Recurring launch workflow</option>
+              <option value="team_or_agency">Team or agency workspace</option>
+              <option value="human_review_addon">Human review add-on</option>
+            </select>
+          </label>
+          <label>
+            Buying trigger
+            <select value={buyingTrigger} onChange={(event) => setBuyingTrigger(event.target.value)}>
+              <option value="">Select buying trigger</option>
+              <option value="launch_deadline">Launch deadline</option>
+              <option value="product_hunt_prep">Product Hunt preparation</option>
+              <option value="investor_or_demo_day">Investor or demo day</option>
+              <option value="client_handoff">Client handoff</option>
+              <option value="repeat_launch_workflow">Repeat launch workflow</option>
+            </select>
+          </label>
           <fieldset>
             <legend>Package scope</legend>
             {launchPackageScopeOptions.map((option) => (
@@ -177,6 +204,8 @@ interface LeadCaptureFormState {
   companyDomain: string;
   repoUrl: string;
   launchTimeline: string;
+  packageModel: string;
+  buyingTrigger: string;
   packageScope: string[];
   humanReviewNeeded: boolean;
   notes: string;
@@ -205,6 +234,8 @@ function buildLeadCapturePayload(link: MarketingLink, form: LeadCaptureFormState
           repoHost: repoReference.repoHost,
           repoFullName: repoReference.repoFullName,
           launchTimeline: form.launchTimeline || undefined,
+          packageModel: form.packageModel || undefined,
+          buyingTrigger: form.buyingTrigger || undefined,
           packageScope: form.packageScope.length ? form.packageScope : undefined,
           humanReviewNeeded: form.humanReviewNeeded,
           notes: form.notes.trim() || undefined,
@@ -306,6 +337,8 @@ function getSafeQualificationAnalytics(qualification: ReturnType<typeof buildLea
 
   return {
     launch_timeline: qualification.launchTimeline,
+    package_model: qualification.packageModel,
+    buying_trigger: qualification.buyingTrigger,
     package_scope_count: qualification.packageScope?.length ?? 0,
     human_review_needed: qualification.humanReviewNeeded,
   };
