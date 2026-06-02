@@ -218,6 +218,13 @@ describe("typed semantic marketing link catalog", () => {
         primaryKeyword: "source backed launch assets",
       }),
     );
+    expect(getMarketingLinkByPath("/product/cold-start-launch-materials")).toEqual(
+      expect.objectContaining({
+        intentCluster: "cold_start_launch_materials",
+        primaryKeyword: "cold start launch materials",
+        primaryCta: "generate_launch_card",
+      }),
+    );
     expect(getMarketingLinkByPath("/product/readme-marketing-cards")).toEqual(
       expect.objectContaining({
         intentCluster: "readme_marketing_cards",
@@ -248,6 +255,16 @@ describe("typed semantic marketing link catalog", () => {
     expect(getMarketingPageDescription(link!)).toContain(
       "reviewable README, social, deck, outreach, and visual materials",
     );
+    expect(getMarketingPageDescription(link!)).not.toMatch(/guaranteed|rankings|revenue|customers|viral/i);
+  });
+
+  it("publishes a cold-start launch materials product hub contract", () => {
+    const link = getMarketingLinkByPath("/product/cold-start-launch-materials");
+
+    expect(link).toBeDefined();
+    expect(getMarketingPageTitle(link!)).toContain("Cold Start Launch Materials");
+    expect(getMarketingPageHeadline(link!)).toContain("Cold Start Launch Materials");
+    expect(getMarketingPageDescription(link!)).toContain("README, social, deck, visual, and outreach drafts");
     expect(getMarketingPageDescription(link!)).not.toMatch(/guaranteed|rankings|revenue|customers|viral/i);
   });
 

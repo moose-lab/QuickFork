@@ -102,6 +102,32 @@ describe("search and AI baseline contract", () => {
     }
   });
 
+  it("covers the cold-start launch materials hub with control and variant prompts", () => {
+    const rows = getSearchAiBaselineRowsForExperiment("2026_q2_cold_start_materials_intent_validation");
+
+    expect(rows).toHaveLength(2);
+    expect(rows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "cold_start_materials_control",
+          routeRole: "control",
+          canonicalPath: "/product/github-repo-to-launch-package",
+          targetUser: "ai_project_builder",
+          query: "GitHub repo to launch package",
+          queryCluster: "github_repo_to_launch_package",
+        }),
+        expect.objectContaining({
+          id: "cold_start_materials_variant",
+          routeRole: "variant",
+          canonicalPath: "/product/cold-start-launch-materials",
+          targetUser: "ai_project_builder",
+          query: "cold start launch materials",
+          queryCluster: "cold_start_launch_materials",
+        }),
+      ]),
+    );
+  });
+
   it("renders a manual runbook without claiming visibility", () => {
     const runbook = renderSearchAiBaselineRunbook("2026_q2_source_backed_assets_intent_validation");
 

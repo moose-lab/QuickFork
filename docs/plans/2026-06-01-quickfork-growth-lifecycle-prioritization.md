@@ -238,6 +238,65 @@ Growth and retention:
 
 Continue from artifact export tracking into paid-intent CTA tests after users copy or download README, social, deck, outreach, or visual prompt artifacts.
 
+## 2026-06-02 Cold Start Launch Materials Hub Slice
+
+Hypothesis:
+
+- If QuickFork publishes a product-led hub for `cold start launch materials`, AI project builders and maintainers will better understand the full value unit: source-backed README, social, deck, visual, and outreach drafts generated from one public GitHub repository URL.
+
+Lifecycle stage:
+
+- Discovery to Validation, with SEO/GEO foundation.
+
+Target user:
+
+- AI project builders, open-source maintainers, indie technical founders, and DevRel teams preparing first public launches.
+
+Changed surface:
+
+- Added `/product/cold-start-launch-materials` as a published product route.
+- Added route narrative, definition, target user, evidence boundary, benefits, workflow, FAQs, source notes, metadata, and schema.
+- Added the page to semantic link inventory, sitemap, `llms.txt`, and public-growth tests.
+- Added `2026_q2_cold_start_materials_intent_validation` to the experiment registry and evidence report.
+- Added Search Console and AI-answer baseline rows for `GitHub repo to launch package` and `cold start launch materials`.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-cold-start-launch-materials-hub.md`.
+- Added research handoff at `docs/marketing/research/2026-06-02-cold-start-launch-materials-hub.md`.
+
+Primary CTA:
+
+- Generate free repo brief.
+
+Primary metric:
+
+- `cta_clicked_per_page_view` for `/product/cold-start-launch-materials`.
+
+Guardrail:
+
+- `generation_failed_per_generation_started`.
+- No browser analytics payload should include raw README text, raw artifact body, email, token, secret, API key, private repo content, or unsupported proof.
+
+Evidence gap:
+
+- The route and contracts are testable but demand remains unvalidated until a 14-day production window, Search Console baseline, AI-answer audit, and qualitative feedback exist.
+
+Evidence observed:
+
+- RED tests failed first because the route, catalog entry, public assets, experiment row, and baseline rows were missing.
+- `npm test -- src/App.test.tsx src/seo/semantic-links.test.ts`: 2 files passed, 37 tests passed.
+- `npm test -- src/seo/public-growth.test.ts`: 1 file passed, 6 tests passed.
+- `npm test -- src/marketing/growth-experiments.test.ts src/marketing/search-ai-baseline.test.ts src/marketing/growth-experiment-report.test.ts`: 3 files passed, 20 tests passed.
+- `npm test`: 24 files passed, 158 tests passed.
+- `npm run build`: TypeScript and Vite production build passed.
+- `git diff --check`: no whitespace errors.
+
+Decision:
+
+- Treat this as a hypothesis and measurement setup. Do not promote it as validated demand or AI-search visibility until production evidence exists.
+
+Next action:
+
+- Run full verification, ship through PR/CI/Vercel, smoke-check production, then begin the 14-day comparison against `/product/github-repo-to-launch-package`.
+
 ## 2026-06-02 Evaluation Slice
 
 Hypothesis:
