@@ -7,6 +7,7 @@ import type {
   CrmAttributionTouch,
   CrmLifecycleStage,
 } from "../crm/types.js";
+import { scoreLaunchPackageFit, type LaunchPackageFitScore } from "./launch-package-fit.js";
 
 type LeadCaptureIntent = "resource" | "demo" | "sales_contact" | "partnership";
 
@@ -72,6 +73,7 @@ export async function captureLead(body: unknown, options: LeadCaptureOptions = {
   const input = normalizeLeadCaptureInput(body, now);
   const crm = options.crm ?? defaultCrmAdapter;
   const lifecycleStage = getLifecycleStage(input.intent);
+  const packageFit = getPackageFit(input);
 
   try {
     const lead = await crm.upsertLead({
@@ -84,9 +86,10 @@ export async function captureLead(body: unknown, options: LeadCaptureOptions = {
       lifecycleStage,
       firstTouch: input.firstTouch,
       lastTouch: input.lastTouch,
-      fitScore: getDefaultFitScore(input.intent),
-      engagementScore: getDefaultEngagementScore(input.intent),
+      fitScore: getLeadFitScore(input, packageFit),
+      engagementScore: getLeadEngagementScore(input, packageFit),
       sourcePage: input.firstTouch.landingPage ?? input.lastTouch.landingPage,
+      qualificationReason: getLeadQualificationReason(packageFit),
     });
     const activity = await crm.createActivity({
       leadId: lead.id,
@@ -100,6 +103,7 @@ export async function captureLead(body: unknown, options: LeadCaptureOptions = {
         contactReason: input.contactReason,
         crmCampaign: input.crmCampaign,
         qualification: input.qualification,
+        packageFit,
         sourcePage: input.firstTouch.landingPage ?? input.lastTouch.landingPage,
       },
     });
@@ -319,6 +323,38 @@ function getDefaultEngagementScore(intent: LeadCaptureIntent) {
       return 70;
     case "partnership":
       return 65;
+  }
+}
+
+function getPackageFit(input: LeadCaptureInput) {
+  if (input.requestType !== "full_launch_package" && input.contactReason !== "full_launch_package") {
+    return undefined;
+  }
+  return scoreLaunchPackageFit(input.qualification ?? {});
+}
+
+function getLeadFitScore(input: LeadCaptureInput, packageFit: LaunchPackageFitScore | undefined) {
+  return Math.max(getDefaultFitScore(input.intent), packageFit?.score ?? 0);
+}
+
+function getLeadEngagementScore(input: LeadCaptureInput, packageFit: LaunchPackageFitScore | undefined) {
+  if (!packageFit) return getDefaultEngagementScore(input.intent);
+
+  const packageEngagementScore =
+    packageFit.tier === "high" ? 90 : packageFit.tier === "medium" ? 78 : 62;
+  return Math.max(getDefaultEngagementScore(input.intent), packageEngagementScore);
+}
+
+function getLeadQualificationReason(packageFit: LaunchPackageFitScore | undefined) {
+  if (!packageFit) return undefined;
+
+  switch (packageFit.tier) {
+    case "high":
+      return "High launch package fit from structured qualification.";
+    case "medium":
+      return "Medium launch package fit from structured qualification.";
+    case "low":
+      return "Low launch package fit from structured qualification.";
   }
 }
 
