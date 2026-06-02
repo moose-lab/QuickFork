@@ -273,6 +273,70 @@ describe("App", () => {
     expect(JSON.stringify(window.dataLayer)).not.toMatch(/ranking|revenue|customers|guaranteed/i);
   });
 
+  it("renders the GitHub repo launch demand map as a source-backed research route", () => {
+    window.dataLayer = [];
+    window.history.replaceState({}, "", "/resources/github-repo-launch-demand-map?utm_source=product_hunt");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /GitHub repo launch demand/i })).toBeInTheDocument();
+    expect(screen.getByText(/public launch-prep sources into a priority map/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Product Hunt launch assets/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/GitHub social preview/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Open Source Guides/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Community launch prep/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: /GitHub Docs social preview/i })).toHaveAttribute(
+      "href",
+      expect.stringContaining("docs.github.com"),
+    );
+    expect(screen.getByRole("link", { name: /Open Source Guides finding users/i })).toHaveAttribute(
+      "href",
+      "https://opensource.guide/finding-users/",
+    );
+    expect(screen.getByRole("link", { name: /Product Hunt launch guide/i })).toHaveAttribute(
+      "href",
+      "https://www.producthunt.com/launch/preparing-for-launch",
+    );
+    expect(screen.getByRole("link", { name: /Reddit Product Hunt launch community/i })).toHaveAttribute(
+      "href",
+      "https://www.reddit.com/r/ProductHuntLaunches/",
+    );
+    const primaryCta = screen
+      .getAllByRole("link", { name: /request full launch package/i })
+      .find((link) => link.classList.contains("primaryButton"));
+    expect(primaryCta).toHaveAttribute("href", "/contact?intent=launch-package");
+    expect(document.title).toBe("GitHub Repo Launch Demand | QuickFork");
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://seekersai.com/resources/github-repo-launch-demand-map",
+    );
+    const schema = JSON.parse(document.querySelector('script[data-quickfork-marketing-schema]')?.textContent ?? "{}");
+    expect(schema["@type"]).toBe("FAQPage");
+    expect(schema.mainEntity[0].name).toContain("What is a GitHub repo launch demand map");
+    expect(window.dataLayer).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: "page_view",
+          page_path: "/resources/github-repo-launch-demand-map",
+          page_type: "resource",
+          buyer_stage: "consideration",
+          intent_cluster: "github_repo_launch_demand_map",
+          utm_source: "product_hunt",
+        }),
+        expect.objectContaining({
+          event: "resource_page_viewed",
+          resource_slug: "github-repo-launch-demand-map",
+          resource_type: "guide",
+          buyer_stage: "consideration",
+          page_type: "resource",
+          intent_cluster: "github_repo_launch_demand_map",
+          utm_source: "product_hunt",
+        }),
+      ]),
+    );
+    expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key/i);
+  }, 10000);
+
   it("submits resource lead capture forms to the CRM-safe server endpoint", async () => {
     window.dataLayer = [];
     window.history.replaceState({}, "", "/resources/github-project-marketing-card-guide?utm_source=github");

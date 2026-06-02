@@ -549,3 +549,64 @@ Decision:
 Next action:
 
 - Fill `docs/marketing/data/growth-experiment-evidence.csv` after a full production window, then use the rendered report to decide whether `/use-cases/ai-project-launch` should be promoted, revised, or replaced by the next high-intent page.
+
+## 2026-06-02 GitHub Repo Launch Demand Map Slice
+
+Hypothesis:
+
+- If QuickFork turns public GitHub repo launch-prep signals into a source-linked demand map, builders will understand the paid full-launch-package CTA as grounded in real launch work rather than generic AI marketing.
+
+Lifecycle stage:
+
+- Discovery to Monetization.
+
+Target user:
+
+- Open-source maintainers, AI project builders, indie founders, DevRel operators, and studios preparing repository launch assets.
+
+Changed surface:
+
+- Added `src/marketing/launch-demand-map.ts` as a typed public-demand signal map.
+- Added `src/marketing/launch-demand-map.test.ts` to verify source URLs, lifecycle priority, paid-intent signals, and claim hygiene.
+- Added `/resources/github-repo-launch-demand-map` as a published resource route with source notes for GitHub Docs, Open Source Guides, Product Hunt, and Reddit community launch prep.
+- Added the route to `docs/marketing/data/semantic-link-inventory.csv`, `public/sitemap.xml`, and `public/llms.txt`.
+- Added research synthesis at `docs/marketing/research/2026-06-02-github-repo-launch-demand-map.md`.
+- Added implementation plan at `docs/superpowers/plans/2026-06-02-github-repo-launch-demand-map.md`.
+
+Primary CTA:
+
+- Request full launch package.
+
+Primary metric:
+
+- `cta_clicked` where `cta_id=request_launch_package` on `/resources/github-repo-launch-demand-map`.
+- `sales_contact_requested` where `contact_reason=full_launch_package` after route visits.
+
+Guardrail:
+
+- Treat public sources as discovery evidence only. Do not publish revenue, customer-count, ranking, conversion-lift, guaranteed-launch, or exact pricing claims from this research.
+
+Evidence gap:
+
+- The route and demand map are source-linked but not validated demand. Production route views, CTA clicks, contact quality, and interviews are still required before pricing or packaging changes.
+
+Evidence observed:
+
+- RED test failed first because `src/marketing/launch-demand-map.ts` did not exist.
+- RED route test failed first because `/resources/github-repo-launch-demand-map` rendered the homepage rather than a marketing route.
+- RED source-note test failed first because the route did not expose the Reddit Product Hunt launch community source link.
+- `npm test -- src/marketing/launch-demand-map.test.ts src/App.test.tsx -t "launch demand map|launch demand"`: 2 files passed, 3 selected tests passed.
+- `npm test -- src/marketing/launch-demand-map.test.ts src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts -t "launch demand map|launch demand|public growth|semantic marketing"`: 4 files passed, 16 selected tests passed.
+- `npm test -- src/App.test.tsx -t "GitHub repo launch demand map"`: 1 file passed, 1 selected test passed after adding the Reddit source note.
+- `npm test -- src/marketing/launch-demand-map.test.ts src/App.test.tsx src/seo/public-growth.test.ts src/seo/semantic-links.test.ts`: 4 files passed, 31 tests passed.
+- `npm test`: 19 files passed, 123 tests passed.
+- `npm run build`: TypeScript build and Vite production build completed.
+- `git diff --check`: no whitespace errors.
+
+Decision:
+
+- Treat this as a research-to-monetization bridge. The next paid-product learning should come from full launch package requests and interviews, not from publishing prices.
+
+Next action:
+
+- After production deploy, verify the route returns 200, appears in sitemap and `llms.txt`, and starts collecting route-level CTA/contact evidence.

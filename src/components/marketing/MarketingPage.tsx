@@ -180,6 +180,26 @@ export function MarketingPage({ link }: MarketingPageProps) {
           </ol>
         </section>
 
+        {narrative.sourceNotes?.length ? (
+          <section className="marketingGrowthSection" aria-labelledby="marketing-source-notes-title">
+            <div className="marketingRelatedHead">
+              <span className="monoLabel">Research sources</span>
+              <h2 id="marketing-source-notes-title">Public signals behind this route.</h2>
+            </div>
+            <div className="marketingBenefitGrid">
+              {narrative.sourceNotes.map((source) => (
+                <article key={source.label}>
+                  <a href={source.url} rel="noreferrer" target="_blank">
+                    <strong>{source.label}</strong>
+                    <ExternalLink size={15} aria-hidden="true" />
+                  </a>
+                  <p>{source.body}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="marketingGrowthSection" aria-labelledby="marketing-faq-title">
           <div className="marketingRelatedHead">
             <span className="monoLabel">AI-search FAQ</span>

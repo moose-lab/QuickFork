@@ -17,6 +17,11 @@ export interface MarketingPageNarrative {
     question: string;
     answer: string;
   }>;
+  sourceNotes?: Array<{
+    label: string;
+    body: string;
+    url: string;
+  }>;
 }
 
 const pageTypeLabels: Record<MarketingPageType, string> = {
@@ -198,6 +203,95 @@ const pageNarratives: Partial<Record<string, MarketingPageNarrative>> = {
       },
     ],
   },
+  github_repo_launch_demand_map: {
+    definition:
+      "A GitHub repo launch demand map turns public launch-prep sources into a priority map for source-backed launch packages. It links repository social previews, open-source audience work, Product Hunt assets, and community launch prep to QuickFork surfaces and paid-intent signals.",
+    targetUser: "Open-source maintainers, AI project builders, indie founders, DevRel operators, and studios preparing repository launch assets.",
+    jobToBeDone:
+      "When a technical team is deciding what launch assets to build first, help them see which public launch requirements map to README, social, deck, outreach, and visual package work.",
+    evidenceBoundary:
+      "This page uses public sources as discovery evidence only. It does not prove QuickFork demand, pricing, ranking lift, revenue, customer count, or conversion lift.",
+    benefits: [
+      {
+        title: "Product Hunt launch assets",
+        body: "Map maker-facing launch requirements into a package that can include tagline, gallery image prompts, first-comment draft, pricing-status language, and launch checklist.",
+      },
+      {
+        title: "GitHub social preview",
+        body: "Treat repository preview images as a concrete visual asset need instead of a decorative afterthought.",
+      },
+      {
+        title: "Open Source Guides",
+        body: "Keep audience, messaging, and feedback loops ahead of scaled content so launch assets do not outrun source evidence.",
+      },
+      {
+        title: "Community launch prep",
+        body: "Use community language around checklists, screenshots, first comments, and concise positioning as interview prompts before public packaging decisions.",
+      },
+    ],
+    workflow: [
+      {
+        title: "Collect public launch requirements",
+        body: "Start with official platform guidance and recent community launch-prep language instead of broad AI marketing assumptions.",
+      },
+      {
+        title: "Map each requirement to a QuickFork surface",
+        body: "Connect demand signals to free repo brief, story map, README/social/deck/outreach exports, visual preview assets, or full launch package requests.",
+      },
+      {
+        title: "Score paid-intent signals",
+        body: "Prioritize export requests, launch deadlines, human review, batch packages, and white-label needs before publishing prices.",
+      },
+      {
+        title: "Validate before scaling",
+        body: "Use production CTA, contact, artifact export, and interview evidence before treating the demand map as a final product strategy.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is a GitHub repo launch demand map?",
+        answer:
+          "It is a source-linked map that translates public launch-prep requirements into QuickFork product surfaces, lifecycle priorities, CTAs, metrics, guardrails, and paid-intent hypotheses.",
+      },
+      {
+        question: "Does this prove people will pay for QuickFork?",
+        answer:
+          "No. It identifies where launch-package value may exist. Willingness to pay still needs full launch package requests, interviews, lead quality review, and repeat usage evidence.",
+      },
+      {
+        question: "Which demand signals matter first?",
+        answer:
+          "The first signals are source-backed repository story, social preview visuals, Product Hunt launch assets, channel-specific copy, and reviewable claims from the repository.",
+      },
+      {
+        question: "How should QuickFork use this map?",
+        answer:
+          "Use it to choose the next landing page, resource, feature, or package test while keeping the public page clear that every claim needs source evidence or explicit user input.",
+      },
+    ],
+    sourceNotes: [
+      {
+        label: "GitHub Docs social preview",
+        body: "GitHub documents repository social preview customization, which makes preview imagery a concrete launch asset for shared repo links.",
+        url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview?apiVersion=2022-11-28",
+      },
+      {
+        label: "Open Source Guides finding users",
+        body: "Open Source Guides frames audience discovery, messaging, and community feedback as early open-source growth work.",
+        url: "https://opensource.guide/finding-users/",
+      },
+      {
+        label: "Product Hunt launch guide",
+        body: "Product Hunt launch preparation depends on maker-facing copy, gallery assets, video decisions, pricing status, and launch-day context.",
+        url: "https://www.producthunt.com/launch/preparing-for-launch",
+      },
+      {
+        label: "Reddit Product Hunt launch community",
+        body: "Community launch-prep threads surface low-confidence language around checklists, screenshots, first comments, and concise positioning.",
+        url: "https://www.reddit.com/r/ProductHuntLaunches/",
+      },
+    ],
+  },
 };
 
 export function getMarketingPageTitle(link: MarketingLink) {
@@ -210,6 +304,9 @@ export function getMarketingPageHeadline(link: MarketingLink) {
   }
   if (link.intentCluster === "ai_project_launch") {
     return "AI Project Launch for source-backed technical launches.";
+  }
+  if (link.intentCluster === "github_repo_launch_demand_map") {
+    return "GitHub Repo Launch Demand for source-backed package prioritization.";
   }
 
   const keyword = formatMarketingLabel(link.primaryKeyword);
@@ -240,6 +337,9 @@ export function getMarketingPageDescription(link: MarketingLink) {
   }
   if (link.intentCluster === "ai_project_launch") {
     return "QuickFork maps AI project launch demand into source-backed README, social, deck, outreach, and visual launch assets for cold-start AI repositories.";
+  }
+  if (link.intentCluster === "github_repo_launch_demand_map") {
+    return "QuickFork maps github repo launch demand into public-source signals for README, social, Product Hunt, deck, outreach, and paid launch-package tests.";
   }
 
   const audience = formatMarketingLabel(link.persona.replace(/_/g, " "));
