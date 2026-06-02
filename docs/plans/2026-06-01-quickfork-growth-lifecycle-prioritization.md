@@ -1412,3 +1412,50 @@ Decision:
 Next action:
 
 - Collect 14 days of GA4 page view, CTA click, generation start, and generation failure data for the two new experiments, plus Search Console query baselines and AI-answer audits.
+
+## 2026-06-02 Search And AI Baseline Contract Slice
+
+Hypothesis:
+
+- If every active page-intent validation experiment has a fixed Search Console and AI-answer prompt contract, QuickFork can collect comparable evidence instead of ad hoc AI/search notes.
+
+Lifecycle stage:
+
+- Discovery to Validation.
+
+Target user:
+
+- Product marketers and DevRel operators evaluating source-backed launch assets.
+- Design leads and open-source maintainers evaluating README marketing cards.
+
+Changed surface:
+
+- `docs/marketing/data/search-ai-baseline-prompts.csv`
+- `src/marketing/search-ai-baseline.ts`
+- `src/marketing/search-ai-baseline.test.ts`
+- `docs/superpowers/plans/2026-06-02-search-ai-baseline-contract.md`
+- `docs/marketing/research/2026-06-02-source-backed-readme-page-refresh.md`
+
+Metric:
+
+- Search Console query impressions, clicks, CTR, and page mapping for each control and variant route.
+- AI-answer mention, citation, source URL, and accuracy status across ChatGPT search, Perplexity, Google AI Overview, Gemini, and Claude.
+
+Guardrail:
+
+- AI/search audit notes must flag invented pricing, rankings, customer count, revenue, conversion lift, Product Hunt outcomes, guaranteed launch claims, and unearned AI citation wins.
+- Do not treat prompt coverage as search demand or AI visibility evidence.
+
+Evidence observed:
+
+- Baseline `npm test` passed before changes: 23 files passed and 149 tests passed.
+- RED test failed first because `src/marketing/search-ai-baseline.ts` did not exist.
+- GREEN focused verification passed: `npm test -- src/marketing/search-ai-baseline.test.ts` returned 1 file passed and 5 tests passed.
+
+Decision:
+
+- Treat this as a P0 measurement contract. It makes the pending Search Console and AI-answer evidence collection executable, but no query demand or AI citation has been validated yet.
+
+Next action:
+
+- Run the manual baseline using the four prompt rows, then fill evidence rows only after real Search Console exports and AI-answer observations exist.
