@@ -124,6 +124,22 @@ describe("growth experiment evidence report", () => {
     }
   });
 
+  it("keeps launch materials map evidence pending until activation and search data exists", () => {
+    const evidence = getGrowthExperimentEvidenceById("2026_q2_launch_materials_map_intent_validation");
+
+    expect(evidence).toEqual(
+      expect.objectContaining({
+        status: "pending_evidence",
+        searchConsoleStatus: "pending",
+        aiVisibilityStatus: "pending",
+        decision: "insufficient_data",
+      }),
+    );
+    expect(evidence?.nextEvidenceNeeded).toContain("launch_materials_map_copied");
+    expect(evidence?.nextEvidenceNeeded).toContain("search_console_query_baseline");
+    expect(evidence?.nextEvidenceNeeded).toContain("ai_answer_audit");
+  });
+
   it("renders a route comparison report without inventing validation", () => {
     const report = renderGrowthExperimentComparisonReport("2026_q2_landing_page_intent_comparison");
 

@@ -99,6 +99,25 @@ export const growthExperimentEvidence: readonly GrowthExperimentEvidence[] = [
     nextEvidenceNeeded:
       "needs_14_days_of_ga4_page_view_cta_clicked_generation_started_generation_failed_search_console_query_baseline_and_ai_answer_audit_before_deciding",
   },
+  {
+    experimentId: "2026_q2_launch_materials_map_intent_validation",
+    status: "pending_evidence",
+    windowStart: "",
+    windowEnd: "",
+    controlPageViews: undefined,
+    controlCtaClicks: undefined,
+    variantPageViews: undefined,
+    variantCtaClicks: undefined,
+    controlGenerationStarts: undefined,
+    controlGenerationFailures: undefined,
+    variantGenerationStarts: undefined,
+    variantGenerationFailures: undefined,
+    searchConsoleStatus: "pending",
+    aiVisibilityStatus: "pending",
+    decision: "insufficient_data",
+    nextEvidenceNeeded:
+      "needs_14_days_of_ga4_page_view_cta_clicked_generation_started_generation_failed_launch_materials_map_copied_search_console_query_baseline_and_ai_answer_audit_before_deciding",
+  },
 ];
 
 export function getGrowthExperimentEvidenceById(experimentId: string) {

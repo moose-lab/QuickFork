@@ -78,3 +78,28 @@ Guardrails:
 ## Next Validation Step
 
 Run a 14-day comparison against `/product/github-repo-to-launch-package` and `/product/cold-start-launch-materials`. Prioritize this slice only if visitors who see or copy the map show stronger generation completion, artifact export, or full-package request behavior.
+
+## 2026-06-03 Validation Contract Update
+
+The launch materials map now has a formal validation contract:
+
+- Experiment id: `2026_q2_launch_materials_map_intent_validation`.
+- Control route: `/product/cold-start-launch-materials`.
+- Variant route: `/product/github-repo-launch-materials-map`.
+- Primary metric: `cta_clicked_per_page_view`.
+- Guardrail metric: `generation_failed_per_generation_started`.
+- Required activation evidence: `launch_materials_map_copied`.
+- Required discovery evidence: Search Console query baseline and AI-answer audit.
+
+This contract compares the broader cold-start launch materials category against the narrower channel-map planning job. It does not validate demand by itself.
+
+Additional verification:
+
+- RED registry test failed first because the launch materials map experiment did not exist.
+- RED evidence test failed first because no pending evidence row existed.
+- RED Search/AI test failed first because no control or variant prompt rows existed.
+- GREEN focused registry, evidence, and Search/AI baseline tests passed after adding the contract rows.
+- Related verification passed: `npm test -- src/marketing/growth-experiments.test.ts src/marketing/growth-experiment-report.test.ts src/marketing/search-ai-baseline.test.ts` returned 3 files passed and 23 tests passed.
+- Full verification passed: `npm test` returned 24 files passed and 163 tests passed.
+- Build verification passed: `npm run build` completed TypeScript build and Vite production build.
+- Diff hygiene passed: `git diff --check` returned no whitespace errors.
