@@ -128,6 +128,42 @@ describe("search and AI baseline contract", () => {
     );
   });
 
+  it("covers the launch materials map page with control and variant prompts", () => {
+    const rows = getSearchAiBaselineRowsForExperiment("2026_q2_launch_materials_map_intent_validation");
+
+    expect(rows).toHaveLength(2);
+    expect(rows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "launch_materials_map_control",
+          routeRole: "control",
+          canonicalPath: "/product/cold-start-launch-materials",
+          targetUser: "ai_project_builder",
+          query: "cold start launch materials",
+          queryCluster: "cold_start_launch_materials",
+        }),
+        expect.objectContaining({
+          id: "launch_materials_map_variant",
+          routeRole: "variant",
+          canonicalPath: "/product/github-repo-launch-materials-map",
+          targetUser: "ai_project_builder",
+          query: "GitHub repo launch materials map",
+          queryCluster: "github_repo_launch_materials_map",
+          expectedTerms: expect.arrayContaining([
+            "QuickFork",
+            "GitHub repository",
+            "launch materials map",
+            "README",
+            "social",
+            "deck",
+            "visual",
+            "outreach",
+          ]),
+        }),
+      ]),
+    );
+  });
+
   it("renders a manual runbook without claiming visibility", () => {
     const runbook = renderSearchAiBaselineRunbook("2026_q2_source_backed_assets_intent_validation");
 

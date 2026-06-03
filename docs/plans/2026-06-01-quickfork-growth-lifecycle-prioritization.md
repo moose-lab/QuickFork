@@ -1582,3 +1582,67 @@ Decision:
 Next action:
 
 - Run full verification, merge, production smoke, then compare `/product/github-repo-launch-materials-map` behavior against `/product/github-repo-to-launch-package` and `/product/cold-start-launch-materials` over a 14-day window.
+
+## 2026-06-03 Launch Materials Map Validation Contract Slice
+
+Hypothesis:
+
+- If QuickFork compares the broad `/product/cold-start-launch-materials` route against the narrower `/product/github-repo-launch-materials-map` route, the team can learn whether AI project builders value source-backed channel planning enough to click the CTA, complete generation, copy the materials map, export artifacts, or request a reviewed launch package.
+
+Lifecycle stage:
+
+- Validation, with activation evidence required.
+
+Target user:
+
+- AI project builders preparing cold-start GitHub launches.
+- Open-source maintainers and DevRel/product-marketing operators who need source-backed planning for README, social, deck, visual, and outreach materials.
+
+Changed surface:
+
+- `src/marketing/growth-experiments.ts`
+- `src/marketing/growth-experiments.test.ts`
+- `src/marketing/growth-experiment-report.ts`
+- `src/marketing/growth-experiment-report.test.ts`
+- `src/marketing/search-ai-baseline.ts`
+- `src/marketing/search-ai-baseline.test.ts`
+- `docs/marketing/data/growth-experiment-registry.csv`
+- `docs/marketing/data/growth-experiment-evidence.csv`
+- `docs/marketing/data/search-ai-baseline-prompts.csv`
+- `docs/marketing/research/2026-06-03-launch-materials-map.md`
+- `docs/superpowers/plans/2026-06-03-launch-materials-map-validation-contract.md`
+
+Metric:
+
+- Primary: `cta_clicked_per_page_view`.
+- Guardrail: `generation_failed_per_generation_started`.
+- Required activation signal: `launch_materials_map_copied`.
+- Required discovery evidence: Search Console query baseline and AI-answer audit.
+
+Guardrail:
+
+- Do not treat a published page, prompt coverage, or a copied artifact as validated demand.
+- Do not claim pricing, rankings, revenue, customer count, conversion lift, Product Hunt outcome, guaranteed launch results, or validated AI citation.
+- Keep evidence rows free of email, raw repo text, tokens, secrets, raw artifact bodies, private notes, or unsupported proof.
+
+Evidence observed:
+
+- Baseline `npm test` passed before changes: 24 test files, 160 tests passed.
+- RED registry test failed first because `2026_q2_launch_materials_map_intent_validation` did not exist.
+- RED evidence test failed first because no pending evidence row existed for the launch materials map experiment.
+- RED Search/AI test failed first because no control or variant baseline rows existed for the launch materials map experiment.
+- GREEN focused registry verification passed: `npm test -- src/marketing/growth-experiments.test.ts -t "launch materials map|mirrors|references published|decision-ready"`.
+- GREEN focused evidence verification passed: `npm test -- src/marketing/growth-experiment-report.test.ts -t "launch materials map|evidence row|mirrors|registry experiment|privacy-safe"`.
+- GREEN focused Search/AI verification passed: `npm test -- src/marketing/search-ai-baseline.test.ts -t "launch materials map|covers every|mirrors|published|claim-safe"`.
+- Related verification passed: `npm test -- src/marketing/growth-experiments.test.ts src/marketing/growth-experiment-report.test.ts src/marketing/search-ai-baseline.test.ts` returned 3 files passed and 23 tests passed.
+- Full verification passed: `npm test` returned 24 files passed and 163 tests passed.
+- Build verification passed: `npm run build` completed TypeScript build and Vite production build.
+- Diff hygiene passed: `git diff --check` returned no whitespace errors.
+
+Decision:
+
+- Treat this as a P0 measurement contract for the launch materials map slice, not a demand result. The contract defines what evidence must be collected before deciding whether the channel-map product angle deserves more landing page, packaging, or paid-offer work.
+
+Next action:
+
+- Run full verification, merge, production smoke, then use `2026_q2_launch_materials_map_intent_validation` for 14 days of GA4, Search Console, and AI-answer evidence collection.
