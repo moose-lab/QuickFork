@@ -37,7 +37,10 @@ describe("App", () => {
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
-    expect(screen.getByRole("link", { name: /pricing/i })).toHaveAttribute("href", "#pricing");
+    expect(within(screen.getByRole("navigation", { name: /primary/i })).getByRole("link", { name: /pricing/i })).toHaveAttribute(
+      "href",
+      "#pricing",
+    );
     const footerNav = screen.getByRole("navigation", { name: /footer/i });
     expect(within(footerNav).getByRole("link", { name: /^contact$/i })).toHaveAttribute("href", "/contact");
     expect(within(footerNav).getByRole("link", { name: /^help$/i })).toHaveAttribute("href", "/help");
@@ -93,6 +96,90 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /From GitHub URL to multilingual launch package/i })).toBeInTheDocument();
   }, 10000);
+
+  it("exposes the published growth architecture through header and footer navigation", () => {
+    render(<App />);
+
+    const primaryNav = screen.getByRole("navigation", { name: /primary/i });
+    expect(within(primaryNav).getByRole("link", { name: /^product/i })).toHaveAttribute("href", "#studio");
+    expect(within(primaryNav).getByRole("link", { name: /^use cases/i })).toHaveAttribute(
+      "href",
+      "/use-cases/open-source-launch",
+    );
+    expect(within(primaryNav).getByRole("link", { name: /^resources/i })).toHaveAttribute(
+      "href",
+      "/resources/open-source-launch-checklist",
+    );
+    expect(within(primaryNav).getByRole("link", { name: /^examples/i })).toHaveAttribute(
+      "href",
+      "/examples/qwenlm-flashqla-launch-card",
+    );
+    expect(within(primaryNav).getByRole("link", { name: /generate free repo brief/i })).toHaveAttribute("href", "#studio");
+
+    const productMenu = screen.getByLabelText(/quickfork product menu/i);
+    expect(within(productMenu).getByRole("link", { name: /repo to launch package/i })).toHaveAttribute(
+      "href",
+      "/product/github-repo-to-launch-package",
+    );
+    expect(within(productMenu).getByRole("link", { name: /source-backed launch assets/i })).toHaveAttribute(
+      "href",
+      "/product/source-backed-launch-assets",
+    );
+    expect(within(productMenu).getByRole("link", { name: /launch package pilot/i })).toHaveAttribute(
+      "href",
+      "/product/repository-launch-package-pilot",
+    );
+
+    const resourcesMenu = screen.getByLabelText(/quickfork resources menu/i);
+    expect(within(resourcesMenu).getByRole("link", { name: /launch readiness score/i })).toHaveAttribute(
+      "href",
+      "/tools/github-repo-launch-readiness-score",
+    );
+    expect(within(resourcesMenu).getByRole("link", { name: /launch announcement template/i })).toHaveAttribute(
+      "href",
+      "/templates/github-launch-announcement",
+    );
+
+    const footerNav = screen.getByRole("navigation", { name: /footer/i });
+    expect(within(footerNav).getByRole("heading", { name: /^product$/i })).toBeInTheDocument();
+    expect(within(footerNav).getByRole("heading", { name: /^resources$/i })).toBeInTheDocument();
+    expect(within(footerNav).getByRole("heading", { name: /^legal and ai discovery$/i })).toBeInTheDocument();
+    expect(within(footerNav).getByRole("link", { name: /repo to launch package/i })).toHaveAttribute(
+      "href",
+      "/product/github-repo-to-launch-package",
+    );
+    expect(within(footerNav).getByRole("link", { name: /launch demand map/i })).toHaveAttribute(
+      "href",
+      "/resources/github-repo-launch-demand-map",
+    );
+    expect(within(footerNav).getByRole("link", { name: /^llms\.txt$/i })).toHaveAttribute("href", "/llms.txt");
+    expect(within(footerNav).getByRole("link", { name: /^pricing\.md$/i })).toHaveAttribute("href", "/pricing.md");
+  });
+
+  it("renders marketing breadcrumbs and curated related routes for high-priority pages", () => {
+    window.history.replaceState({}, "", "/product/github-repo-to-launch-package");
+
+    render(<App />);
+
+    const breadcrumbs = screen.getByRole("navigation", { name: /breadcrumb/i });
+    expect(within(breadcrumbs).getByRole("link", { name: /^home$/i })).toHaveAttribute("href", "/");
+    expect(within(breadcrumbs).getByText(/^Product$/i)).toBeInTheDocument();
+    expect(within(breadcrumbs).getByText(/GitHub Repo To Launch Package/i)).toBeInTheDocument();
+
+    const relatedRoutes = screen.getByRole("region", { name: /related routes/i });
+    expect(within(relatedRoutes).getByRole("link", { name: /^use case: open source launch$/i })).toHaveAttribute(
+      "href",
+      "/use-cases/open-source-launch",
+    );
+    expect(within(relatedRoutes).getByRole("link", { name: /^resource: open source launch checklist$/i })).toHaveAttribute(
+      "href",
+      "/resources/open-source-launch-checklist",
+    );
+    expect(within(relatedRoutes).getByRole("link", { name: /^tool: github repo launch readiness score$/i })).toHaveAttribute(
+      "href",
+      "/tools/github-repo-launch-readiness-score",
+    );
+  });
 
   it("keeps the generator studio inside the redesigned frontend", () => {
     render(<App />);
@@ -1120,7 +1207,10 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: /help center/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /quickfork home/i })).toHaveAttribute("href", "/#hero");
     expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "/#studio");
-    expect(screen.getByRole("link", { name: /pricing/i })).toHaveAttribute("href", "/#pricing");
+    expect(within(screen.getByRole("navigation", { name: /primary/i })).getByRole("link", { name: /pricing/i })).toHaveAttribute(
+      "href",
+      "/#pricing",
+    );
     expect(screen.getByRole("link", { name: /contact the team/i })).toHaveAttribute("href", "/contact");
     expect(document.title).toBe("Help Center | QuickFork");
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute("href", "https://seekersai.com/help");
@@ -1617,7 +1707,8 @@ describe("App", () => {
   it("shows auth state controls in the top navigation", () => {
     render(<App />);
 
-    expect(screen.getByRole("link", { name: /sign in/i })).toHaveAttribute("href", "/sign-in");
-    expect(screen.getByRole("link", { name: /sign up/i })).toHaveAttribute("href", "/sign-up");
+    const banner = screen.getByRole("banner");
+    expect(within(banner).getByRole("link", { name: /sign in/i })).toHaveAttribute("href", "/sign-in");
+    expect(within(banner).getByRole("link", { name: /sign up/i })).toHaveAttribute("href", "/sign-up");
   });
 });

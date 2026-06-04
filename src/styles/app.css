@@ -142,6 +142,11 @@ blockquote {
   position: relative;
 }
 
+.productNavItem:last-of-type .productMenu {
+  right: 0;
+  left: auto;
+}
+
 .navLink {
   min-height: 36px;
   display: inline-flex;
@@ -174,6 +179,12 @@ blockquote {
   padding-inline: 12px;
 }
 
+.navBriefLink {
+  border-color: var(--dark);
+  color: #ffffff;
+  background: var(--dark);
+}
+
 .productChevron {
   transition: transform 160ms ease;
 }
@@ -187,6 +198,13 @@ blockquote {
   box-shadow: 0 10px 24px rgba(2, 2, 15, 0.08);
   outline: 2px solid rgba(2, 2, 15, 0.12);
   outline-offset: 2px;
+}
+
+.navBriefLink:hover,
+.navBriefLink:focus-visible {
+  border-color: var(--dark);
+  color: #ffffff;
+  background: #191936;
 }
 
 .productNavItem:hover .productChevron,
@@ -2331,13 +2349,12 @@ blockquote {
 }
 
 .footer {
-  min-height: 112px;
   border-top: 1px solid var(--border);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.7fr);
+  align-items: start;
+  gap: 32px;
+  padding: 34px 0;
   color: var(--muted);
   font-size: 11px;
   font-weight: 650;
@@ -2363,27 +2380,49 @@ blockquote {
 }
 
 .footerNav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 22px 20px;
+}
+
+.footerGroup {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.footerGroup h2 {
+  color: var(--fg);
+  font: 700 12px/1 var(--font-mono);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.footerGroup div {
+  display: grid;
+  gap: 6px;
 }
 
 .footerNav a {
-  min-height: 38px;
+  min-height: 28px;
   border: 1px solid transparent;
   border-radius: 4px;
   display: inline-flex;
   align-items: center;
-  padding: 0 10px;
+  justify-self: start;
+  padding: 0;
   color: var(--muted);
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.25;
+  text-transform: none;
 }
 
 .footerNav a:hover,
 .footerNav a:focus-visible {
-  border-color: var(--border);
   color: var(--fg);
-  background: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .secondaryHero,
@@ -2500,6 +2539,7 @@ blockquote {
 }
 
 .marketingHeroSection,
+.marketingBreadcrumbs,
 .marketingBodySection,
 .marketingGrowthSection,
 .marketingCaptureSection,
@@ -2508,8 +2548,36 @@ blockquote {
   margin: 0 auto;
 }
 
+.marketingBreadcrumbs {
+  padding-top: 34px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+  font: 650 12px/1.4 var(--font-mono);
+  text-transform: uppercase;
+}
+
+.marketingBreadcrumbs a {
+  color: var(--fg);
+}
+
+.marketingBreadcrumbs a:hover,
+.marketingBreadcrumbs a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.marketingBreadcrumbs span[aria-current="page"] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
 .marketingHeroSection {
-  padding: 92px 0 64px;
+  padding: 44px 0 64px;
 }
 
 .marketingHeroGrid {
@@ -3261,6 +3329,7 @@ blockquote {
   .studioSection,
   .closing,
   .marketingHeroSection,
+  .marketingBreadcrumbs,
   .marketingBodySection,
   .marketingGrowthSection,
   .marketingCaptureSection,
@@ -3285,7 +3354,8 @@ blockquote {
     justify-self: start;
     width: 100%;
     gap: 8px;
-    overflow: visible;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
   .productNavItem {
@@ -3503,6 +3573,17 @@ blockquote {
   }
 
   .footerNav {
-    justify-content: flex-start;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .footerNav {
+    grid-template-columns: 1fr;
+  }
+
+  .marketingBreadcrumbs span[aria-current="page"] {
+    white-space: normal;
   }
 }

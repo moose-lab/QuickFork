@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { LandingFooter } from "../landing/LandingSections";
 import { LandingNav } from "../landing/LandingNav";
 import { trackEvent } from "../../lib/analytics";
-import { marketingPageLinks, type MarketingLink } from "../../marketing/link-catalog";
+import { marketingPageLinks, type MarketingLink, type MarketingPageType } from "../../marketing/link-catalog";
 import {
   formatMarketingLabel,
   getMarketingPageDescription,
@@ -82,6 +82,7 @@ export function MarketingPage({ link }: MarketingPageProps) {
     <div className="siteShell">
       <LandingNav />
       <main className="marketingPage">
+        <MarketingBreadcrumbs link={link} />
         <section className="marketingHeroSection" aria-labelledby="marketing-page-title">
           <div className="marketingHeroGrid">
             <div className="marketingHeroCopy">
@@ -357,14 +358,19 @@ export function MarketingPage({ link }: MarketingPageProps) {
         ) : null}
 
         {relatedLinks.length > 0 ? (
-          <section className="marketingRelatedSection" aria-labelledby="marketing-related-title">
+          <section className="marketingRelatedSection" aria-label="Related routes">
             <div className="marketingRelatedHead">
               <span className="monoLabel">Related routes</span>
               <h2 id="marketing-related-title">Keep visitors moving through the funnel.</h2>
             </div>
             <div className="marketingRelatedGrid">
               {relatedLinks.map((relatedLink) => (
-                <a className="marketingRelatedLink" href={new URL(relatedLink.canonicalUrl).pathname} key={relatedLink.slug}>
+                <a
+                  aria-label={`${getMarketingPageTypeLabel(relatedLink)}: ${formatMarketingLabel(relatedLink.primaryKeyword)}`}
+                  className="marketingRelatedLink"
+                  href={new URL(relatedLink.canonicalUrl).pathname}
+                  key={relatedLink.slug}
+                >
                   <span>{getMarketingPageTypeLabel(relatedLink)}</span>
                   <strong>{formatMarketingLabel(relatedLink.primaryKeyword)}</strong>
                   <small>{getMarketingPrimaryCtaLabel(relatedLink)}</small>
@@ -376,6 +382,18 @@ export function MarketingPage({ link }: MarketingPageProps) {
       </main>
       <LandingFooter />
     </div>
+  );
+}
+
+function MarketingBreadcrumbs({ link }: { link: MarketingLink }) {
+  return (
+    <nav className="marketingBreadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span>{getMarketingParentLabel(link.pageType)}</span>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{getMarketingBreadcrumbLabel(link)}</span>
+    </nav>
   );
 }
 
@@ -455,10 +473,105 @@ function applyMarketingSchema(link: MarketingLink) {
 }
 
 function getRelatedLinks(currentLink: MarketingLink) {
+  const curatedSlugs = curatedRelatedLinkSlugs[currentLink.slug];
+
+  if (curatedSlugs) {
+    return curatedSlugs
+      .map((slug) => marketingPageLinks.find((link) => link.slug === slug))
+      .filter((link): link is MarketingLink => Boolean(link));
+  }
+
   return marketingPageLinks
     .filter((link) => link.slug !== currentLink.slug)
     .filter((link) => link.funnelStage === currentLink.funnelStage || link.buyerStage === currentLink.buyerStage)
     .slice(0, 3);
+}
+
+const curatedRelatedLinkSlugs: Record<string, string[]> = {
+  "github-repo-to-launch-package": [
+    "open-source-launch",
+    "open-source-launch-checklist",
+    "github-repo-launch-readiness-score",
+  ],
+  "source-backed-launch-assets": [
+    "github-project-marketing-card-guide",
+    "chatgpt-open-source-launch-copy",
+    "repository-launch-package-pilot",
+  ],
+  "cold-start-launch-materials": [
+    "github-repo-launch-demand-map",
+    "ai-project-launch",
+    "github-repo-launch-materials-map",
+  ],
+  "github-repo-launch-materials-map": [
+    "devrel-launch-workflow",
+    "github-launch-announcement",
+    "github-repo-to-product-outreach",
+  ],
+  "readme-marketing-cards": [
+    "readme-cover-prompt-guide",
+    "canva-readme-banner-generator",
+    "qwenlm-flashqla-launch-card",
+  ],
+  "github-repo-visual-explainer": [
+    "qwenlm-flashqla-launch-card",
+    "deepseek-twvp-launch-card",
+    "github-project-marketing-card-guide",
+  ],
+  "github-repo-to-launch-deck": [
+    "github-launch-announcement",
+    "github-repo-launch-demand-map",
+    "repository-launch-package-pilot",
+  ],
+  "github-repo-to-product-outreach": [
+    "repository-launch-package-pilot",
+    "github-repo-launch-demand-map",
+    "source-backed-launch-assets",
+  ],
+  "github-repo-launch-readiness-score": [
+    "repository-launch-package-pilot",
+    "cold-start-launch-materials",
+    "open-source-launch-checklist",
+  ],
+  "qwenlm-flashqla-launch-card": [
+    "github-repo-visual-explainer",
+    "github-project-marketing-card-guide",
+    "github-repo-to-launch-package",
+  ],
+  "deepseek-twvp-launch-card": [
+    "github-repo-visual-explainer",
+    "source-backed-launch-assets",
+    "ai-project-launch",
+  ],
+  "chatgpt-open-source-launch-copy": [
+    "source-backed-launch-assets",
+    "qwenlm-flashqla-launch-card",
+    "github-repo-to-launch-package",
+  ],
+  "canva-readme-banner-generator": [
+    "readme-marketing-cards",
+    "readme-cover-prompt-guide",
+    "qwenlm-flashqla-launch-card",
+  ],
+};
+
+function getMarketingParentLabel(pageType: MarketingPageType) {
+  const parentLabels: Record<MarketingPageType, string> = {
+    product: "Product",
+    use_case: "Use Cases",
+    resource: "Resources",
+    tool: "Tools",
+    template: "Templates",
+    example: "Examples",
+    compare: "Compare",
+    contact: "Contact",
+  };
+
+  return parentLabels[pageType];
+}
+
+function getMarketingBreadcrumbLabel(link: MarketingLink) {
+  return getMarketingPageTitle(link).replace(/\s+\|\s+QuickFork$/, "");
 }
 
 function getResourceType(link: MarketingLink) {
