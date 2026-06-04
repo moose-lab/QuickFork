@@ -19,7 +19,7 @@ export interface ModelSettings {
 export interface AssetPreset {
   id: string;
   label: string;
-  useCase: "README" | "PPT" | "Social";
+  useCase: "README" | "PPT" | "Social" | "Sites";
   size: string;
   aspect: string;
   note: string;
@@ -86,6 +86,14 @@ export const ASSET_PRESETS: AssetPreset[] = [
     size: "1920x1080",
     aspect: "16:9",
     note: "Fits widescreen decks and product updates without manual cropping.",
+  },
+  {
+    id: "site-hero",
+    label: "Launch site hero",
+    useCase: "Sites",
+    size: "1600x900",
+    aspect: "16:9",
+    note: "Fits a product launch site hero, showcase page, or campaign landing page preview.",
   },
   {
     id: "x-linkedin-landscape",

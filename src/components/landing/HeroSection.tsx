@@ -142,7 +142,7 @@ interface RepoLaunchMaterialsMapSummary {
 }
 
 interface RepoLaunchMaterialChannelSummary {
-  type: "readme" | "social" | "deck" | "visual" | "outreach";
+  type: "readme" | "social" | "deck" | "site" | "visual" | "outreach";
   label: string;
   primaryUser: string;
   jobToBeDone: string;
@@ -154,7 +154,7 @@ interface RepoLaunchMaterialChannelSummary {
 }
 
 interface RepoLaunchBriefArtifactSummary {
-  type: "audience" | "story_map" | "materials_map" | "readme" | "social" | "deck" | "outreach" | "visual";
+  type: "audience" | "story_map" | "materials_map" | "readme" | "social" | "deck" | "site" | "outreach" | "visual";
   label: string;
   fileName: string;
   body: string;
@@ -706,7 +706,7 @@ function LaunchBriefPanel({
       <div className="launchPackageCta">
         <div>
           <strong>Need a complete launch package?</strong>
-          <small>Request reviewed README, social, deck, outreach, and visual assets before publishing.</small>
+          <small>Request reviewed README, social, deck, site, outreach, and visual assets before publishing.</small>
         </div>
         <a className="primaryButton" href={fullLaunchPackageHref} onClick={handleFullLaunchPackageIntent}>
           Request full launch package

@@ -1646,3 +1646,113 @@ Decision:
 Next action:
 
 - Run full verification, merge, production smoke, then use `2026_q2_launch_materials_map_intent_validation` for 14 days of GA4, Search Console, and AI-answer evidence collection.
+
+## 2026-06-03 Sites Output Enablement Slice
+
+Hypothesis:
+
+- If QuickFork exposes Sites as part of the launch package, founders, open-source maintainers, and DevRel operators can turn repository evidence into a reviewable launch site/page spine instead of treating launch output as only README, deck, social, visual, and outreach material.
+
+Lifecycle stage:
+
+- Activation to monetization.
+
+Target user:
+
+- AI/devtool builders, open-source maintainers, technical founders, and DevRel operators preparing a public launch.
+
+Changed surface:
+
+- `src/server/generation/types.ts`
+- `src/server/generation/launch-brief.ts`
+- `src/server/generation/generation.test.ts`
+- `src/components/landing/HeroSection.tsx`
+- `src/components/studio/ProductStudio.tsx`
+- `src/components/marketing/LeadCaptureForm.tsx`
+- `src/core/pipeline.ts`
+- `src/App.test.tsx`
+- `src/server/marketing/launch-package-fit.test.ts`
+- `src/server/marketing/lead-capture.test.ts`
+- `docs/marketing/research/2026-06-03-sites-output-enablement.md`
+
+Metric:
+
+- `launch_artifact_copied` or `launch_artifact_downloaded` where `artifact_type=site`.
+- `sales_contact_requested` with package scope including `sites`.
+
+Guardrail:
+
+- Sites output is a reviewable page spine, not automatic publishing.
+- Do not send raw README text, raw artifact body, email, token, secret, unsupported customer proof, rankings, revenue, pricing, or guaranteed-growth claims to browser analytics.
+
+Evidence observed:
+
+- RED generation test failed first because the launch brief did not include the site channel.
+- RED App tests failed first because the studio and full launch package form did not expose Sites.
+- Focused generation verification passed: `npm test -- src/server/generation/generation.test.ts -t "source-backed free repo launch brief"` returned 1 file passed and 1 selected test passed.
+- Focused App verification passed: `npm test -- src/App.test.tsx -t "keeps the generator studio|full launch package contact|landing architecture"` returned 1 file passed and 3 selected tests passed.
+- Focused lead qualification verification passed: `npm test -- src/server/marketing/launch-package-fit.test.ts src/server/marketing/lead-capture.test.ts -t "launch package fit|full launch package qualification"` returned 2 files passed and 2 selected tests passed.
+- Full verification passed with threads pool: `npm test -- --testTimeout=30000 --pool=threads` returned 25 files passed and 168 tests passed.
+- Build verification passed: `npm run build` completed TypeScript build and Vite production build.
+- Diff hygiene passed: `git diff --check` returned no whitespace errors.
+
+Decision:
+
+- Treat Sites as a product-output and monetization hypothesis. It fills a landing-page material gap in the launch package, but production users have not yet copied, downloaded, or requested this scope.
+
+Next action:
+
+- Track site artifact copy/download and full launch package requests with `sites` scope before investing in full hosted site generation, CMS export, or public landing-page automation.
+
+## 2026-06-03 SEO/GEO Evidence Workbook Slice
+
+Hypothesis:
+
+- If QuickFork expands each registered Search/AI baseline row into a surface-specific audit workbook, SEO/GEO reviewers can collect Search Console and AI-answer evidence without drifting from the experiment contract.
+
+Lifecycle stage:
+
+- Validation, P0 measurement and evidence.
+
+Target user:
+
+- SEO/GEO supervisor auditing whether QuickFork is indexable, extractable, and accurately summarized.
+- Growth operator collecting Search Console and AI-answer evidence for active page-intent experiments.
+
+Changed surface:
+
+- `src/marketing/seo-geo-audit-workbook.ts`
+- `src/marketing/seo-geo-audit-workbook.test.ts`
+- `docs/marketing/data/seo-geo-audit-workbook.csv`
+- `docs/marketing/research/2026-06-03-seo-geo-evidence-workbook.md`
+- `docs/superpowers/plans/2026-06-03-seo-geo-evidence-workbook.md`
+
+Metric:
+
+- Completion of Search Console and AI-answer workbook rows for experiments that require search or AI evidence.
+- Supporting route metrics remain `page_view`, `cta_clicked`, `generation_started`, `generation_completed`, and `generation_failed` over the same 14-day window.
+
+Guardrail:
+
+- Do not treat a workbook row, prompt, route, or crawler asset as validated search demand or AI visibility.
+- Do not claim ranking wins, AI citations, customer traction, revenue, conversion lift, pricing validation, Product Hunt outcomes, or guaranteed launches.
+- Keep workbook rows free of raw emails, raw repo text, source notes, private launch notes, tokens, secrets, raw artifacts, or unsupported proof.
+
+Evidence observed:
+
+- RED test failed first because the SEO/GEO audit workbook module did not exist.
+- Focused verification passed after adding the module and CSV mirror: `npm test -- src/marketing/seo-geo-audit-workbook.test.ts` returned 1 file passed and 5 tests passed.
+- Related verification passed: `npm test -- src/marketing/seo-geo-audit-workbook.test.ts src/marketing/search-ai-baseline.test.ts src/marketing/growth-experiment-report.test.ts` returned 3 files passed and 21 tests passed.
+- Initial full `npm test` attempts with the default forks pool hit Vitest worker startup timeouts in this local environment.
+- Targeted reruns of the affected files passed, including `npm test -- src/App.test.tsx -t "keeps the generator studio|full launch package contact|landing architecture"` and `npm test -- src/server/marketing/launch-package-fit.test.ts`.
+- Full verification passed with threads pool: `npm test -- --testTimeout=30000 --pool=threads` returned 25 files passed and 168 tests passed.
+- Build verification passed: `npm run build` completed TypeScript build and Vite production build.
+- Diff hygiene passed: `git diff --check` returned no whitespace errors.
+
+Decision:
+
+- Treat this as P0 measurement infrastructure, not a validation result. It makes the current active experiments reviewable by a senior SEO/GEO operator before QuickFork scales more landing pages.
+
+Next action:
+
+- Run related/full verification, then use the workbook to collect 14-day Search Console and AI-answer evidence before deciding which active page-intent experiments should be promoted, rewritten, consolidated, or paused.

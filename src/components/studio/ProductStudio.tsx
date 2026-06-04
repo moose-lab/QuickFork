@@ -152,6 +152,7 @@ export function ProductStudio() {
             <span>README</span>
             <span>PPT</span>
             <span>Social</span>
+            <span>Sites</span>
           </div>
         </div>
       </div>

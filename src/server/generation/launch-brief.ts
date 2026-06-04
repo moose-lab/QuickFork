@@ -25,7 +25,7 @@ export function buildRepoLaunchBrief(input: {
   const insights = padItems(input.brief.keyInsights, [
     "Repository evidence is compressed into a clear launch story.",
     "Source-backed assets help reviewers separate facts from hypotheses.",
-    "The launch package can be reused across README, social, deck, and outreach surfaces.",
+    "The launch package can be reused across README, social, deck, site, and outreach surfaces.",
   ]).slice(0, 3);
   const workflow = padItems(input.brief.workflowSteps, ["Brief", "Generate", "Review"]).slice(0, 3);
   const audience = audienceHypothesis(input.metadata);
@@ -192,6 +192,29 @@ function buildLaunchBriefArtifacts(input: {
       sourceReferences: input.sourceReferences,
     },
     {
+      type: "site",
+      label: "Launch site page spine",
+      fileName: `${slug}-launch-site-page-spine.md`,
+      body: [
+        `# Launch site page spine for ${input.repoFullName}`,
+        "",
+        "## Launch site page spine",
+        "",
+        `Summary: ${input.summary}`,
+        `Audience hypothesis: ${input.audienceHypothesis}`,
+        "",
+        "## Page outline",
+        `- Hero: Explain ${input.repoFullName} with the strongest source-backed launch angle.`,
+        `- Proof: Use "${input.launchAngles[0]?.body ?? input.summary}" only if the cited source supports it.`,
+        "- Workflow: Show how a visitor moves from repository context to README, social, deck, visual, and outreach artifacts.",
+        "- CTA: Ask visitors to generate a similar launch package or request a reviewed full package.",
+        "- Guardrail: Do not publish unsupported traction, adoption, commercial, pricing, or benchmark claims.",
+        "",
+        sourceBlock,
+      ].join("\n"),
+      sourceReferences: input.sourceReferences,
+    },
+    {
       type: "outreach",
       label: "Product outreach draft",
       fileName: `${slug}-outreach-draft.txt`,
@@ -284,7 +307,7 @@ function buildLaunchMaterialsMap(input: {
 
   return {
     title: `${input.repoFullName} launch materials map`,
-    summary: `Channel plan for README, social, deck, visual, and outreach launch materials from ${input.summary}`,
+    summary: `Channel plan for README, social, deck, site, visual, and outreach launch materials from ${input.summary}`,
     channels: [
       {
         type: "readme",
@@ -318,6 +341,17 @@ function buildLaunchMaterialsMap(input: {
         source: secondarySource,
         reviewQuestion: "Which deck slide needs the strongest source citation before sharing outside the team?",
         successSignal: "Deck artifact copied or downloaded; full launch package CTA clicked after artifact review.",
+      },
+      {
+        type: "site",
+        label: "Launch site page spine",
+        primaryUser: "Technical founders, DevRel operators, and visitors comparing the project before opening GitHub",
+        jobToBeDone: "Understand the project story, source proof, and launch package path before diving into the repository.",
+        artifactLabel: "Launch site page spine",
+        channelFit: `Turn the story map into a crawlable page outline: hero proof from "${topAngle}", workflow, artifacts, and review guardrails.`,
+        source: primarySource,
+        reviewQuestion: "Which source-backed proof belongs above the fold before publishing a public site page?",
+        successSignal: "Site spine copied or downloaded; full launch package request or generation_started follows the site CTA.",
       },
       {
         type: "visual",
@@ -394,7 +428,7 @@ function buildStoryMap(input: {
         id: "launch",
         label: "Launch",
         title: "Channel package",
-        detail: `Package README, social, deck, outreach, and visual assets using the ${input.visualCategory} direction.`,
+        detail: `Package README, social, deck, site, outreach, and visual assets using the ${input.visualCategory} direction.`,
         source: "Launch package channels from the QuickFork generation workflow.",
       },
     ],

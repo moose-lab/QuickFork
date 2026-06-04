@@ -106,6 +106,7 @@ describe("App", () => {
     expect(screen.getAllByText(/README/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/PPT/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Social/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Sites/i).length).toBeGreaterThan(0);
   });
 
   it("tracks route-level page views with funnel intent metadata", () => {
@@ -1057,6 +1058,7 @@ describe("App", () => {
     fireEvent.click(screen.getByLabelText(/^Social$/i));
     fireEvent.click(screen.getByLabelText(/^Deck$/i));
     fireEvent.click(screen.getByLabelText(/^Outreach$/i));
+    fireEvent.click(screen.getByLabelText(/^Sites$/i));
     fireEvent.click(screen.getByLabelText(/^Visual explainer$/i));
     fireEvent.click(screen.getByLabelText(/human review needed/i));
     fireEvent.change(screen.getByLabelText(/launch notes/i), {
@@ -1080,7 +1082,7 @@ describe("App", () => {
         launchTimeline: "within_30_days",
         packageModel: "single_launch",
         buyingTrigger: "launch_deadline",
-        packageScope: ["readme", "social", "deck", "outreach", "visual_explainer"],
+        packageScope: ["readme", "social", "deck", "outreach", "sites", "visual_explainer"],
         humanReviewNeeded: true,
         notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",
       },
@@ -1101,7 +1103,7 @@ describe("App", () => {
           launch_timeline: "within_30_days",
           package_model: "single_launch",
           buying_trigger: "launch_deadline",
-          package_scope_count: 5,
+          package_scope_count: 6,
           human_review_needed: true,
         }),
       ]),

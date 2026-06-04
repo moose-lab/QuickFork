@@ -228,7 +228,7 @@ export interface RepoLaunchStoryMap {
   nodes: RepoLaunchStoryMapNode[];
 }
 
-export type RepoLaunchMaterialChannelType = "readme" | "social" | "deck" | "visual" | "outreach";
+export type RepoLaunchMaterialChannelType = "readme" | "social" | "deck" | "site" | "visual" | "outreach";
 
 export interface RepoLaunchMaterialChannel {
   type: RepoLaunchMaterialChannelType;
@@ -248,7 +248,7 @@ export interface RepoLaunchMaterialsMap {
   channels: RepoLaunchMaterialChannel[];
 }
 
-export type RepoLaunchBriefArtifactType = "audience" | "story_map" | "materials_map" | "readme" | "social" | "deck" | "outreach" | "visual";
+export type RepoLaunchBriefArtifactType = "audience" | "story_map" | "materials_map" | "readme" | "social" | "deck" | "site" | "outreach" | "visual";
 
 export interface RepoLaunchBriefArtifact {
   type: RepoLaunchBriefArtifactType;

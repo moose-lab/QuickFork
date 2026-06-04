@@ -302,6 +302,7 @@ const launchPackageScopeOptions = [
   { value: "social", label: "Social" },
   { value: "deck", label: "Deck" },
   { value: "outreach", label: "Outreach" },
+  { value: "sites", label: "Sites" },
   { value: "visual_explainer", label: "Visual explainer" },
 ] as const;
 
