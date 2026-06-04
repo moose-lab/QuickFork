@@ -1,4 +1,4 @@
-import { BookOpen, ChevronDown, FileText, Layers3, PanelTop, Route, Search, Sparkles, Target } from "lucide-react";
+import { ArrowRight, BookOpen, ChevronDown, FileText, Layers3, PanelTop, Route, Search, Sparkles, Target } from "lucide-react";
 import { UserMenu } from "../auth/UserMenu";
 
 const navMenus = [
@@ -12,31 +12,31 @@ const navMenus = [
         href: "#studio",
         icon: PanelTop,
         title: "Studio",
-        description: "Generate the QuickFork launch package",
+        description: "Generate the editable social launch package",
       },
       {
         href: "/product/github-repo-to-launch-package",
         icon: Route,
-        title: "Repo to launch package",
-        description: "Source-backed story, copy, and visuals",
+        title: "Repo-to-social package",
+        description: "Source-backed story, post copy, and visuals",
       },
       {
         href: "/product/source-backed-launch-assets",
         icon: Target,
         title: "Source-backed launch assets",
-        description: "Keep generated claims reviewable",
+        description: "Keep generated social claims reviewable",
       },
       {
         href: "/product/cold-start-launch-materials",
         icon: Sparkles,
-        title: "Cold-start launch materials",
-        description: "README, social, deck, and outreach drafts",
+        title: "Cold-start social materials",
+        description: "README, post, card, and outreach drafts",
       },
       {
         href: "/product/github-repo-launch-materials-map",
         icon: Layers3,
         title: "Launch materials map",
-        description: "Plan every launch artifact by evidence",
+        description: "Plan every social artifact by evidence",
       },
       {
         href: "/product/repository-launch-package-pilot",
@@ -56,7 +56,7 @@ const navMenus = [
         href: "/use-cases/open-source-launch",
         icon: BookOpen,
         title: "Open-source launch",
-        description: "Package a public repository for launch",
+        description: "Package a public repository for social launch",
       },
       {
         href: "/use-cases/ai-project-launch",
@@ -68,7 +68,7 @@ const navMenus = [
         href: "/use-cases/devrel-launch-workflow",
         icon: Route,
         title: "DevRel launch workflow",
-        description: "Repeat launch prep across many projects",
+        description: "Repeat social launch prep across projects",
       },
     ],
   },
@@ -87,7 +87,7 @@ const navMenus = [
       {
         href: "/resources/github-project-marketing-card-guide",
         icon: BookOpen,
-        title: "Marketing card guide",
+        title: "Social card guide",
         description: "Turn a repo into a visual card",
       },
       {
@@ -148,7 +148,7 @@ const navMenus = [
       },
     ],
   },
-];
+] as const;
 
 export function LandingNav() {
   const studioHref = getLandingAnchorHref("#studio");
@@ -160,7 +160,10 @@ export function LandingNav() {
           <span className="mark" aria-hidden="true">
             QF
           </span>
-          <span>QuickFork</span>
+          <span className="brandCopy">
+            <strong>QuickFork</strong>
+            <small>Repo-to-social launch kit</small>
+          </span>
         </a>
         <nav className="navLinks" aria-label="Primary product navigation">
           {navMenus.map((menu) => (
@@ -191,11 +194,12 @@ export function LandingNav() {
           <a className="navLink pricingLink" href={getLandingAnchorHref("#pricing")} aria-label="Pricing, view subscription options">
             Pricing
           </a>
-          <a className="navLink navBriefLink" href={studioHref} aria-label="Generate free repo brief">
-            Generate free repo brief
-          </a>
         </nav>
         <div className="navActions">
+          <a className="navCta secondary navGenerateLink" href={studioHref}>
+            Generate free repo brief
+            <ArrowRight aria-hidden="true" size={16} />
+          </a>
           <UserMenu />
         </div>
       </div>

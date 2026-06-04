@@ -20,6 +20,8 @@ const exampleImages = [
   { label: "Japanese", src: "/examples/twvp-cover-ja.png" },
 ];
 
+const studioAssetPresets = ASSET_PRESETS.filter((preset) => preset.useCase !== "PPT");
+
 export function ProductStudio() {
   const [repoUrl, setRepoUrl] = useState("https://github.com/deepseek-ai/Thinking-with-Visual-Primitives");
   const [projectName, setProjectName] = useState("Thinking with Visual Primitives");
@@ -56,11 +58,11 @@ export function ProductStudio() {
     <section className="studioSection" id="studio" aria-labelledby="studio-title">
       <div className="sectionGrid studioIntro">
         <SectionIntro
-          copy="The redesigned front end keeps QuickFork's working generator visible, so the landing story and the actual output controls share the same system."
+          copy="The generator stays on the page because the product promise is intentionally direct: one repository source, one editable story, and social launch surfaces for README, X/LinkedIn, and square feed cards."
           eyebrow="Studio / Generator"
           id="studio-title"
-          label="Product studio"
-          title="Keep the launch package editable inside the page."
+          label="Social channel studio"
+          title="Keep the repo-to-social package editable inside the page."
         />
       </div>
 
@@ -133,7 +135,7 @@ export function ProductStudio() {
             <MonitorUp size={18} /> Output options
           </div>
           <div className="optionList">
-            {ASSET_PRESETS.map((preset) => (
+            {studioAssetPresets.map((preset) => (
               <button
                 aria-pressed={preset.id === presetId}
                 className={preset.id === presetId ? "option active" : "option"}
@@ -150,9 +152,8 @@ export function ProductStudio() {
           </div>
           <div className="tags">
             <span>README</span>
-            <span>PPT</span>
-            <span>Social</span>
-            <span>Sites</span>
+            <span>X / LinkedIn</span>
+            <span>Square social</span>
           </div>
         </div>
       </div>
@@ -180,7 +181,7 @@ export function ProductStudio() {
       <div className="outputGrid">
         <div className="panel previewPanel">
           <div className="panelTitle">
-            <Languages size={18} /> Localized launch package
+            <Languages size={18} /> Localized social package
           </div>
           <div className="localeTabs">
             {launchPackage.locales.map((locale) => (
@@ -200,7 +201,7 @@ export function ProductStudio() {
 
         <div className="panel promptPanel">
           <div className="panelTitle">
-            <FileImage size={18} /> Infographic prompt
+            <FileImage size={18} /> Social card prompt
           </div>
           <pre className="promptPreview">{activeOutput.coverPrompt}</pre>
         </div>
@@ -209,7 +210,7 @@ export function ProductStudio() {
       <div className="examples">
         <div className="sectionHeading">
           <h3>Example materials</h3>
-          <p>Reference and generated covers included for README, deck, and social review.</p>
+          <p>Reference and generated covers included for README, X/LinkedIn, square card, and manifest review.</p>
         </div>
         <div className="imageGrid">
           {exampleImages.map((imageItem) => (

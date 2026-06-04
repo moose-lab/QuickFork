@@ -191,7 +191,7 @@ function baseContent(input: LaunchInput) {
       ],
       steps: ["Analyze repository", "Write launch copy", "Generate infographic"],
       paragraphs: [
-        `${projectName} becomes a compact launch package: project overview, copy, visual structure, image prompts, and export sizes for README files, decks, and social channels.`,
+        `${projectName} becomes a compact social launch package: project overview, copy, visual structure, image prompts, and export sizes for README files, launch posts, and social channels.`,
         "QuickFork keeps all languages structurally aligned so teams can compare, review, and distribute the same story across English, Chinese, and Japanese audiences.",
       ],
     },
@@ -205,7 +205,7 @@ function baseContent(input: LaunchInput) {
       ],
       steps: ["分析仓库", "撰写发布文案", "生成信息图"],
       paragraphs: [
-        `${projectName} 会被整理成紧凑发布包：项目概要、文案、视觉结构、图像提示词，以及适配 README、PPT 和社交平台的导出尺寸。`,
+        `${projectName} 会被整理成紧凑社交发布包：项目概要、文案、视觉结构、图像提示词，以及适配 README、发布帖和社交平台的导出尺寸。`,
         "QuickFork 让三种语言共享同一套信息结构，便于团队在英文、中文、日文之间对照审阅和统一分发。",
       ],
     },
@@ -219,7 +219,7 @@ function baseContent(input: LaunchInput) {
       ],
       steps: ["リポジトリを分析", "ローンチコピーを作成", "情報図を生成"],
       paragraphs: [
-        `${projectName} は、プロジェクト概要、コピー、視覚構成、画像プロンプト、README・PPT・SNS 向けサイズを含むコンパクトなローンチパッケージになります。`,
+        `${projectName} は、プロジェクト概要、コピー、視覚構成、画像プロンプト、README・投稿・SNS 向けサイズを含むコンパクトなソーシャルローンチパッケージになります。`,
         "QuickFork は英語・中国語・日本語で同じ情報構造を保つため、チームは同じストーリーを比較、レビュー、配布できます。",
       ],
     },
