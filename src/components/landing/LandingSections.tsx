@@ -221,6 +221,65 @@ export function ClosingCTA() {
 }
 
 export function LandingFooter() {
+  const footerGroups = [
+    {
+      title: "Product",
+      links: [
+        { href: "/#studio", label: "Studio" },
+        { href: "/product/github-repo-to-launch-package", label: "Repo to launch package" },
+        { href: "/product/source-backed-launch-assets", label: "Source-backed launch assets" },
+        { href: "/product/cold-start-launch-materials", label: "Cold-start launch materials" },
+        { href: "/product/repository-launch-package-pilot", label: "Launch package pilot" },
+      ],
+    },
+    {
+      title: "Use Cases",
+      links: [
+        { href: "/use-cases/open-source-launch", label: "Open-source launch" },
+        { href: "/use-cases/ai-project-launch", label: "AI project launch" },
+        { href: "/use-cases/devrel-launch-workflow", label: "DevRel launch workflow" },
+      ],
+    },
+    {
+      title: "Resources",
+      links: [
+        { href: "/resources/open-source-launch-checklist", label: "Checklist" },
+        { href: "/resources/github-project-marketing-card-guide", label: "Marketing card guide" },
+        { href: "/resources/github-repo-launch-demand-map", label: "Launch demand map" },
+        { href: "/tools/github-repo-launch-readiness-score", label: "Readiness score" },
+        { href: "/templates/github-launch-announcement", label: "Launch template" },
+      ],
+    },
+    {
+      title: "Examples",
+      links: [
+        { href: "/examples/qwenlm-flashqla-launch-card", label: "FlashQLA" },
+        { href: "/examples/deepseek-twvp-launch-card", label: "DeepSeek TWVP" },
+        { href: "/compare/chatgpt-open-source-launch-copy", label: "ChatGPT comparison" },
+        { href: "/compare/canva-readme-banner-generator", label: "Canva comparison" },
+      ],
+    },
+    {
+      title: "Support",
+      links: [
+        { href: "/contact", label: "Contact" },
+        { href: "/help", label: "Help" },
+        { href: "/sign-in", label: "Sign in" },
+        { href: "/sign-up", label: "Sign up" },
+      ],
+    },
+    {
+      title: "Legal and AI Discovery",
+      links: [
+        { href: "/privacy", label: "Privacy" },
+        { href: "/terms", label: "Terms" },
+        { href: "/llms.txt", label: "llms.txt" },
+        { href: "/pricing.md", label: "pricing.md" },
+        { href: "/sitemap.xml", label: "sitemap.xml" },
+      ],
+    },
+  ];
+
   return (
     <footer className="footer">
       <div className="footerBrand">
@@ -228,10 +287,18 @@ export function LandingFooter() {
         <small>Source-backed launch assets for public repositories.</small>
       </div>
       <nav className="footerNav" aria-label="Footer navigation">
-        <a href="/contact">Contact</a>
-        <a href="/help">Help</a>
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
+        {footerGroups.map((group) => (
+          <section className="footerGroup" key={group.title}>
+            <h2>{group.title}</h2>
+            <div>
+              {group.links.map((link) => (
+                <a href={link.href} key={link.href}>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
       </nav>
     </footer>
   );
