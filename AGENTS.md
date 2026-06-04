@@ -19,6 +19,8 @@ Every QuickFork growth iteration must follow this loop:
 5. Verify the change with repo tests, production checks, analytics checks, or manual evidence collection as appropriate.
 6. Update repo docs and the Obsidian strategy mirror with what changed, what evidence exists, and what remains unvalidated.
 
+If the current evidence is incomplete, stop using strategy reports, SEO/GEO supervisor reports, generated experiment reports, or Obsidian summaries as inputs for the next growth decision. Incomplete reports may only trigger evidence collection, measurement fixes, crawlability fixes, or clearly independent product-foundation work that was already prioritized outside the report.
+
 ### Source of Truth
 
 - Start from `.agents/product-marketing.md` before writing copy, planning SEO/GEO pages, changing positioning, or defining paid packaging.
@@ -163,6 +165,23 @@ Before marking a growth strategy or growth iteration as effective, verify the ap
 - Claim hygiene: no public page violates `.agents/product-marketing.md`.
 
 If evidence is missing, label the strategy as a hypothesis and document the next validation step.
+
+### Evidence-Gated Report Use
+
+Treat SEO/GEO supervisor reports, audit workbooks, generated experiment reports, and Obsidian strategy summaries as decision support only after the evidence completeness gate passes.
+
+A report is complete enough to drive the next growth action only when it includes:
+
+- The exact experiment, route, page family, or product surface being evaluated.
+- The evidence window, normally 14 days unless a shorter diagnostic window is explicitly justified.
+- Production crawlability checks: public route status, canonical URL, sitemap inclusion, robots policy, and `llms.txt` alignment where relevant.
+- GA4 or equivalent activation data for page view, CTA click, generation start, generation completion, and guardrail events.
+- Search Console or equivalent query-page evidence for the relevant non-brand and brand queries.
+- AI-answer observations across the configured surfaces, including ChatGPT Search, Perplexity, Google AI Overview, Gemini, Claude, and any unavailable surface noted as unavailable.
+- Claim hygiene review against `.agents/product-marketing.md`, including forbidden pricing, ranking, revenue, customer, conversion-lift, Product Hunt, and guaranteed-growth claims.
+- A decision label: `validated`, `partially_validated`, `insufficient_data`, `blocked`, or `hypothesis`.
+
+If any required evidence is missing, do not use the report to expand landing pages, change SEO/GEO priorities, set pricing, publish product claims, choose productization, or declare demand. Allowed next actions are limited to collecting the missing evidence, fixing measurement/crawl/access problems, documenting the gap, or continuing independent product lifecycle work whose priority does not depend on the incomplete report.
 
 ### Obsidian Strategy Log
 

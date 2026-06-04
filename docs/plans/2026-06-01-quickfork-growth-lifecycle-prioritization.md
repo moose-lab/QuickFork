@@ -24,6 +24,27 @@ Each growth iteration must state:
 - Source-backed claim limits
 - Obsidian mirror update
 
+## Evidence-Gated Action Rule
+
+As of 2026-06-04, SEO/GEO supervisor reports, generated experiment reports, audit workbooks, and Obsidian strategy summaries are not allowed to drive the next growth or productization decision until their evidence is complete.
+
+Incomplete reports can only trigger:
+
+- Missing-evidence collection.
+- Measurement, crawlability, or access fixes.
+- Documentation of the exact gap and next validation step.
+- Product lifecycle work that was already prioritized independently of the incomplete report.
+
+They must not trigger:
+
+- New landing-page expansion.
+- SEO/GEO priority changes.
+- Public pricing, packaging, or revenue claims.
+- Productization decisions such as hosted sites, paid tiers, agency packaging, or lifecycle automation.
+- Claims that a segment, keyword, page, route, or AI-search surface is validated.
+
+A report becomes action-ready only after it names the evaluated route or product surface, covers the declared evidence window, includes production crawlability checks, GA4 or equivalent activation data, Search Console or equivalent query-page evidence, AI-answer observations across the configured surfaces, and a claim hygiene review against `.agents/product-marketing.md`.
+
 ## Lifecycle Model
 
 | Stage | User state | Product job | Primary metric | Guardrail |
