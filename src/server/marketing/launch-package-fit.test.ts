@@ -11,7 +11,7 @@ describe("launch package fit scoring", () => {
         launchTimeline: "within_30_days",
         packageModel: "single_launch",
         buyingTrigger: "launch_deadline",
-        packageScope: ["readme", "social", "deck", "outreach", "visual_explainer"],
+        packageScope: ["readme", "social", "deck", "outreach", "sites", "visual_explainer"],
         humanReviewNeeded: true,
         notes: "Launching an AI repo and need source-backed README, deck, and outreach review.",
       }),

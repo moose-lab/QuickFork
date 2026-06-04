@@ -547,6 +547,7 @@ describe("project launch generation backend", () => {
         "readme",
         "social",
         "deck",
+        "site",
         "visual",
         "outreach",
       ]);
@@ -561,7 +562,7 @@ describe("project launch generation backend", () => {
           source: expect.stringContaining("README or repo metadata includes"),
         }),
       );
-      expect(result.launchBrief.launchMaterialsMap.channels[3]).toEqual(
+      expect(result.launchBrief.launchMaterialsMap.channels[4]).toEqual(
         expect.objectContaining({
           type: "visual",
           artifactLabel: "Visual explainer prompt",
@@ -575,6 +576,7 @@ describe("project launch generation backend", () => {
         "readme",
         "social",
         "deck",
+        "site",
         "outreach",
         "visual",
       ]);
@@ -612,6 +614,13 @@ describe("project launch generation backend", () => {
             type: "deck",
             label: "Pitch deck outline",
             body: expect.stringContaining("Problem:"),
+          }),
+          expect.objectContaining({
+            type: "site",
+            label: "Launch site page spine",
+            fileName: "nexu-io-open-design-launch-site-page-spine.md",
+            body: expect.stringContaining("## Launch site page spine"),
+            sourceReferences: expect.arrayContaining([expect.stringContaining("README or repo metadata includes")]),
           }),
         ]),
       );
