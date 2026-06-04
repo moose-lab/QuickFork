@@ -1,13 +1,12 @@
-import { PanelTop } from "lucide-react";
+import { ArrowRight, CheckCircle2, PanelTop } from "lucide-react";
 import {
-  canvasModules,
   faqItems,
-  featureCards,
-  proofAudience,
-  proofQuotes,
+  publishGates,
+  pricingPlans,
+  reviewWorkbenchLanes,
+  socialChannelOutputs,
+  socialFlowSteps,
   showcases,
-  studioPills,
-  workflowSteps,
 } from "../../content/landing";
 import { SectionIntro } from "./SectionIntro";
 
@@ -16,31 +15,37 @@ export function FeatureSection() {
     <section className="section" id="features" aria-labelledby="features-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="QuickFork now exposes the backend generation contract in the page itself: repo URL in, curated brief, localized copy, prompts, mock cards, quality reports, and manifest paths out."
-          eyebrow="01 / Features"
+          copy="Cold-start project launches fail when the first impression is just a raw GitHub link. QuickFork turns repo evidence into social launch assets that are scannable, editable, and still tied to sources."
+          eyebrow="01 / Product"
           id="features-title"
-          title="Generate a source-backed launch package from repository evidence."
+          title="Turn repo evidence into social assets people can inspect."
         />
-        <div className="featureBoard" aria-label="QuickFork feature set">
-          {featureCards.map((feature) => (
-            <article className="featureCard" key={feature.code}>
-              <span className="featureCode">{feature.code}</span>
-              <strong>{feature.title}</strong>
-              <p>{feature.description}</p>
-              <div className="artifact" aria-hidden="true">
-                <div className="artifactHead">
-                  <span>{feature.artifactLabel}</span>
-                  <span>{feature.artifactValue}</span>
-                </div>
-                <div className="artifactBody">
-                  <span className="line" />
-                  <span className="line" />
-                  <span className="line" />
-                  <span className="line" />
-                </div>
-              </div>
-            </article>
-          ))}
+        <div className="socialFlowBoard">
+          <ol className="socialFlowSteps" aria-label="Repo-to-social conversion steps">
+            {socialFlowSteps.map((step) => (
+              <li key={step.code}>
+                <span>{step.code}</span>
+                <strong>{step.title}</strong>
+                <p>{step.body}</p>
+                <small>{step.source}</small>
+              </li>
+            ))}
+          </ol>
+          <aside className="socialChannelPanel" aria-label="Reviewable social launch package">
+            <div className="socialChannelHeader">
+              <span className="monoLabel">Channel outputs</span>
+              <strong>One repo story, four publishable surfaces.</strong>
+            </div>
+            <ul className="socialChannelOutputs" aria-label="Social launch channel outputs">
+              {socialChannelOutputs.map((output) => (
+                <li key={output.title}>
+                  <span>{output.label}</span>
+                  <strong>{output.title}</strong>
+                  <p>{output.body}</p>
+                </li>
+              ))}
+            </ul>
+          </aside>
         </div>
       </div>
     </section>
@@ -86,50 +91,26 @@ export function WorkflowSection() {
     <section className="darkBand" id="how-to" aria-labelledby="how-title">
       <div className="section">
         <div className="sectionGrid">
-          <SectionIntro
-            copy="The frontend sends a small request, the server runs the mockable A-to-K pipeline, and the Hero page returns concrete paths for the files written under output/project-launch."
-            eyebrow="02 / How to"
+        <SectionIntro
+            copy="The workflow is deliberately operational: collect source facts, draft social surfaces side by side, then keep every publishable asset tied to an evidence audit."
+            eyebrow="02 / Workflow"
             id="how-title"
-            title="From GitHub URL to multilingual launch package."
+            title="Review every social asset before it ships."
           />
-          <div className="stepGrid" aria-label="QuickFork workflow">
-            {workflowSteps.map((step) => (
-              <article className="stepCard" key={step.number}>
-                <span className="stepNum">{step.number}</span>
-                <strong>{step.title}</strong>
-                <p>{step.copy}</p>
-              </article>
-            ))}
-          </div>
-          <div className="productLab" aria-label="QuickFork product interface mockup">
-            <div className="labTopbar">
-              <span>QuickFork Studio</span>
-              <span>Repository to generated artifacts</span>
-            </div>
-            <div className="labBody">
-              <div className="labSidebar">
-                {studioPills.map((pill) => (
-                  <div className="labPill" key={pill.label}>
-                    <span>{pill.label}</span>
-                    {pill.value}
-                  </div>
-                ))}
-              </div>
-              <div className="labCanvas">
-                <div className="canvasTitle">Launch package, ready for review.</div>
-                <div className="canvasModules" aria-hidden="true">
-                  {canvasModules.map((module) => (
-                    <span key={module}>{module}</span>
+          <ol className="reviewWorkbench" aria-label="Repo-to-social review workbench lanes">
+            {reviewWorkbenchLanes.map((lane) => (
+              <li key={lane.label}>
+                <span>{lane.label}</span>
+                <strong>{lane.title}</strong>
+                <p>{lane.body}</p>
+                <ul aria-label={`${lane.label} checklist`}>
+                  {lane.items.map((item) => (
+                    <li key={item}>{item}</li>
                   ))}
-                </div>
-                <div className="canvasFoot">
-                  <span>Manifest</span>
-                  <span>Cards</span>
-                  <span>Reports</span>
-                </div>
-              </div>
-            </div>
-          </div>
+                </ul>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>
@@ -141,38 +122,20 @@ export function ProofSection() {
     <section className="section" id="proof" aria-labelledby="proof-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="QuickFork uses proof carefully: name the user, explain the workflow, and leave numerical claims out until real product data exists."
-          eyebrow="03 / Social proof"
+          copy="QuickFork is built for teams that need attention without inventing traction. The proof system treats generated launch assets as drafts until the source map, prompt trace, channel fit, and approval state are visible."
+          eyebrow="03 / Review"
           id="proof-title"
-          title="Show who the workflow is for before claiming scale."
+          title="Publish only after the social package passes source-backed gates."
         />
-        <div className="proofGrid">
-          <div className="quoteRail">
-            {proofQuotes.map((quote) => (
-              <article className="quoteCard" key={quote.quote}>
-                <div className="quoteMark" aria-hidden="true">
-                  "
-                </div>
-                <div>
-                  <blockquote>{quote.quote}</blockquote>
-                  <p>{quote.copy}</p>
-                  <cite>{quote.cite}</cite>
-                </div>
-              </article>
-            ))}
-          </div>
-          <aside className="proofAside" aria-label="QuickFork audience proof">
-            <h3>Built for launch work that still needs review.</h3>
-            <div className="proofList">
-              {proofAudience.map((item) => (
-                <span key={item.label}>
-                  {item.label}
-                  <b>{item.value}</b>
-                </span>
-              ))}
-            </div>
-          </aside>
-        </div>
+        <ul className="publishGateList" aria-label="Source-backed publish gates">
+          {publishGates.map((gate) => (
+            <li key={gate.title}>
+              <span>{gate.label}</span>
+              <strong>{gate.title}</strong>
+              <p>{gate.body}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -183,10 +146,10 @@ export function FAQSection() {
     <section className="section" id="faq" aria-labelledby="faq-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="The FAQ reduces hesitation after the user understands the workflow. QuickFork answers concerns about evidence, output quality, editable control, and launch-readiness."
+          copy="QuickFork answers the questions a maintainer, founder, DevRel lead, or product marketer asks before trusting generated launch assets."
           eyebrow="04 / FAQ"
           id="faq-title"
-          title="Answer what a serious buyer will ask."
+          title="Keep the launch simple, reviewable, and source-backed."
         />
         <div className="faqGrid">
           {faqItems.map((item) => (
@@ -203,19 +166,44 @@ export function FAQSection() {
 
 export function ClosingCTA() {
   return (
-    <section className="closing" id="pricing" aria-labelledby="closing-title">
-      <div>
-        <span className="monoLabel">Final CTA</span>
-        <h2 id="closing-title">Start with the repo you have. Ship the launch package you need.</h2>
+    <section className="pricingSection" id="pricing" aria-labelledby="pricing-title">
+      <div className="pricingHeader">
+        <div>
+          <span className="monoLabel">05 / Pricing</span>
+          <h2 id="pricing-title">Choose the repo-to-social package that matches launch risk.</h2>
+        </div>
         <p>
-          QuickFork turns repository evidence into a reviewable launch brief, README assets, social copy, deck structure,
-          outreach drafts, and visual explainers for technical products.
+          Start free when you only need evidence shape. Upgrade when the launch needs reusable social assets, review reports,
+          and team approval before a public post.
         </p>
       </div>
-      <a className="button" href="#features">
-        <PanelTop aria-hidden="true" size={17} />
-        Review the workflow
-      </a>
+      <ul className="pricingGrid" aria-label="Repo-to-social pricing plans">
+        {pricingPlans.map((plan) => (
+          <li className={plan.highlighted ? "pricingCard featured" : "pricingCard"} key={plan.name}>
+            <div className="pricingCardTop">
+              <span>{plan.badge}</span>
+              <strong>{plan.name}</strong>
+              <p>{plan.description}</p>
+            </div>
+            <div className="pricingAmount">
+              <strong>{plan.price}</strong>
+              <span>{plan.cadence}</span>
+            </div>
+            <ul aria-label={`${plan.name} includes`}>
+              {plan.features.map((feature) => (
+                <li key={feature}>
+                  <CheckCircle2 aria-hidden="true" size={15} />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+            <a className={plan.highlighted ? "primaryButton" : "secondaryButton"} href={plan.href}>
+              {plan.name === "Free scan" ? <PanelTop aria-hidden="true" size={16} /> : <ArrowRight aria-hidden="true" size={16} />}
+              {plan.ctaLabel}
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -226,9 +214,9 @@ export function LandingFooter() {
       title: "Product",
       links: [
         { href: "/#studio", label: "Studio" },
-        { href: "/product/github-repo-to-launch-package", label: "Repo to launch package" },
+        { href: "/product/github-repo-to-launch-package", label: "Repo-to-social package" },
         { href: "/product/source-backed-launch-assets", label: "Source-backed launch assets" },
-        { href: "/product/cold-start-launch-materials", label: "Cold-start launch materials" },
+        { href: "/product/cold-start-launch-materials", label: "Cold-start social materials" },
         { href: "/product/repository-launch-package-pilot", label: "Launch package pilot" },
       ],
     },
@@ -244,7 +232,7 @@ export function LandingFooter() {
       title: "Resources",
       links: [
         { href: "/resources/open-source-launch-checklist", label: "Checklist" },
-        { href: "/resources/github-project-marketing-card-guide", label: "Marketing card guide" },
+        { href: "/resources/github-project-marketing-card-guide", label: "Social card guide" },
         { href: "/resources/github-repo-launch-demand-map", label: "Launch demand map" },
         { href: "/tools/github-repo-launch-readiness-score", label: "Readiness score" },
         { href: "/templates/github-launch-announcement", label: "Launch template" },

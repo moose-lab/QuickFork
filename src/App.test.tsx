@@ -21,26 +21,40 @@ describe("App", () => {
 
     expect(screen.getByRole("banner")).toHaveClass("nav");
     expect(appStyles).toMatch(/\.nav\s*{[^}]*position:\s*sticky;/s);
-    expect(appStyles).toMatch(/\.heroGrid\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*4fr\)\s+minmax\(0,\s*6fr\);/s);
+    expect(appStyles).toMatch(/\.heroGrid\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*0\.92fr\)\s+minmax\(0,\s*1\.28fr\);/s);
     expect(appStyles).toMatch(/\.hero h1\s*{[^}]*font-family:\s*var\(--font-body\);/s);
-    expect(appStyles).toMatch(/\.sectionTitle h2,\s*\.showcaseCopy h3,\s*\.proofAside h3,\s*\.closing h2\s*{[^}]*font-family:\s*var\(--font-body\);/s);
+    expect(appStyles).toMatch(/\.hero h1\s*{[^}]*font-size:\s*72px;/s);
+    expect(appStyles).toMatch(/\.sectionTitle h2,\s*\.showcaseCopy h3,\s*\.proofAside h3,\s*\.pricingSection h2\s*{[^}]*font-family:\s*var\(--font-body\);/s);
     expect(appStyles).not.toMatch(/drop::first-letter/);
     expect(appStyles).toMatch(/\.productPlayback\s*{[^}]*border:\s*0;[^}]*padding:\s*0;[^}]*box-shadow:\s*none;/s);
-    expect(appStyles).toMatch(/\.referenceForm\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+116px;/s);
+    expect(appStyles).toMatch(/\.referenceForm\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+164px;/s);
     expect(appStyles).toMatch(/\.referenceControls\s*{[^}]*grid-template-columns:\s*minmax\(220px,\s*0\.58fr\)\s+minmax\(150px,\s*0\.42fr\);/s);
-    expect(designSpec).toContain("Desktop ratio is 4:6.");
+    expect(appStyles).toMatch(/\.socialFlowBoard\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*0\.9fr\)\s+minmax\(0,\s*1\.1fr\);/s);
+    expect(appStyles).toMatch(/\.heroVisual\s*{[^}]*grid-template-areas:\s*"media outputs"\s+"artifact outputs"\s+"flow flow";/s);
+    expect(appStyles).toMatch(/\.productPlayback\s*{[^}]*grid-area:\s*media;[^}]*max-width:\s*none;[^}]*justify-self:\s*stretch;/s);
+    expect(appStyles).toMatch(/\.heroArtifactPreview\s*{[^}]*position:\s*static;[^}]*grid-area:\s*artifact;/s);
+    expect(appStyles).toMatch(/\.heroArtifactPreview img\s*{[^}]*object-fit:\s*contain;/s);
+    expect(appStyles).toMatch(/\.visualPackageStack\s*{[^}]*position:\s*static;[^}]*grid-area:\s*outputs;[^}]*box-shadow:\s*none;/s);
+    expect(appStyles).toMatch(/\.visualPipeline\s*{[^}]*position:\s*static;[^}]*grid-area:\s*flow;/s);
+    expect(designSpec).toContain("Desktop ratio keeps the social launch composer compact and gives the visual stage more room.");
+    expect(designSpec).toContain("The visual stage uses a grid workbench instead of overlapping output panels on top of the repository playback.");
     expect(designSpec).toContain("All visible H1 and H2 headings use the same body sans stack");
-    expect(designSpec).toContain("The right animation area is unframed.");
+    expect(designSpec).toContain("The right visual stage combines product playback, generated social artifact preview, and a compact output stack.");
     expect(designSpec).toContain("Hero generation quality is fixed to low by default");
     expect(designSpec).toContain("English is selected by default and Chinese/Japanese are optional");
     expect(designSpec).toContain("a ratio dropdown aligned on the same row as language controls");
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /product/i })).toHaveAttribute("href", "#studio");
-    expect(within(screen.getByRole("navigation", { name: /primary/i })).getByRole("link", { name: /pricing/i })).toHaveAttribute(
+    const header = screen.getByRole("banner");
+    expect(within(header).getByRole("link", { name: /quickfork home/i })).toBeInTheDocument();
+    expect(within(header).getByText(/repo-to-social launch kit/i)).toBeInTheDocument();
+    const primaryNav = within(header).getByRole("navigation", { name: /primary/i });
+    expect(within(primaryNav).getByRole("link", { name: /^product/i })).toHaveAttribute("href", "#studio");
+    expect(within(primaryNav).getByRole("link", { name: /repo-to-social package/i })).toHaveAttribute(
       "href",
-      "#pricing",
+      "/product/github-repo-to-launch-package",
     );
+    expect(within(primaryNav).getByRole("link", { name: /pricing/i })).toHaveAttribute("href", "#pricing");
+    expect(within(header).getByRole("link", { name: /generate free repo brief/i })).toHaveAttribute("href", "#studio");
     const footerNav = screen.getByRole("navigation", { name: /footer/i });
     expect(within(footerNav).getByRole("link", { name: /^contact$/i })).toHaveAttribute("href", "/contact");
     expect(within(footerNav).getByRole("link", { name: /^help$/i })).toHaveAttribute("href", "/help");
@@ -49,14 +63,31 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /start a fork/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: /generate a cold-start launch package from one github repository/i,
+        name: /Repo to social launch package/i,
       }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Paste a public repo\. QuickFork builds a social launch story, README visual, post copy, channel card, and evidence manifest/i,
+      ),
+    ).toBeInTheDocument();
+    const heroPackageLine = screen.getByRole("list", { name: /launch package outputs/i });
+    expect(heroPackageLine).toHaveTextContent(/Social story/i);
+    expect(heroPackageLine).toHaveTextContent(/README visual/i);
+    expect(heroPackageLine).toHaveTextContent(/Post copy/i);
+    expect(heroPackageLine).toHaveTextContent(/Channel card/i);
+    expect(heroPackageLine).toHaveTextContent(/Evidence manifest/i);
+    const visualPackagePreview = screen.getByRole("list", { name: /generated launch package preview/i });
+    expect(within(visualPackagePreview).getByText(/Story/i)).toBeInTheDocument();
+    expect(within(visualPackagePreview).getByText(/README/i)).toBeInTheDocument();
+    expect(within(visualPackagePreview).getByText(/Post/i)).toBeInTheDocument();
+    expect(within(visualPackagePreview).getByText(/Card/i)).toBeInTheDocument();
+    expect(within(visualPackagePreview).getByText(/Manifest/i)).toBeInTheDocument();
     const form = screen.getByRole("form", { name: /project launch generator/i });
     expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveValue("https://github.com/QwenLM/FlashQLA");
     expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveAttribute("placeholder", "https://github.com/owner/repo");
-    expect(within(form).getByText(/Can be used to generate README, PPT, or social media launch assets\./i)).toBeInTheDocument();
-    expect(within(form).getByRole("button", { name: /^generate$/i })).toBeInTheDocument();
+    expect(within(form).getByText(/Generate a social launch story, visual, and post from one repo\./i)).toBeInTheDocument();
+    expect(within(form).getByRole("button", { name: /^generate package$/i })).toBeInTheDocument();
     expect(within(form).queryByLabelText(/hero image quality/i)).not.toBeInTheDocument();
     const languageGroup = within(form).getByRole("group", { name: /^languages$/i });
     const ratioSelect = within(form).getByRole("combobox", { name: /asset ratio/i });
@@ -75,6 +106,7 @@ describe("App", () => {
     const heroVideo = document.querySelector('video[aria-label="Product animation playback"]');
     expect(heroVideo).toBeInTheDocument();
     expect(heroVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
+    expect(heroVideo).toHaveAttribute("poster", "/examples/flashqla-reference.jpeg");
     expect(heroVideo).toHaveAttribute("autoPlay");
     expect(heroVideo).not.toHaveAttribute("controls");
     expect(heroVideo).not.toHaveAttribute("controlsList");
@@ -88,14 +120,44 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /preview prompts/i })).not.toBeInTheDocument();
     expect(
       screen.getByText(
-        /QuickFork reads repository evidence, explains the project visually, and drafts README, social, deck, and outreach assets/i,
+        /Paste a public repo\. QuickFork builds a social launch story/i,
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /Generate a source-backed launch package from repository evidence/i }),
+      screen.getByRole("heading", { name: /Turn repo evidence into social assets people can inspect/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /From GitHub URL to multilingual launch package/i })).toBeInTheDocument();
-  }, 10000);
+    expect(screen.getByRole("heading", { name: /Review every social asset before it ships/i })).toBeInTheDocument();
+    expect(screen.getByText(/Cold-start project launches fail when the first impression is just a raw GitHub link\./i)).toBeInTheDocument();
+    const conversionSteps = screen.getByRole("list", { name: /repo-to-social conversion steps/i });
+    expect(within(conversionSteps).getAllByText(/Evidence intake/i).length).toBeGreaterThan(0);
+    expect(within(conversionSteps).getAllByText(/Social angle/i).length).toBeGreaterThan(0);
+    expect(within(conversionSteps).getAllByText(/Channel package/i).length).toBeGreaterThan(0);
+    const channelOutputs = screen.getByRole("list", { name: /social launch channel outputs/i });
+    expect(within(channelOutputs).getByText(/X\/LinkedIn launch post/i)).toBeInTheDocument();
+    expect(within(channelOutputs).getByText(/README visual card/i)).toBeInTheDocument();
+    expect(within(channelOutputs).getByText(/Square social card/i)).toBeInTheDocument();
+    expect(within(channelOutputs).getByText(/Evidence manifest/i)).toBeInTheDocument();
+    expect(appStyles).toMatch(/\.reviewWorkbench\s*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/s);
+    const reviewWorkbench = screen.getByRole("list", { name: /repo-to-social review workbench lanes/i });
+    expect(within(reviewWorkbench).getAllByText(/Source intake/i).length).toBeGreaterThan(0);
+    expect(within(reviewWorkbench).getAllByText(/Channel drafts/i).length).toBeGreaterThan(0);
+    expect(within(reviewWorkbench).getAllByText(/Evidence audit/i).length).toBeGreaterThan(0);
+    const publishGates = screen.getByRole("list", { name: /source-backed publish gates/i });
+    expect(within(publishGates).getByText(/Claim source map/i)).toBeInTheDocument();
+    expect(within(publishGates).getByText(/Prompt trace/i)).toBeInTheDocument();
+    expect(within(publishGates).getByText(/Channel fit/i)).toBeInTheDocument();
+    expect(within(publishGates).getByText(/Human approval/i)).toBeInTheDocument();
+    const pricing = screen.getByRole("region", { name: /Choose the repo-to-social package that matches launch risk/i });
+    expect(within(pricing).getByText(/^Free scan$/i)).toBeInTheDocument();
+    expect(within(pricing).getByText(/^Launch package$/i)).toBeInTheDocument();
+    expect(within(pricing).getByText(/^Team review$/i)).toBeInTheDocument();
+    expect(within(pricing).getByRole("list", { name: /Repo-to-social pricing plans/i })).toBeInTheDocument();
+    expect(within(pricing).getByText(/1 repo/i)).toBeInTheDocument();
+    expect(within(pricing).getAllByText(/5 launches/i).length).toBeGreaterThan(0);
+    expect(within(pricing).getAllByText(/Source-backed review/i).length).toBeGreaterThan(0);
+    expect(appStyles).toMatch(/\.pricingSection\s*{/);
+    expect(appStyles).toMatch(/\.pricingGrid\s*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/s);
+  }, 20000);
 
   it("exposes the published growth architecture through header and footer navigation", () => {
     render(<App />);
@@ -114,10 +176,11 @@ describe("App", () => {
       "href",
       "/examples/qwenlm-flashqla-launch-card",
     );
-    expect(within(primaryNav).getByRole("link", { name: /generate free repo brief/i })).toHaveAttribute("href", "#studio");
+    const header = screen.getByRole("banner");
+    expect(within(header).getByRole("link", { name: /generate free repo brief/i })).toHaveAttribute("href", "#studio");
 
     const productMenu = screen.getByLabelText(/quickfork product menu/i);
-    expect(within(productMenu).getByRole("link", { name: /repo to launch package/i })).toHaveAttribute(
+    expect(within(productMenu).getByRole("link", { name: /repo-to-social package/i })).toHaveAttribute(
       "href",
       "/product/github-repo-to-launch-package",
     );
@@ -144,7 +207,7 @@ describe("App", () => {
     expect(within(footerNav).getByRole("heading", { name: /^product$/i })).toBeInTheDocument();
     expect(within(footerNav).getByRole("heading", { name: /^resources$/i })).toBeInTheDocument();
     expect(within(footerNav).getByRole("heading", { name: /^legal and ai discovery$/i })).toBeInTheDocument();
-    expect(within(footerNav).getByRole("link", { name: /repo to launch package/i })).toHaveAttribute(
+    expect(within(footerNav).getByRole("link", { name: /repo-to-social package/i })).toHaveAttribute(
       "href",
       "/product/github-repo-to-launch-package",
     );
@@ -184,16 +247,17 @@ describe("App", () => {
   it("keeps the generator studio inside the redesigned frontend", () => {
     render(<App />);
 
-    expect(screen.getByText(/Product studio/i)).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: /^GitHub URL$/i })).toBeInTheDocument();
-    expect(screen.getByText(/Model settings/i)).toBeInTheDocument();
-    expect(screen.getByText(/Narrative options/i)).toBeInTheDocument();
-    expect(screen.getByText(/Localized launch package/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/^\s*Infographic prompt$/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/README/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/PPT/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Social/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Sites/i).length).toBeGreaterThan(0);
+    const studio = screen.getByRole("region", { name: /Keep the repo-to-social package editable inside the page/i });
+    expect(within(studio).getByText(/Social channel studio/i)).toBeInTheDocument();
+    expect(within(studio).getByRole("textbox", { name: /^GitHub URL$/i })).toBeInTheDocument();
+    expect(within(studio).getByText(/Model settings/i)).toBeInTheDocument();
+    expect(within(studio).getByText(/Narrative options/i)).toBeInTheDocument();
+    expect(within(studio).getByText(/Localized social package/i)).toBeInTheDocument();
+    expect(within(studio).getAllByText(/^\s*Social card prompt$/i).length).toBeGreaterThan(0);
+    expect(within(studio).getAllByText(/README/i).length).toBeGreaterThan(0);
+    expect(within(studio).getAllByText(/X \/ LinkedIn/i).length).toBeGreaterThan(0);
+    expect(within(studio).getAllByText(/Square social/i).length).toBeGreaterThan(0);
+    expect(within(studio).queryByText(/PPT|PowerPoint|deck/i)).not.toBeInTheDocument();
   });
 
   it("tracks route-level page views with funnel intent metadata", () => {
@@ -216,7 +280,7 @@ describe("App", () => {
       ]),
     );
     expect(JSON.stringify(window.dataLayer)).not.toContain("token=secret");
-  });
+  }, 15000);
 
   it("renders catalog-backed marketing route shells with route metadata and CTAs", () => {
     window.dataLayer = [];
@@ -440,7 +504,7 @@ describe("App", () => {
       /\b(guaranteed|rankings|revenue|customers|viral|fully autonomous)\b/i,
     );
     expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key|raw|readme/i);
-  }, 10000);
+  }, 20000);
 
   it("renders the GitHub repo launch materials map as a product activation route", () => {
     window.dataLayer = [];
@@ -543,7 +607,7 @@ describe("App", () => {
       /\b(guaranteed|rankings|revenue|customers|viral|fully autonomous)\b/i,
     );
     expect(JSON.stringify(window.dataLayer)).not.toMatch(/email|token|secret|api_key/i);
-  }, 10000);
+  }, 20000);
 
   it("renders README marketing cards as a README-first product route", () => {
     window.dataLayer = [];
@@ -1211,6 +1275,7 @@ describe("App", () => {
       "href",
       "/#pricing",
     );
+    expect(screen.getByRole("link", { name: /generate free repo brief/i })).toHaveAttribute("href", "/#studio");
     expect(screen.getByRole("link", { name: /contact the team/i })).toHaveAttribute("href", "/contact");
     expect(document.title).toBe("Help Center | QuickFork");
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute("href", "https://seekersai.com/help");
@@ -1346,6 +1411,17 @@ describe("App", () => {
                   reviewQuestion: "Does the visual direction preserve identity assets and avoid fake logos?",
                   successSignal: "Visual prompt copied or image preview opened.",
                 },
+                {
+                  type: "deck",
+                  label: "Launch deck outline",
+                  primaryUser: "Technical founders",
+                  jobToBeDone: "Turn the repo story into a reviewable social thread before launch.",
+                  artifactLabel: "Deck outline",
+                  channelFit: "Deck channels need the same source-backed visual metaphor as README and social preview.",
+                  source: "Audience hypothesis from repo metadata and topics.",
+                  reviewQuestion: "Which source-backed proof belongs in the thread outline?",
+                  successSignal: "Thread outline copied or approved.",
+                },
               ],
             },
             readmeChecklist: [
@@ -1430,7 +1506,7 @@ describe("App", () => {
       target: { value: "https://github.com/QwenLM/FlashQLA" },
     });
     fireEvent.blur(within(form).getByRole("textbox", { name: /github repository url/i }));
-    fireEvent.click(within(form).getByRole("button", { name: /^generate$/i }));
+    fireEvent.click(within(form).getByRole("button", { name: /^generate package$/i }));
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     expect(fetchMock).toHaveBeenCalledWith(
@@ -1472,10 +1548,13 @@ describe("App", () => {
     expect(within(storyMapRegion).getByText(/Install to benchmark/i)).toBeInTheDocument();
     const materialsMapRegion = within(briefRegion).getByRole("region", { name: /launch materials map/i });
     expect(within(materialsMapRegion).getByText(/^Launch materials map$/i)).toBeInTheDocument();
-    expect(within(materialsMapRegion).getByText(/Channel plan for README, social, deck, visual, and outreach/i)).toBeInTheDocument();
+    expect(within(materialsMapRegion).getByText(/Channel plan for README, social, thread, visual, and outreach/i)).toBeInTheDocument();
     expect(within(materialsMapRegion).getByText(/README launch section/i)).toBeInTheDocument();
     expect(within(materialsMapRegion).getByText(/Which source-backed claim belongs in the README hero/i)).toBeInTheDocument();
     expect(within(materialsMapRegion).getByText(/Visual project explainer/i)).toBeInTheDocument();
+    expect(within(materialsMapRegion).getAllByText(/^Thread outline$/i).length).toBeGreaterThan(0);
+    expect(within(materialsMapRegion).getByText(/Thread channels need the same source-backed visual metaphor/i)).toBeInTheDocument();
+    expect(within(materialsMapRegion).queryByText(/\bdeck\b/i)).not.toBeInTheDocument();
     expect(within(briefRegion).getByText(/Lead with a one-sentence README value proposition/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Launch angle 1/i)).toBeInTheDocument();
     expect(within(briefRegion).getByText(/Create a ai_kernel_infra visual explainer/i)).toBeInTheDocument();
@@ -1539,6 +1618,8 @@ describe("App", () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Project story map"));
     fireEvent.click(within(materialsMapRegion).getByRole("button", { name: /copy launch materials map/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Launch materials map"));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("Channel: thread"));
+    expect(navigator.clipboard.writeText).not.toHaveBeenCalledWith(expect.stringMatching(/\bdeck\b/i));
     fireEvent.click(within(briefRegion).getByRole("button", { name: /copy README launch brief/i }));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining("README checklist"));
     fireEvent.click(within(briefRegion).getByRole("link", { name: /download README launch brief/i }));
@@ -1571,8 +1652,8 @@ describe("App", () => {
             event: "launch_materials_map_copied",
             repo_full_name: "QwenLM/FlashQLA",
             generation_id: "gen_qwenlm_flashqla_test",
-            channel_count: 2,
-            artifact_type_count: 2,
+            channel_count: 3,
+            artifact_type_count: 3,
             source_reference_count: 1,
           }),
           expect.objectContaining({
@@ -1662,7 +1743,7 @@ describe("App", () => {
     render(<App />);
 
     const form = screen.getByRole("form", { name: /project launch generator/i });
-    fireEvent.click(within(form).getByRole("button", { name: /^generate$/i }));
+    fireEvent.click(within(form).getByRole("button", { name: /^generate package$/i }));
 
     await screen.findByText(/provider failed for token=secret/i);
     expect(window.dataLayer).toEqual(

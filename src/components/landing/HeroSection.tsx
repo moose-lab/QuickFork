@@ -20,6 +20,22 @@ const localeOptions: Array<{ id: LocaleCode; label: string; shortLabel: string }
   { id: "ja", label: "Japanese", shortLabel: "JA" },
 ];
 
+const heroPackageItems = [
+  "Social story",
+  "README visual",
+  "Post copy",
+  "Channel card",
+  "Evidence manifest",
+] as const;
+
+const heroVisualOutputs = [
+  { label: "Story", value: "Social angle" },
+  { label: "README", value: "Hero visual" },
+  { label: "Post", value: "Launch copy" },
+  { label: "Card", value: "Channel visual" },
+  { label: "Manifest", value: "Evidence trail" },
+] as const;
+
 const soundUnlockEvents = ["pointerdown", "keydown", "touchstart"] as const;
 
 async function playHeroVideo(video: HTMLVideoElement) {
@@ -159,6 +175,26 @@ interface RepoLaunchBriefArtifactSummary {
   fileName: string;
   body: string;
   sourceReferences: string[];
+}
+
+function normalizeRepoToSocialText(value: string) {
+  return value
+    .replace(/\bLaunch deck outline\b/g, "Thread outline")
+    .replace(/\blaunch deck outline\b/g, "thread outline")
+    .replace(/\bDeck outline\b/g, "Thread outline")
+    .replace(/\bdeck outline\b/g, "thread outline")
+    .replace(/\bDeck channels\b/g, "Thread channels")
+    .replace(/\bdeck channels\b/g, "thread channels")
+    .replace(/\bDeck channel\b/g, "Thread channel")
+    .replace(/\bdeck channel\b/g, "thread channel")
+    .replace(/\bDeck-ready\b/g, "Thread-ready")
+    .replace(/\bdeck-ready\b/g, "thread-ready")
+    .replace(/\bDeck\b/g, "Thread")
+    .replace(/\bdeck\b/g, "thread");
+}
+
+function getLaunchMaterialTypeLabel(type: RepoLaunchMaterialChannelSummary["type"]) {
+  return type === "deck" ? "thread" : type;
 }
 
 async function createGeneration(input: {
@@ -314,7 +350,7 @@ function ProjectLaunchInputPanel() {
   return (
     <div className="generatorStack">
       <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
-        <p className="referencePrompt">Can be used to generate README, PPT, or social media launch assets.</p>
+        <p className="referencePrompt">Generate a social launch story, visual, and post from one repo.</p>
         <div className="referenceForm">
           <label className="referenceField">
             <Github aria-hidden="true" size={17} />
@@ -332,7 +368,7 @@ function ProjectLaunchInputPanel() {
           </label>
           <button className="primaryButton" disabled={isSubmitting} type="submit">
             {isSubmitting ? <Loader2 aria-hidden="true" className="spinIcon" size={17} /> : null}
-            Generate
+            Generate package
           </button>
         </div>
         <div className="referenceControls">
@@ -505,13 +541,13 @@ function LaunchBriefPanel({
   };
 
   const handleCopyArtifact = async (artifact: RepoLaunchBriefArtifactSummary) => {
-    await navigator.clipboard?.writeText(artifact.body);
-    setCopyStatus(`Copied ${artifact.label}`);
+    await navigator.clipboard?.writeText(normalizeRepoToSocialText(artifact.body));
+    setCopyStatus(`Copied ${normalizeRepoToSocialText(artifact.label)}`);
     trackLaunchArtifact("launch_artifact_copied", artifact);
   };
 
   const handleArtifactDownload = (artifact: RepoLaunchBriefArtifactSummary) => {
-    setCopyStatus(`Downloaded ${artifact.label}`);
+    setCopyStatus(`Downloaded ${normalizeRepoToSocialText(artifact.label)}`);
     trackLaunchArtifact("launch_artifact_downloaded", artifact);
   };
 
@@ -628,7 +664,7 @@ function LaunchBriefPanel({
           <div className="launchMaterialsMapHead">
             <div>
               <strong>Launch materials map</strong>
-              <small>{brief.launchMaterialsMap.summary}</small>
+              <small>{normalizeRepoToSocialText(brief.launchMaterialsMap.summary)}</small>
             </div>
             <button className="secondaryButton" onClick={() => void handleCopyMaterialsMap()} type="button">
               <Copy aria-hidden="true" size={15} />
@@ -638,35 +674,35 @@ function LaunchBriefPanel({
           <ul className="launchMaterialsMapChannels">
             {brief.launchMaterialsMap.channels.map((channel) => (
               <li key={channel.type}>
-                <span>{channel.type}</span>
-                <strong>{channel.label}</strong>
+                <span>{getLaunchMaterialTypeLabel(channel.type)}</span>
+                <strong>{normalizeRepoToSocialText(channel.label)}</strong>
                 <dl>
                   <div>
                     <dt>User</dt>
-                    <dd>{channel.primaryUser}</dd>
+                    <dd>{normalizeRepoToSocialText(channel.primaryUser)}</dd>
                   </div>
                   <div>
                     <dt>Job</dt>
-                    <dd>{channel.jobToBeDone}</dd>
+                    <dd>{normalizeRepoToSocialText(channel.jobToBeDone)}</dd>
                   </div>
                   <div>
                     <dt>Artifact</dt>
-                    <dd>{channel.artifactLabel}</dd>
+                    <dd>{normalizeRepoToSocialText(channel.artifactLabel)}</dd>
                   </div>
                   <div>
                     <dt>Fit</dt>
-                    <dd>{channel.channelFit}</dd>
+                    <dd>{normalizeRepoToSocialText(channel.channelFit)}</dd>
                   </div>
                   <div>
                     <dt>Review</dt>
-                    <dd>{channel.reviewQuestion}</dd>
+                    <dd>{normalizeRepoToSocialText(channel.reviewQuestion)}</dd>
                   </div>
                   <div>
                     <dt>Signal</dt>
-                    <dd>{channel.successSignal}</dd>
+                    <dd>{normalizeRepoToSocialText(channel.successSignal)}</dd>
                   </div>
                 </dl>
-                <small>{channel.source}</small>
+                <small>{normalizeRepoToSocialText(channel.source)}</small>
               </li>
             ))}
           </ul>
@@ -681,16 +717,16 @@ function LaunchBriefPanel({
           {brief.artifacts.map((artifact) => (
             <div className="launchArtifactRow" key={`${artifact.type}-${artifact.fileName}`}>
               <div>
-                <strong>{artifact.label}</strong>
+                <strong>{normalizeRepoToSocialText(artifact.label)}</strong>
                 <small>{artifact.fileName}</small>
               </div>
               <div className="launchArtifactActions">
-                <button aria-label={`Copy ${artifact.label}`} onClick={() => void handleCopyArtifact(artifact)} type="button">
+                <button aria-label={`Copy ${normalizeRepoToSocialText(artifact.label)}`} onClick={() => void handleCopyArtifact(artifact)} type="button">
                   <Copy aria-hidden="true" size={15} />
                   Copy
                 </button>
                 <a
-                  aria-label={`Download ${artifact.label}`}
+                  aria-label={`Download ${normalizeRepoToSocialText(artifact.label)}`}
                   download={artifact.fileName}
                   href={getArtifactDownloadHref(artifact)}
                   onClick={() => handleArtifactDownload(artifact)}
@@ -706,7 +742,7 @@ function LaunchBriefPanel({
       <div className="launchPackageCta">
         <div>
           <strong>Need a complete launch package?</strong>
-          <small>Request reviewed README, social, deck, site, outreach, and visual assets before publishing.</small>
+          <small>Request reviewed README, launch post, channel card, manifest, and visual assets before publishing.</small>
         </div>
         <a className="primaryButton" href={fullLaunchPackageHref} onClick={handleFullLaunchPackageIntent}>
           Request full launch package
@@ -741,7 +777,7 @@ function LaunchBriefPanel({
           <p>{brief.socialPost}</p>
         </article>
         <article>
-          <strong>Deck outline</strong>
+          <strong>Thread outline</strong>
           <ol>
             {brief.deckOutline.map((item) => (
               <li key={item}>{item}</li>
@@ -766,7 +802,7 @@ function getLaunchBriefSectionCount(brief: RepoLaunchBriefSummary) {
 }
 
 function getArtifactDownloadHref(artifact: RepoLaunchBriefArtifactSummary) {
-  return `data:text/plain;charset=utf-8,${encodeURIComponent(artifact.body)}`;
+  return `data:text/plain;charset=utf-8,${encodeURIComponent(normalizeRepoToSocialText(artifact.body))}`;
 }
 
 function getFullLaunchPackageHref() {
@@ -799,7 +835,7 @@ function serializeLaunchBrief(brief: RepoLaunchBriefSummary, repoFullName: strin
     "Social post:",
     brief.socialPost,
     "",
-    "Deck outline:",
+    "Thread outline:",
     ...brief.deckOutline.map((item, index) => `${index + 1}. ${item}`),
     "",
     "Outreach draft:",
@@ -845,21 +881,21 @@ function serializeStoryMap(storyMap: RepoLaunchStoryMapSummary) {
 
 function serializeLaunchMaterialsMap(launchMaterialsMap: RepoLaunchMaterialsMapSummary) {
   return [
-    `Launch materials map: ${launchMaterialsMap.title}`,
+    `Launch materials map: ${normalizeRepoToSocialText(launchMaterialsMap.title)}`,
     "",
-    launchMaterialsMap.summary,
+    normalizeRepoToSocialText(launchMaterialsMap.summary),
     "",
     ...launchMaterialsMap.channels.map((channel, index) =>
       [
-        `${index + 1}. ${channel.label}`,
-        `   Channel: ${channel.type}`,
-        `   Primary user: ${channel.primaryUser}`,
-        `   Job to be done: ${channel.jobToBeDone}`,
-        `   Artifact: ${channel.artifactLabel}`,
-        `   Channel fit: ${channel.channelFit}`,
-        `   Review question: ${channel.reviewQuestion}`,
-        `   Success signal: ${channel.successSignal}`,
-        `   Source: ${channel.source}`,
+        `${index + 1}. ${normalizeRepoToSocialText(channel.label)}`,
+        `   Channel: ${getLaunchMaterialTypeLabel(channel.type)}`,
+        `   Primary user: ${normalizeRepoToSocialText(channel.primaryUser)}`,
+        `   Job to be done: ${normalizeRepoToSocialText(channel.jobToBeDone)}`,
+        `   Artifact: ${normalizeRepoToSocialText(channel.artifactLabel)}`,
+        `   Channel fit: ${normalizeRepoToSocialText(channel.channelFit)}`,
+        `   Review question: ${normalizeRepoToSocialText(channel.reviewQuestion)}`,
+        `   Success signal: ${normalizeRepoToSocialText(channel.successSignal)}`,
+        `   Source: ${normalizeRepoToSocialText(channel.source)}`,
       ].join("\n"),
     ),
   ].join("\n");
@@ -894,12 +930,35 @@ function ProductAnimationPanel() {
             loop
             onContextMenu={(event) => event.preventDefault()}
             playsInline
+            poster="/examples/flashqla-reference.jpeg"
             preload="metadata"
             ref={videoRef}
             src="/media/quickfork-hero-16x9-black.mp4"
           />
         </div>
       </aside>
+      <figure className="heroArtifactPreview">
+        <img alt="QuickFork generated social launch visual" src="/examples/flashqla-reference.jpeg" />
+        <figcaption>
+          <span>Generated social direction</span>
+          <strong>Social angle to card to proof</strong>
+        </figcaption>
+      </figure>
+      <ul className="visualPackageStack" aria-label="Generated launch package preview">
+        {heroVisualOutputs.map((item) => (
+          <li key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+          </li>
+        ))}
+      </ul>
+      <div className="visualPipeline" aria-label="Repository to social launch package flow">
+        <span>Repo scan</span>
+        <ArrowRight aria-hidden="true" size={14} />
+        <span>Social story</span>
+        <ArrowRight aria-hidden="true" size={14} />
+        <span>Launch package</span>
+      </div>
     </div>
   );
 }
@@ -909,10 +968,17 @@ export function HeroSection() {
     <section className="hero" id="hero" aria-labelledby="hero-title">
       <div className="heroGrid">
         <div className="heroContent">
-          <h1 id="hero-title">Generate a cold-start launch package from one GitHub repository.</h1>
+          <h1 id="hero-title">Repo to social launch package.</h1>
           <p className="heroCopy">
-            QuickFork reads repository evidence, explains the project visually, and drafts README, social, deck, and outreach assets that builders can review before launch.
+            Paste a public repo. QuickFork builds a social launch story, README visual, post copy, channel card, and evidence manifest. Claims stay tied to repo sources.
           </p>
+          <ul className="heroPackageLine" aria-label="Launch package outputs">
+            {heroPackageItems.map((item) => (
+              <li key={item}>
+                {item}
+              </li>
+            ))}
+          </ul>
           <ProjectLaunchInputPanel />
         </div>
         <ProductAnimationPanel />

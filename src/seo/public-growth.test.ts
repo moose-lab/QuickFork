@@ -118,11 +118,21 @@ describe("public growth infrastructure", () => {
   it("sets homepage metadata for canonical public discovery", () => {
     const index = readProjectFile("index.html");
 
-    expect(index).toContain("<title>QuickFork - GitHub Repository to Launch-Ready Marketing Assets</title>");
+    expect(index).toContain("<title>QuickFork - Repo-to-Social Launch Package for GitHub Repositories</title>");
     expect(index).toContain('<link rel="canonical" href="https://seekersai.com/" />');
-    expect(index).toMatch(/<meta\s+name="description"/);
+    expect(index).toContain(
+      'content="QuickFork turns a GitHub repository into a source-backed social launch story, README visual, post copy, channel card, and evidence manifest."',
+    );
+    expect(index).toContain(
+      '<meta property="og:title" content="QuickFork - Repo-to-Social Launch Package for GitHub Repositories" />',
+    );
+    expect(index).toContain(
+      '<meta name="twitter:title" content="QuickFork - Repo-to-Social Launch Package for GitHub Repositories" />',
+    );
     expect(index).toContain('<meta property="og:url" content="https://seekersai.com/" />');
     expect(index).toContain('"@type": "SoftwareApplication"');
+    expect(index).not.toContain("Launch-Ready Marketing Assets");
+    expect(index).not.toContain("marketing card");
   });
 
   it("documents the production GA4 environment variable", () => {

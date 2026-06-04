@@ -22,6 +22,19 @@ type FeatureCard = {
   artifactValue: string;
 };
 
+type SocialFlowStep = {
+  code: string;
+  title: string;
+  body: string;
+  source: string;
+};
+
+type SocialChannelOutput = {
+  label: string;
+  title: string;
+  body: string;
+};
+
 type Showcase = {
   id: string;
   label: string;
@@ -49,21 +62,29 @@ type WorkflowStep = {
   copy: string;
 };
 
-type StudioPill = {
+type ReviewWorkbenchLane = {
   label: string;
-  value: string;
-};
-
-type ProofQuote = {
-  quote: string;
+  title: string;
   body: string;
-  copy: string;
-  cite: string;
+  items: Array<string>;
 };
 
-type ProofAudience = {
+type PublishGate = {
   label: string;
-  value: string;
+  title: string;
+  body: string;
+};
+
+type PricingPlan = {
+  name: string;
+  price: string;
+  cadence: string;
+  description: string;
+  badge: string;
+  ctaLabel: string;
+  href: string;
+  highlighted?: boolean;
+  features: Array<string>;
 };
 
 type FaqItem = {
@@ -88,117 +109,161 @@ export const referenceOutputChips = [
 
 export const featureCards = [
   {
-    code: "F-01 / Repo intake",
-    title: "Validate one GitHub URL into a canonical source.",
-    body: "QuickFork normalizes owner, repo, full name, and GitHub URL before any artifact is written.",
+    code: "F-01 / Cold start",
+    title: "Start from the repo instead of a blank marketing brief.",
+    body: "QuickFork turns a public GitHub URL into the factual base for the launch story.",
     description:
-      "QuickFork normalizes owner, repo, full name, and GitHub URL before any artifact is written.",
+      "QuickFork turns a public GitHub URL into the factual base for the launch story.",
     artifact: { label: "Input", value: "Repo URL" },
     artifactLabel: "Input",
     artifactValue: "Repo URL",
   },
   {
-    code: "F-02 / README extraction",
-    title: "Generate source-backed launch assets from repository evidence.",
-    body: "README text, GitHub metadata, topics, metrics, official links, and referenced images become the project evidence base.",
+    code: "F-02 / Visual story",
+    title: "Infographic first.",
+    body: "README, X/LinkedIn, and square social posts all reuse the same project explanation.",
     description:
-      "README text, GitHub metadata, topics, metrics, official links, and referenced images become the project evidence base.",
-    artifact: { label: "Signals", value: "README" },
-    artifactLabel: "Signals",
-    artifactValue: "README",
+      "README, X/LinkedIn, and square social posts all reuse the same project explanation.",
+    artifact: { label: "Asset", value: "Infographic" },
+    artifactLabel: "Asset",
+    artifactValue: "Infographic",
   },
   {
-    code: "F-03 / Identity assets",
-    title: "Resolve brand assets before drawing anything.",
-    body: "The pipeline prefers official repo or README assets and falls back to the GitHub avatar instead of inventing random logos.",
+    code: "F-03 / Source guard",
+    title: "Evidence-locked.",
+    body: "Repo metadata, README claims, official links, metrics, and identity assets stay tied to the output package.",
     description:
-      "The pipeline prefers official repo or README assets and falls back to the GitHub avatar instead of inventing random logos.",
-    artifact: { label: "Asset", value: "Traceable" },
-    artifactLabel: "Asset",
+      "Repo metadata, README claims, official links, metrics, and identity assets stay tied to the output package.",
+    artifact: { label: "Claims", value: "Traceable" },
+    artifactLabel: "Claims",
     artifactValue: "Traceable",
   },
   {
-    code: "F-04 / Brief builder",
-    title: "Convert raw signals into a curated project brief.",
-    body: "Positioning, metrics, key insights, workflow steps, and source signals are saved to project_brief_curated.json.",
+    code: "F-04 / Launch copy",
+    title: "Explain the problem and the solving path.",
+    body: "QuickFork turns project structure into a concise story: what problem exists, what the repo changes, and why it matters.",
     description:
-      "Positioning, metrics, key insights, workflow steps, and source signals are saved to project_brief_curated.json.",
-    artifact: { label: "Brief", value: "JSON" },
-    artifactLabel: "Brief",
-    artifactValue: "JSON",
+      "QuickFork turns project structure into a concise story: what problem exists, what the repo changes, and why it matters.",
+    artifact: { label: "Story", value: "Brief" },
+    artifactLabel: "Story",
+    artifactValue: "Brief",
   },
   {
-    code: "F-05 / Localized copy",
-    title: "Keep every locale aligned to the same slots.",
-    body: "English, Chinese, and Japanese cards preserve metric order, feature order, workflow order, brand names, and GitHub URL.",
+    code: "F-05 / Channel fit",
+    title: "Package the same idea for README and social feeds.",
+    body: "One repo story becomes a README cover, launch post, square social card, and editable prompt instead of disconnected one-off drafts.",
     description:
-      "English, Chinese, and Japanese cards preserve metric order, feature order, workflow order, brand names, and GitHub URL.",
-    artifact: { label: "Copy", value: "EN/ZH/JA" },
-    artifactLabel: "Copy",
-    artifactValue: "EN/ZH/JA",
+      "One repo story becomes a README cover, launch post, square social card, and editable prompt instead of disconnected one-off drafts.",
+    artifact: { label: "Channels", value: "3+" },
+    artifactLabel: "Channels",
+    artifactValue: "3+",
   },
   {
-    code: "F-06 / Output package",
-    title: "Write prompts, images, reports, and manifest files.",
-    body: "The mock backend saves model-ready prompts, placeholder cards, per-locale quality reports, assets, and manifest.json.",
+    code: "F-06 / Review path",
+    title: "Export a package humans can approve.",
+    body: "Prompts, generated images, quality reports, launch copy, and manifest paths stay visible before anything is published.",
     description:
-      "The mock backend saves model-ready prompts, placeholder cards, per-locale quality reports, assets, and manifest.json.",
-    artifact: { label: "Output", value: "Files" },
+      "Prompts, generated images, quality reports, launch copy, and manifest paths stay visible before anything is published.",
+    artifact: { label: "Output", value: "Manifest" },
     artifactLabel: "Output",
-    artifactValue: "Files",
+    artifactValue: "Manifest",
   },
 ] satisfies Array<FeatureCard>;
+
+export const socialFlowSteps = [
+  {
+    code: "01 / Evidence intake",
+    title: "Evidence intake",
+    body: "QuickFork reads the README, repo metadata, official links, screenshots, and identity signals before writing launch copy.",
+    source: "README, topics, stars, releases",
+  },
+  {
+    code: "02 / Social angle",
+    title: "Social angle",
+    body: "The system compresses the technical project into a shareable angle: problem, mechanism, proof, and why the repo matters now.",
+    source: "Problem, mechanism, proof",
+  },
+  {
+    code: "03 / Channel package",
+    title: "Channel package",
+    body: "The same source-backed story becomes post copy, a README visual, a square channel card, and a manifest reviewers can inspect.",
+    source: "Post, card, manifest",
+  },
+] satisfies Array<SocialFlowStep>;
+
+export const socialChannelOutputs = [
+  {
+    label: "Post",
+    title: "X/LinkedIn launch post",
+    body: "A short social post that explains what changed, who should care, and links back to the repository.",
+  },
+  {
+    label: "README",
+    title: "README visual card",
+    body: "A repo-first visual that can sit above the README fold or inside a launch thread.",
+  },
+  {
+    label: "Card",
+    title: "Square social card",
+    body: "A scannable 1:1 card for feeds, directories, and social previews.",
+  },
+  {
+    label: "Proof",
+    title: "Evidence manifest",
+    body: "A review trail tying claims, prompts, images, and source facts back to the repository.",
+  },
+] satisfies Array<SocialChannelOutput>;
 
 export const showcases = [
   {
     id: "visual-posture-title",
-    label: "Project explainer",
-    eyebrow: "Project explainer",
+    label: "Repo-to-social",
+    eyebrow: "Repo-to-social",
     title:
-      "A good launch package helps strangers understand the repo before they read the code.",
-    body: "QuickFork turns README evidence, repository metadata, and workflow signals into a visual explanation that can support a README hero, launch post, pitch deck, or demo follow-up.",
-    copy: "QuickFork turns README evidence, repository metadata, and workflow signals into a visual explanation that can support a README hero, launch post, pitch deck, or demo follow-up.",
+      "A good launch card shows the project shape before the README asks for attention.",
+    body: "QuickFork turns README evidence, repository metadata, and workflow signals into a visual explanation that can sit in a README, a launch post, or a square social card.",
+    copy: "QuickFork turns README evidence, repository metadata, and workflow signals into a visual explanation that can sit in a README, a launch post, or a square social card.",
     metaLabel: "Launch asset strategy",
     imageFirst: true,
     image: {
-      src: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=82",
-      alt: "Editorial workspace with desks and large windows",
+      src: "/examples/flashqla-reference.jpeg",
+      alt: "FlashQLA launch infographic generated from a GitHub repository",
       caption:
-        "Image slot A - editorial workspace photography - used as trust atmosphere between product sections",
+        "Example output - a README and social-ready infographic generated from repo evidence",
     },
     meta: [
       {
         label: "Section role",
-        value: "Make the project understandable",
+        value: "Make the project scannable",
       },
-      { label: "Asset type", value: "README hero / deck visual" },
+      { label: "Asset type", value: "README hero / social card" },
       {
         label: "Composition",
-        value: "Project context before decoration",
+        value: "Problem, mechanism, path",
       },
       { label: "Constraint", value: "Claims stay source-backed" },
     ],
   },
   {
     id: "critique-title",
-    label: "Launch review",
-    eyebrow: "Launch review",
-    title: "Cold-start builders need channel-ready assets without losing technical accuracy.",
-    body: "QuickFork keeps the same factual brief behind README copy, social posts, deck structure, and outreach drafts, so the launch story stays consistent while each channel gets the right format.",
-    copy: "QuickFork keeps the same factual brief behind README copy, social posts, deck structure, and outreach drafts, so the launch story stays consistent while each channel gets the right format.",
+    label: "Output reuse",
+    eyebrow: "Output reuse",
+    title: "The same source-backed story travels from README to social feeds.",
+    body: "QuickFork keeps the factual brief behind every channel, so the launch story stays consistent while the artifact format changes for each audience.",
+    copy: "QuickFork keeps the factual brief behind every channel, so the launch story stays consistent while the artifact format changes for each audience.",
     metaLabel: "Package strategy",
     imageFirst: false,
     image: {
-      src: "https://images.unsplash.com/photo-1558655146-364adaf1fcc9?auto=format&fit=crop&w=1800&q=82",
-      alt: "Designer workspace with interface sketches and laptop",
+      src: "/examples/twvp-cover-en.png",
+      alt: "Visual Primitives launch infographic generated for README and social use",
       caption:
-        "Image slot B - product design process photography - placed before objections and FAQ",
+        "Example output - channel-ready infographic with problem, mechanism, and GitHub source",
     },
     meta: [
-      { label: "Placement", value: "Before FAQ to handle trust objections" },
-      { label: "Purpose", value: "Show reviewable launch workflow" },
-      { label: "Style", value: "Operational, not hype-driven" },
-      { label: "Fallback", value: "Use generated artifact preview" },
+      { label: "Reuse", value: "README / post / social" },
+      { label: "Purpose", value: "Explain technical structure" },
+      { label: "Style", value: "Visual, not hype-driven" },
+      { label: "Review", value: "Edit before sharing" },
     ],
   },
 ] satisfies Array<Showcase>;
@@ -206,78 +271,128 @@ export const showcases = [
 export const workflowSteps = [
   {
     number: "01",
-    title: "Paste a GitHub repository URL.",
-    body: "The frontend sends repoUrl, locales, preset, provider, and image quality to POST /api/generations.",
-    copy: "The frontend sends repoUrl, locales, preset, provider, and image quality to POST /api/generations.",
+    title: "Paste the public GitHub repository.",
+    body: "QuickFork starts from the repo URL and reads the project facts the audience would otherwise have to find manually.",
+    copy: "QuickFork starts from the repo URL and reads the project facts the audience would otherwise have to find manually.",
   },
   {
     number: "02",
-    title: "Build the repository evidence package.",
-    body: "The server reads GitHub metadata, README content, official links, referenced images, and identity assets.",
-    copy: "The server reads GitHub metadata, README content, official links, referenced images, and identity assets.",
+    title: "Build the cold-start story.",
+    body: "The system turns README, metadata, links, metrics, and identity assets into a compact project explanation.",
+    copy: "The system turns README, metadata, links, metrics, and identity assets into a compact project explanation.",
   },
   {
     number: "03",
-    title: "Create copy, prompt, and quality artifacts.",
-    body: "The pipeline writes fixed-slot localized copy, gpt-image-2 prompts, mock cards, and quality reports.",
-    copy: "The pipeline writes fixed-slot localized copy, gpt-image-2 prompts, mock cards, and quality reports.",
+    title: "Generate the visual and channel assets.",
+    body: "QuickFork prepares infographic prompts, README/social visuals, launch copy, and review notes from the same source.",
+    copy: "QuickFork prepares infographic prompts, README/social visuals, launch copy, and review notes from the same source.",
   },
   {
     number: "04",
-    title: "Return output paths to the Hero page.",
-    body: "The UI shows artifactRoot, manifestPath, and the first locale's prompt, image, and quality report paths.",
-    copy: "The UI shows artifactRoot, manifestPath, and the first locale's prompt, image, and quality report paths.",
+    title: "Review the package before sharing.",
+    body: "The UI keeps the launch brief, image, prompt, quality report, and manifest visible so the user stays in control.",
+    copy: "The UI keeps the launch brief, image, prompt, quality report, and manifest visible so the user stays in control.",
   },
 ] satisfies Array<WorkflowStep>;
 
-export const studioPills = [
-  { label: "Input", value: "github.com/owner/repo" },
-  { label: "Brief", value: "project_brief_curated.json" },
-  { label: "Locales", value: "EN - ZH - JA" },
-  { label: "Outputs", value: "Prompt - image - quality report" },
-] satisfies Array<StudioPill>;
+export const reviewWorkbenchLanes = [
+  {
+    label: "Source intake",
+    title: "Source intake",
+    body: "Collect the repo facts that can support a public launch claim before any post copy is written.",
+    items: ["README claims", "Repo metadata", "Official links", "Screenshots"],
+  },
+  {
+    label: "Channel drafts",
+    title: "Channel drafts",
+    body: "Generate the launch surfaces side by side so the user can compare tone, crop, and channel fit.",
+    items: ["X/LinkedIn post", "README card", "Square social", "Thread outline"],
+  },
+  {
+    label: "Evidence audit",
+    title: "Evidence audit",
+    body: "Keep unsupported claims visible and force the package back through human review before sharing.",
+    items: ["Claim map", "Prompt trace", "Quality note", "Manifest path"],
+  },
+] satisfies Array<ReviewWorkbenchLane>;
 
-export const canvasModules = [
-  "Brief JSON",
-  "Prompt file",
-  "Quality report",
-] satisfies Array<string>;
+export const publishGates = [
+  {
+    label: "Gate 01",
+    title: "Claim source map",
+    body: "Every major claim points back to README text, repository metadata, official links, or marked assumptions.",
+  },
+  {
+    label: "Gate 02",
+    title: "Prompt trace",
+    body: "The infographic prompt and generated image stay attached to the source brief for later editing.",
+  },
+  {
+    label: "Gate 03",
+    title: "Channel fit",
+    body: "README, X/LinkedIn, and square social outputs keep the same story while changing crop and density.",
+  },
+  {
+    label: "Gate 04",
+    title: "Human approval",
+    body: "The package is explicitly a review draft; publishable assets are selected by the repo owner.",
+  },
+] satisfies Array<PublishGate>;
 
-export const proofQuotes = [
+export const pricingPlans = [
   {
-    quote:
-      "It gives the team a credible launch spine before anyone starts rewriting the README by hand.",
-    body: "Best for builders who need to turn repository evidence into reviewable launch materials.",
-    copy: "Best for builders who need to turn repository evidence into reviewable launch materials.",
-    cite: "Early product-marketing review",
+    name: "Free scan",
+    price: "$0",
+    cadence: "per repo",
+    description: "Validate whether one public repository has enough source evidence for a credible social launch package.",
+    badge: "1 repo",
+    ctaLabel: "Generate free scan",
+    href: "#hero",
+    features: [
+      "Repo evidence intake",
+      "Social angle summary",
+      "README visual direction",
+      "Evidence manifest preview",
+    ],
   },
   {
-    quote:
-      "The useful part is the translation layer: repo context becomes README, social, deck, and outreach drafts.",
-    body: "QuickFork helps teams avoid generic AI copy while keeping launch channels aligned.",
-    copy: "QuickFork helps teams avoid generic AI copy while keeping launch channels aligned.",
-    cite: "Founder workflow note",
+    name: "Launch package",
+    price: "$49",
+    cadence: "per month",
+    description: "Package repeat launches into reviewable README, X/LinkedIn, square social, and manifest assets.",
+    badge: "5 launches",
+    ctaLabel: "Start launch package",
+    href: "/sign-up",
+    highlighted: true,
+    features: [
+      "5 launches",
+      "X/LinkedIn launch posts",
+      "README and square social visuals",
+      "Prompt and quality reports",
+    ],
   },
-] satisfies Array<ProofQuote>;
-
-export const proofAudience = [
-  { label: "Primary user", value: "AI project builders" },
-  { label: "Secondary user", value: "Open-source maintainers and DevRel teams" },
   {
-    label: "Core job",
-    value: "Turn one repository URL into launch assets",
+    name: "Team review",
+    price: "Custom",
+    cadence: "for teams",
+    description: "Add human approval paths, shared source maps, and launch review support for technical teams.",
+    badge: "Source-backed review",
+    ctaLabel: "Talk to team",
+    href: "/contact?intent=launch-package&utm_source=pricing",
+    features: [
+      "Source-backed review",
+      "Shared approval checklist",
+      "Launch-package QA support",
+      "Private roadmap intake",
+    ],
   },
-  {
-    label: "Proof policy",
-    value: "Use real claims only; mark placeholders clearly",
-  },
-] satisfies Array<ProofAudience>;
+] satisfies Array<PricingPlan>;
 
 export const faqItems = [
   {
     question: "What does QuickFork generate from a repository URL?",
     answer:
-      "QuickFork generates a source-backed launch brief, README-oriented copy, social launch copy, deck structure, outreach drafts, visual prompts, image outputs, quality reports, and a manifest for review.",
+      "QuickFork generates a source-backed social launch brief, infographic prompt, README visual, social post copy, channel card direction, quality report, and manifest for review.",
     defaultOpen: true,
   },
   {
@@ -288,12 +403,12 @@ export const faqItems = [
   {
     question: "Can the generated launch package be edited?",
     answer:
-      "Yes. The generated package is a draft for human review. Builders can edit claims, remove unsupported language, change tone, and choose which README, social, deck, or outreach assets are publishable.",
+      "Yes. The generated package is a draft for human review. Builders can edit claims, remove unsupported language, change tone, and choose which README, post, or social card assets are publishable.",
   },
   {
     question: "What does the export include?",
     answer:
-      "The current workflow returns artifact paths for prompts, generated images, quality reports, and manifest data. The growth roadmap adds fuller README, social, deck, and outreach exports.",
+      "The current workflow returns artifact paths for prompts, generated images, quality reports, launch copy, channel cards, and manifest data. The product direction keeps exports focused on README and social launch use cases.",
   },
   {
     question: "How does QuickFork avoid generic AI marketing copy?",
@@ -308,4 +423,4 @@ export const faqItems = [
 ] satisfies Array<FaqItem>;
 
 export const pageNote =
-  "Project launch generation - mock backend contract - GitHub repository to traceable card artifacts";
+  "Repo-to-social launch workspace - GitHub repository to story, README, post, channel card, and evidence assets";

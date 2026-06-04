@@ -71,7 +71,7 @@ components:
 
 ## Overview
 
-QuickFork is a working product surface, not a marketing brochure. The landing page should lead with the actual generation workflow: repository URL input, output options, and the generated launch package preview.
+QuickFork is a working repo-to-social launch product surface, not a marketing brochure. The landing page should lead with the actual generation workflow: repository URL input, output options, and the generated social launch package preview.
 
 ## Brand & Style
 
@@ -89,9 +89,9 @@ Subtitle copy must be one clear sentence that states the product function. Avoid
 
 ## Layout
 
-The Hero is a split two-panel layout. The left panel is copy and input. The right panel is product animation. Desktop ratio is 4:6.
+The Hero is a split two-panel layout. The left panel is copy and input. The right panel is product animation. Desktop ratio keeps the social launch composer compact and gives the visual stage more room.
 
-The right animation area is unframed. Do not add outer cards, padding, borders, shadows, rounded frames, badges, captions, or edge chrome around the media. Let the video itself define the visual boundary.
+The right visual stage combines product playback, generated social artifact preview, and a compact output stack. The visual stage uses a grid workbench instead of overlapping output panels on top of the repository playback. Do not add decorative hero cards, badges, or explanatory chrome that competes with the actual product preview.
 
 ## Elevation & Depth
 
@@ -106,17 +106,24 @@ Controls use 4px radius. Repeated cards can use up to 8px radius. Hero media use
 The Hero includes:
 
 - one H1
-- one functional subtitle sentence about cold-start, README, social media, PPT, and product outreach outputs
+- one functional subtitle sentence about repo-to-social launch package generation
+- one compact output rail naming social story, README visual, post copy, channel card, and evidence manifest
 - the project launch input panel
-- one short placeholder line above the Generate button: can be used to generate README, PPT, or social media launch assets
-- a compact GitHub URL input paired with a short Generate button
+- one short placeholder line above the Generate package button: generate a social launch story, visual, and post from one repo
+- a compact GitHub URL input paired with a short Generate package button
 - preset language buttons where English is selected by default and Chinese/Japanese are optional
 - a ratio dropdown aligned on the same row as language controls, offering 16:9, 1:1, 4:3, 3:4, and 9:16 with 4:3 selected by default
 - one unframed product animation panel
 
 Hero generation quality is fixed to low by default and should not be exposed as a user-facing preset in this surface.
 
-The Hero does not include secondary CTA links, capability cards, feature chips, decorative badges, quality selectors, or explanatory labels around the animation.
+The Hero does not include secondary CTA links, decorative badges, quality selectors, or explanatory labels around the animation. It may include one compact output rail when the labels clarify the repo-to-social value unit.
+
+## Pricing
+
+Pricing is a SaaS decision surface, not a decorative final CTA. The section presents three concrete repo-to-social options: a free single-repo scan, a repeat launch package, and a team review path for source-backed approval. Each plan must show the launch boundary, included review artifacts, and a direct next action.
+
+The pricing layout uses the same crisp grid, mono labels, 4px controls, and restrained accent system as the rest of the landing page. The recommended plan may use the dark surface; the other plans remain white workspace cards.
 
 ## Do's and Don'ts
 
