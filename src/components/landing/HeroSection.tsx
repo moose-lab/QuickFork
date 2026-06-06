@@ -22,16 +22,16 @@ const localeOptions: Array<{ id: LocaleCode; label: string; shortLabel: string }
 
 const heroPackageItems = [
   "Infographic",
-  "README",
+  "README hero",
   "X / LinkedIn",
   "Square card",
 ] as const;
 
 const heroVisualOutputs = [
-  { label: "README", value: "Hero visual" },
-  { label: "X / LinkedIn", value: "Launch post" },
+  { label: "README", value: "Hero proof" },
+  { label: "X / LinkedIn", value: "Launch copy" },
   { label: "Square", value: "Feed card" },
-  { label: "Story", value: "Short brief" },
+  { label: "Proof", value: "Manifest" },
 ] as const;
 
 const soundUnlockEvents = ["pointerdown", "keydown", "touchstart"] as const;
@@ -348,7 +348,7 @@ function ProjectLaunchInputPanel() {
   return (
     <div className="generatorStack">
       <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
-        <p className="referencePrompt">Paste a repo. Generate launch visuals.</p>
+        <p className="referencePrompt">Paste a repo. Generate source-backed launch assets.</p>
         <div className="referenceForm">
           <label className="referenceField">
             <Github aria-hidden="true" size={17} />
@@ -366,7 +366,7 @@ function ProjectLaunchInputPanel() {
           </label>
           <button className="primaryButton" disabled={isSubmitting} type="submit">
             {isSubmitting ? <Loader2 aria-hidden="true" className="spinIcon" size={17} /> : null}
-            Generate package
+            Generate launch package
           </button>
         </div>
         <div className="referenceControls">
@@ -914,7 +914,7 @@ function HeroResultPanel() {
         <img alt="QuickFork generated launch infographic" src="/examples/flashqla-reference.jpeg" />
         <figcaption>
           <span>Generated infographic</span>
-          <strong>README + social ready</strong>
+          <strong>README + social proof</strong>
         </figcaption>
       </figure>
       <ul className="visualPackageStack" aria-label="Launch asset format preview">
@@ -930,7 +930,7 @@ function HeroResultPanel() {
         <ArrowRight aria-hidden="true" size={14} />
         <span>Infographic</span>
         <ArrowRight aria-hidden="true" size={14} />
-        <span>Share</span>
+        <span>Launch</span>
       </div>
     </div>
   );
@@ -941,9 +941,9 @@ export function HeroSection() {
     <section className="hero" id="hero" aria-labelledby="hero-title">
       <div className="heroGrid">
         <div className="heroContent">
-          <h1 id="hero-title">Repo in. Infographic out.</h1>
+          <h1 id="hero-title">Repo in. Social launch out.</h1>
           <p className="heroCopy">
-            Paste a GitHub repo. QuickFork builds a README-ready infographic and social copy for cold-start distribution.
+            Paste a GitHub repo. QuickFork builds source-backed README visuals and X/LinkedIn copy for developer cold starts.
           </p>
           <ul className="heroPackageLine" aria-label="Launch asset outputs">
             {heroPackageItems.map((item) => (
@@ -955,10 +955,10 @@ export function HeroSection() {
           <ProjectLaunchInputPanel />
           <div className="heroActions" aria-label="Landing page actions">
             <a className="primaryButton" href={getLandingAnchorHref("#studio")}>
-              Generate now
+              Generate launch package
             </a>
             <a className="secondaryButton" href="/examples/qwenlm-flashqla-launch-card">
-              View example
+              View source-backed example
             </a>
           </div>
         </div>

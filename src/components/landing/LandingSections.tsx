@@ -15,10 +15,10 @@ export function FeatureSection() {
     <section className="section" id="features" aria-labelledby="features-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="One GitHub URL becomes a visual, a short story, and channel-ready exports."
+          copy="One GitHub URL becomes a factual story, README hero, X/LinkedIn copy, square card, and reviewable proof."
           eyebrow="01 / Product"
           id="features-title"
-          title="From repo to launch graphic."
+          title="From repo evidence to social-ready launch assets."
         />
         <div className="socialFlowBoard">
           <ol className="socialFlowSteps" aria-label="Repo-to-infographic conversion steps">
@@ -34,7 +34,7 @@ export function FeatureSection() {
           <aside className="socialChannelPanel" aria-label="Launch asset package">
             <div className="socialChannelHeader">
               <span className="monoLabel">Formats</span>
-              <strong>One project explanation, four outputs.</strong>
+              <strong>One source-backed story, four launch outputs.</strong>
             </div>
             <ul className="socialChannelOutputs" aria-label="Launch asset format outputs">
               {socialChannelOutputs.map((output) => (
@@ -57,8 +57,16 @@ export function ProductDemoSection() {
     <section className="productDemoSection" aria-labelledby="product-demo-title">
       <div className="productDemoIntro">
         <span className="monoLabel">Product motion</span>
-        <h2 id="product-demo-title">QuickFork product animation demo</h2>
-        <p>Keep the Hero focused on generation. Use this demo to inspect the full repo-to-social workflow in motion.</p>
+        <h2 id="product-demo-title">See the repo-to-social workflow in motion.</h2>
+        <p>Hero stays focused on generation. This demo shows how the repo story becomes editable launch assets for developer channels.</p>
+        <div className="heroActions">
+          <a className="secondaryButton" href="#studio">
+            Open studio
+          </a>
+          <a className="secondaryButton" href="/examples/qwenlm-flashqla-launch-card">
+            Inspect example
+          </a>
+        </div>
       </div>
       <aside className="productDemoPlayback">
         <div className="videoFrame">
@@ -118,10 +126,10 @@ export function WorkflowSection() {
       <div className="section">
         <div className="sectionGrid">
         <SectionIntro
-            copy="QuickFork keeps the cold-start workflow short: input, generate, export."
+            copy="QuickFork keeps the developer cold-start loop short: input repo evidence, generate assets, review before distribution."
             eyebrow="02 / Workflow"
             id="how-title"
-            title="Built for cold starts."
+            title="Shorten the developer cold-start loop."
           />
           <ol className="reviewWorkbench" aria-label="Cold-start asset workflow lanes">
             {reviewWorkbenchLanes.map((lane) => (
@@ -148,10 +156,10 @@ export function ProofSection() {
     <section className="section" id="proof" aria-labelledby="proof-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="Generated launch assets stay editable, source-labeled, and ready for README or social distribution."
+          copy="Generated launch assets stay editable, source-labeled, and guarded against unsupported growth claims."
           eyebrow="03 / Review"
           id="proof-title"
-          title="Clean outputs, no fake traction."
+          title="Trust signals before growth claims."
         />
         <ul className="publishGateList" aria-label="Clean launch output checks">
           {publishGates.map((gate) => (
@@ -172,10 +180,10 @@ export function FAQSection() {
     <section className="section" id="faq" aria-labelledby="faq-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="Short answers for teams turning repos into launch visuals."
+          copy="Short answers for teams turning repositories into source-backed launch assets."
           eyebrow="04 / FAQ"
           id="faq-title"
-          title="Keep the launch simple."
+          title="Repo-to-social questions, answered."
         />
         <div className="faqGrid">
           {faqItems.map((item) => (
@@ -196,10 +204,10 @@ export function ClosingCTA() {
       <div className="pricingHeader">
         <div>
           <span className="monoLabel">05 / Pricing</span>
-          <h2 id="pricing-title">Choose the infographic workflow that matches launch volume.</h2>
+          <h2 id="pricing-title">Choose the cold-start launch workflow that matches your repo volume.</h2>
         </div>
         <p>
-          Start with one repo. Upgrade when you need repeat infographic exports, channel copy, and team review.
+          Start with one public repo. Upgrade when you need repeat source-backed assets, channel copy, and team review.
         </p>
       </div>
       <ul className="pricingGrid" aria-label="Repo-to-social pricing plans">
@@ -292,7 +300,7 @@ export function LandingFooter() {
     <footer className="footer">
       <div className="footerBrand">
         <span>QuickFork</span>
-        <small>Source-backed launch assets for public repositories.</small>
+        <small>Repo-to-social launch assets for developer cold starts.</small>
         <small>(c) 2026 QuickFork.</small>
       </div>
       <nav className="footerNav" aria-label="Footer navigation">

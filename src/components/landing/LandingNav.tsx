@@ -6,19 +6,19 @@ const featureLinks = [
     href: "#features",
     icon: Image,
     title: "Launch infographic",
-    description: "Repo to README and social visual",
+    description: "Repo evidence to README and social visual",
   },
   {
     href: "#studio",
     icon: MessageSquareText,
     title: "Social copy studio",
-    description: "Post copy, locale, and channel output",
+    description: "Cold-start copy, locale, and channel output",
   },
   {
     href: "/examples/qwenlm-flashqla-launch-card",
     icon: PanelsTopLeft,
     title: "Generated examples",
-    description: "Inspect real repo-to-social packages",
+    description: "Inspect source-backed repo-to-social packages",
   },
   {
     href: "/product/github-repo-launch-materials-map",

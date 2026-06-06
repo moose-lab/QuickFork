@@ -5,6 +5,7 @@ import App from "./App";
 
 const appStyles = readFileSync("src/styles/app.css", "utf8");
 const designSpec = readFileSync("DESIGN.md", "utf8");
+const indexHtml = readFileSync("index.html", "utf8");
 
 describe("App", () => {
   const originalPath = window.location.pathname;
@@ -16,9 +17,13 @@ describe("App", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders the landing architecture as a compact infographic-first SaaS tool", () => {
+  it("renders the landing architecture as a repo-to-social cold-start SaaS tool", () => {
     render(<App />);
 
+    expect(indexHtml).toContain("QuickFork - Repo-to-Social Launch Assets for Developer Cold Starts");
+    expect(indexHtml).toContain("source-backed launch assets");
+    expect(indexHtml).toContain("developer cold starts");
+    expect(indexHtml).toContain('"@type": "FAQPage"');
     expect(screen.getByRole("banner")).toHaveClass("nav");
     expect(appStyles).toMatch(/\.nav\s*{[^}]*position:\s*sticky;/s);
     expect(appStyles).toMatch(/\.heroGrid\s*{[^}]*grid-template-columns:\s*minmax\(0,\s*0\.92fr\)\s+minmax\(0,\s*1\.28fr\);/s);
@@ -84,12 +89,12 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /start a fork/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: /Repo in\. Infographic out\./i,
+        name: /Repo in\. Social launch out\./i,
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Paste a GitHub repo\. QuickFork builds a README-ready infographic and social copy for cold-start distribution\./i,
+        /Paste a GitHub repo\. QuickFork builds source-backed README visuals and X\/LinkedIn copy for developer cold starts\./i,
       ),
     ).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/developer launch cockpit|repo evidence graph|social artifact queue|review gates/i);
@@ -102,14 +107,14 @@ describe("App", () => {
     expect(within(visualPackagePreview).getByText(/^README$/i)).toBeInTheDocument();
     expect(within(visualPackagePreview).getByText(/^X \/ LinkedIn$/i)).toBeInTheDocument();
     expect(within(visualPackagePreview).getByText(/^Square$/i)).toBeInTheDocument();
-    expect(within(visualPackagePreview).getByText(/^Story$/i)).toBeInTheDocument();
+    expect(within(visualPackagePreview).getByText(/^Proof$/i)).toBeInTheDocument();
     const form = screen.getByRole("form", { name: /project launch generator/i });
     expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveValue("https://github.com/QwenLM/FlashQLA");
     expect(within(form).getByRole("textbox", { name: /github repository url/i })).toHaveAttribute("placeholder", "https://github.com/owner/repo");
-    expect(within(form).getByText(/Paste a repo\. Generate launch visuals\./i)).toBeInTheDocument();
-    expect(within(form).getByRole("button", { name: /^generate package$/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /^generate now$/i })).toHaveAttribute("href", "#studio");
-    expect(screen.getByRole("link", { name: /^view example$/i })).toHaveAttribute(
+    expect(within(form).getByText(/Paste a repo\. Generate source-backed launch assets\./i)).toBeInTheDocument();
+    expect(within(form).getByRole("button", { name: /^generate launch package$/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^generate launch package$/i })).toHaveAttribute("href", "#studio");
+    expect(screen.getByRole("link", { name: /^view source-backed example$/i })).toHaveAttribute(
       "href",
       "/examples/qwenlm-flashqla-launch-card",
     );
@@ -131,7 +136,7 @@ describe("App", () => {
     expect(screen.getByLabelText(/QuickFork product preview/i)).toBeInTheDocument();
     const productPreview = screen.getByLabelText(/QuickFork product preview/i);
     expect(productPreview.querySelector("video")).not.toBeInTheDocument();
-    const productDemo = screen.getByRole("region", { name: /QuickFork product animation demo/i });
+    const productDemo = screen.getByRole("region", { name: /See the repo-to-social workflow in motion/i });
     const demoVideo = within(productDemo).getByLabelText(/Product workflow animation/i);
     expect(demoVideo).toHaveAttribute("src", "/media/quickfork-hero-16x9-black.mp4");
     expect(demoVideo).toHaveAttribute("poster", "/examples/flashqla-reference.jpeg");
@@ -141,14 +146,14 @@ describe("App", () => {
     expect(screen.queryByRole("link", { name: /preview prompts/i })).not.toBeInTheDocument();
     expect(
       screen.getByText(
-        /Paste a GitHub repo\. QuickFork builds a README-ready infographic/i,
+        /Paste a GitHub repo\. QuickFork builds source-backed README visuals/i,
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /From repo to launch graphic\./i }),
+      screen.getByRole("heading", { name: /From repo evidence to social-ready launch assets\./i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Built for cold starts\./i })).toBeInTheDocument();
-    expect(screen.getByText(/One GitHub URL becomes a visual, a short story, and channel-ready exports\./i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Shorten the developer cold-start loop\./i })).toBeInTheDocument();
+    expect(screen.getByText(/One GitHub URL becomes a factual story, README hero, X\/LinkedIn copy, square card, and reviewable proof\./i)).toBeInTheDocument();
     const conversionSteps = screen.getByRole("list", { name: /repo-to-infographic conversion steps/i });
     expect(within(conversionSteps).getAllByText(/^Repo$/i).length).toBeGreaterThan(0);
     expect(within(conversionSteps).getAllByText(/^Infographic$/i).length).toBeGreaterThan(0);
@@ -164,11 +169,11 @@ describe("App", () => {
     expect(within(reviewWorkbench).getAllByText(/Generate/i).length).toBeGreaterThan(0);
     expect(within(reviewWorkbench).getAllByText(/Export/i).length).toBeGreaterThan(0);
     const publishGates = screen.getByRole("list", { name: /clean launch output checks/i });
+    expect(within(publishGates).getByText(/Repo evidence first/i)).toBeInTheDocument();
     expect(within(publishGates).getByText(/No fake traction/i)).toBeInTheDocument();
-    expect(within(publishGates).getByText(/Source labels/i)).toBeInTheDocument();
-    expect(within(publishGates).getByText(/Edit before share/i)).toBeInTheDocument();
-    expect(within(publishGates).getByText(/Export ready/i)).toBeInTheDocument();
-    const pricing = screen.getByRole("region", { name: /Choose the infographic workflow that matches launch volume/i });
+    expect(within(publishGates).getByText(/Assumptions labeled/i)).toBeInTheDocument();
+    expect(within(publishGates).getByText(/Human review path/i)).toBeInTheDocument();
+    const pricing = screen.getByRole("region", { name: /Choose the cold-start launch workflow that matches your repo volume/i });
     expect(within(pricing).getByText(/^Free scan$/i)).toBeInTheDocument();
     expect(within(pricing).getByText(/^Launch package$/i)).toBeInTheDocument();
     expect(within(pricing).getByText(/^Team review$/i)).toBeInTheDocument();
@@ -195,7 +200,7 @@ describe("App", () => {
     expect(existsSync(stitchPromptPath)).toBe(true);
     expect(existsSync(stitchExportPath)).toBe(true);
     expect(readFileSync(stitchDesignPath, "utf8")).toContain("Compact Infographic SaaS");
-    expect(readFileSync(stitchPromptPath, "utf8")).toContain("Repo in. Infographic out.");
+    expect(readFileSync(stitchPromptPath, "utf8")).toContain("Repo in. Social launch out.");
     expect(readFileSync(stitchExportPath, "utf8")).toContain("QuickFork Compact SaaS");
   }, 20000);
 
@@ -1540,7 +1545,7 @@ describe("App", () => {
       target: { value: "https://github.com/QwenLM/FlashQLA" },
     });
     fireEvent.blur(within(form).getByRole("textbox", { name: /github repository url/i }));
-    fireEvent.click(within(form).getByRole("button", { name: /^generate package$/i }));
+    fireEvent.click(within(form).getByRole("button", { name: /^generate launch package$/i }));
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     expect(fetchMock).toHaveBeenCalledWith(
@@ -1777,7 +1782,7 @@ describe("App", () => {
     render(<App />);
 
     const form = screen.getByRole("form", { name: /project launch generator/i });
-    fireEvent.click(within(form).getByRole("button", { name: /^generate package$/i }));
+    fireEvent.click(within(form).getByRole("button", { name: /^generate launch package$/i }));
 
     await screen.findByText(/provider failed for token=secret/i);
     expect(window.dataLayer).toEqual(
