@@ -15,13 +15,13 @@ export function FeatureSection() {
     <section className="section" id="features" aria-labelledby="features-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="Cold-start project launches fail when the first impression is just a raw GitHub link. QuickFork turns repo evidence into social launch assets that are scannable, editable, and still tied to sources."
+          copy="One GitHub URL becomes a visual, a short story, and channel-ready exports."
           eyebrow="01 / Product"
           id="features-title"
-          title="Turn repo evidence into social assets people can inspect."
+          title="From repo to launch graphic."
         />
         <div className="socialFlowBoard">
-          <ol className="socialFlowSteps" aria-label="Repo-to-social conversion steps">
+          <ol className="socialFlowSteps" aria-label="Repo-to-infographic conversion steps">
             {socialFlowSteps.map((step) => (
               <li key={step.code}>
                 <span>{step.code}</span>
@@ -31,12 +31,12 @@ export function FeatureSection() {
               </li>
             ))}
           </ol>
-          <aside className="socialChannelPanel" aria-label="Reviewable social launch package">
+          <aside className="socialChannelPanel" aria-label="Launch asset package">
             <div className="socialChannelHeader">
-              <span className="monoLabel">Channel outputs</span>
-              <strong>One repo story, four publishable surfaces.</strong>
+              <span className="monoLabel">Formats</span>
+              <strong>One project explanation, four outputs.</strong>
             </div>
-            <ul className="socialChannelOutputs" aria-label="Social launch channel outputs">
+            <ul className="socialChannelOutputs" aria-label="Launch asset format outputs">
               {socialChannelOutputs.map((output) => (
                 <li key={output.title}>
                   <span>{output.label}</span>
@@ -48,6 +48,32 @@ export function FeatureSection() {
           </aside>
         </div>
       </div>
+    </section>
+  );
+}
+
+export function ProductDemoSection() {
+  return (
+    <section className="productDemoSection" aria-labelledby="product-demo-title">
+      <div className="productDemoIntro">
+        <span className="monoLabel">Product motion</span>
+        <h2 id="product-demo-title">QuickFork product animation demo</h2>
+        <p>Keep the Hero focused on generation. Use this demo to inspect the full repo-to-social workflow in motion.</p>
+      </div>
+      <aside className="productDemoPlayback">
+        <div className="videoFrame">
+          <video
+            aria-label="Product workflow animation"
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/examples/flashqla-reference.jpeg"
+            preload="metadata"
+            src="/media/quickfork-hero-16x9-black.mp4"
+          />
+        </div>
+      </aside>
     </section>
   );
 }
@@ -92,12 +118,12 @@ export function WorkflowSection() {
       <div className="section">
         <div className="sectionGrid">
         <SectionIntro
-            copy="The workflow is deliberately operational: collect source facts, draft social surfaces side by side, then keep every publishable asset tied to an evidence audit."
+            copy="QuickFork keeps the cold-start workflow short: input, generate, export."
             eyebrow="02 / Workflow"
             id="how-title"
-            title="Review every social asset before it ships."
+            title="Built for cold starts."
           />
-          <ol className="reviewWorkbench" aria-label="Repo-to-social review workbench lanes">
+          <ol className="reviewWorkbench" aria-label="Cold-start asset workflow lanes">
             {reviewWorkbenchLanes.map((lane) => (
               <li key={lane.label}>
                 <span>{lane.label}</span>
@@ -122,12 +148,12 @@ export function ProofSection() {
     <section className="section" id="proof" aria-labelledby="proof-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="QuickFork is built for teams that need attention without inventing traction. The proof system treats generated launch assets as drafts until the source map, prompt trace, channel fit, and approval state are visible."
+          copy="Generated launch assets stay editable, source-labeled, and ready for README or social distribution."
           eyebrow="03 / Review"
           id="proof-title"
-          title="Publish only after the social package passes source-backed gates."
+          title="Clean outputs, no fake traction."
         />
-        <ul className="publishGateList" aria-label="Source-backed publish gates">
+        <ul className="publishGateList" aria-label="Clean launch output checks">
           {publishGates.map((gate) => (
             <li key={gate.title}>
               <span>{gate.label}</span>
@@ -146,10 +172,10 @@ export function FAQSection() {
     <section className="section" id="faq" aria-labelledby="faq-title">
       <div className="sectionGrid">
         <SectionIntro
-          copy="QuickFork answers the questions a maintainer, founder, DevRel lead, or product marketer asks before trusting generated launch assets."
+          copy="Short answers for teams turning repos into launch visuals."
           eyebrow="04 / FAQ"
           id="faq-title"
-          title="Keep the launch simple, reviewable, and source-backed."
+          title="Keep the launch simple."
         />
         <div className="faqGrid">
           {faqItems.map((item) => (
@@ -170,11 +196,10 @@ export function ClosingCTA() {
       <div className="pricingHeader">
         <div>
           <span className="monoLabel">05 / Pricing</span>
-          <h2 id="pricing-title">Choose the repo-to-social package that matches launch risk.</h2>
+          <h2 id="pricing-title">Choose the infographic workflow that matches launch volume.</h2>
         </div>
         <p>
-          Start free when you only need evidence shape. Upgrade when the launch needs reusable social assets, review reports,
-          and team approval before a public post.
+          Start with one repo. Upgrade when you need repeat infographic exports, channel copy, and team review.
         </p>
       </div>
       <ul className="pricingGrid" aria-label="Repo-to-social pricing plans">

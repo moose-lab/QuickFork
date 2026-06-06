@@ -35,7 +35,7 @@ export function UserMenu() {
   return (
     <div className="authLinks" aria-label="Account">
       <a href="/sign-in">Sign in</a>
-      <a className="navCta" href="/sign-up">
+      <a className="accountCta" href="/sign-up">
         Sign up
       </a>
     </div>

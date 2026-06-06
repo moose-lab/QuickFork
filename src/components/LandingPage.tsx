@@ -7,6 +7,7 @@ import {
   FAQSection,
   FeatureSection,
   LandingFooter,
+  ProductDemoSection,
   ProofSection,
   SplitShowcase,
   WorkflowSection,
@@ -19,6 +20,7 @@ export function LandingPage() {
       <main>
         <HeroSection />
         <div className="pageNote">{pageNote}</div>
+        <ProductDemoSection />
         <FeatureSection />
         <SplitShowcase index={0} />
         <WorkflowSection />

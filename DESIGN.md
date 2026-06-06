@@ -71,7 +71,7 @@ components:
 
 ## Overview
 
-QuickFork is a working repo-to-social launch product surface, not a marketing brochure. The landing page should lead with the actual generation workflow: repository URL input, output options, and the generated social launch package preview.
+QuickFork is a working repo-to-infographic launch product surface, not a marketing brochure. The landing page should lead with the actual generation workflow: repository URL input, output options, and the generated infographic preview.
 
 ## Brand & Style
 
@@ -89,9 +89,15 @@ Subtitle copy must be one clear sentence that states the product function. Avoid
 
 ## Layout
 
-The Hero is a split two-panel layout. The left panel is copy and input. The right panel is product animation. Desktop ratio keeps the social launch composer compact and gives the visual stage more room.
+The Hero is a split two-panel layout. The left panel is product brand, concise copy, quick generation, and landing-page CTAs. The right panel is generated-result display only. Desktop ratio keeps the repo input compact and gives the infographic preview more room.
 
-The right visual stage combines product playback, generated social artifact preview, and a compact output stack. The visual stage uses a grid workbench instead of overlapping output panels on top of the repository playback. Do not add decorative hero cards, badges, or explanatory chrome that competes with the actual product preview.
+Hero right side is generated-result display only; product motion belongs in the demo section below the Hero.
+
+The right visual stage combines generated infographic preview, compact format stack, and a simple repo-to-share pipeline. The visual stage uses a grid workbench instead of overlapping output panels on top of the generated result. Do not add decorative hero cards, badges, or explanatory chrome that competes with the actual product preview.
+
+The Header brand descriptor is "Repo-to-social tools". Header navigation may include a compact Features dropdown because QuickFork will expand into more repo-to-SaaS tools. Header should not carry product or function CTAs; account CTAs are allowed. Product CTAs belong inside the landing sections where intent is clearer.
+
+The compact SaaS direction uses Product Green (#178f74) only for active pipeline state. Keep the dominant workspace white, ink, and dark navy so the page reads as a precise developer tool instead of a one-note AI interface.
 
 ## Elevation & Depth
 
@@ -106,18 +112,20 @@ Controls use 4px radius. Repeated cards can use up to 8px radius. Hero media use
 The Hero includes:
 
 - one H1
-- one functional subtitle sentence about repo-to-social launch package generation
-- one compact output rail naming social story, README visual, post copy, channel card, and evidence manifest
+- one functional subtitle sentence about repo-to-infographic launch asset generation
+- one compact output rail naming infographic, README, X/LinkedIn, and square card
 - the project launch input panel
-- one short placeholder line above the Generate package button: generate a social launch story, visual, and post from one repo
+- one short placeholder line above the Generate package button: paste a repo and generate launch visuals
 - a compact GitHub URL input paired with a short Generate package button
 - preset language buttons where English is selected by default and Chinese/Japanese are optional
 - a ratio dropdown aligned on the same row as language controls, offering 16:9, 1:1, 4:3, 3:4, and 9:16 with 4:3 selected by default
-- one unframed product animation panel
+- one right-side generated result panel
+- one compact CTA row inside the Hero, not in the Header
+- one product animation demo section below the Hero
 
 Hero generation quality is fixed to low by default and should not be exposed as a user-facing preset in this surface.
 
-The Hero does not include secondary CTA links, decorative badges, quality selectors, or explanatory labels around the animation. It may include one compact output rail when the labels clarify the repo-to-social value unit.
+The Hero does not include product animation, decorative badges, quality selectors, or long explanatory labels. It may include one compact output rail when the labels clarify the repo-to-social value unit.
 
 ## Pricing
 

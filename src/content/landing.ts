@@ -172,45 +172,45 @@ export const featureCards = [
 
 export const socialFlowSteps = [
   {
-    code: "01 / Evidence intake",
-    title: "Evidence intake",
-    body: "QuickFork reads the README, repo metadata, official links, screenshots, and identity signals before writing launch copy.",
-    source: "README, topics, stars, releases",
+    code: "01 / Repo",
+    title: "Repo",
+    body: "Paste a public GitHub URL.",
+    source: "README, topics, links",
   },
   {
-    code: "02 / Social angle",
-    title: "Social angle",
-    body: "The system compresses the technical project into a shareable angle: problem, mechanism, proof, and why the repo matters now.",
-    source: "Problem, mechanism, proof",
+    code: "02 / Infographic",
+    title: "Infographic",
+    body: "Turn the project into a visual first impression.",
+    source: "Problem, mechanism, output",
   },
   {
-    code: "03 / Channel package",
-    title: "Channel package",
-    body: "The same source-backed story becomes post copy, a README visual, a square channel card, and a manifest reviewers can inspect.",
-    source: "Post, card, manifest",
+    code: "03 / Distribute",
+    title: "Distribute",
+    body: "Export README and social formats from the same story.",
+    source: "README, post, card",
   },
 ] satisfies Array<SocialFlowStep>;
 
 export const socialChannelOutputs = [
   {
-    label: "Post",
-    title: "X/LinkedIn launch post",
-    body: "A short social post that explains what changed, who should care, and links back to the repository.",
+    label: "README",
+    title: "README hero",
+    body: "A visual opener for the repo page.",
   },
   {
-    label: "README",
-    title: "README visual card",
-    body: "A repo-first visual that can sit above the README fold or inside a launch thread.",
+    label: "Post",
+    title: "X / LinkedIn",
+    body: "Short launch copy for developer feeds.",
   },
   {
     label: "Card",
-    title: "Square social card",
-    body: "A scannable 1:1 card for feeds, directories, and social previews.",
+    title: "Square card",
+    body: "A 1:1 image for feeds and directories.",
   },
   {
-    label: "Proof",
-    title: "Evidence manifest",
-    body: "A review trail tying claims, prompts, images, and source facts back to the repository.",
+    label: "Copy",
+    title: "Launch copy",
+    body: "A compact story to paste, edit, and share.",
   },
 ] satisfies Array<SocialChannelOutput>;
 
@@ -297,45 +297,45 @@ export const workflowSteps = [
 
 export const reviewWorkbenchLanes = [
   {
-    label: "Source intake",
-    title: "Source intake",
-    body: "Collect the repo facts that can support a public launch claim before any post copy is written.",
-    items: ["README claims", "Repo metadata", "Official links", "Screenshots"],
+    label: "Input",
+    title: "Input",
+    body: "Start from one repo URL and a few output choices.",
+    items: ["GitHub URL", "Language", "Ratio", "Launch focus"],
   },
   {
-    label: "Channel drafts",
-    title: "Channel drafts",
-    body: "Generate the launch surfaces side by side so the user can compare tone, crop, and channel fit.",
-    items: ["X/LinkedIn post", "README card", "Square social", "Thread outline"],
+    label: "Generate",
+    title: "Generate",
+    body: "Create the visual, launch copy, and channel formats together.",
+    items: ["Infographic", "README hero", "X / LinkedIn", "Square card"],
   },
   {
-    label: "Evidence audit",
-    title: "Evidence audit",
-    body: "Keep unsupported claims visible and force the package back through human review before sharing.",
-    items: ["Claim map", "Prompt trace", "Quality note", "Manifest path"],
+    label: "Export",
+    title: "Export",
+    body: "Keep the package editable before it moves to README or social.",
+    items: ["Image", "Post copy", "Prompt", "Manifest"],
   },
 ] satisfies Array<ReviewWorkbenchLane>;
 
 export const publishGates = [
   {
-    label: "Gate 01",
-    title: "Claim source map",
-    body: "Every major claim points back to README text, repository metadata, official links, or marked assumptions.",
+    label: "Check 01",
+    title: "No fake traction",
+    body: "No invented users, rankings, revenue, or viral claims.",
   },
   {
-    label: "Gate 02",
-    title: "Prompt trace",
-    body: "The infographic prompt and generated image stay attached to the source brief for later editing.",
+    label: "Check 02",
+    title: "Source labels",
+    body: "Repo facts and assumptions stay visible.",
   },
   {
-    label: "Gate 03",
-    title: "Channel fit",
-    body: "README, X/LinkedIn, and square social outputs keep the same story while changing crop and density.",
+    label: "Check 03",
+    title: "Edit before share",
+    body: "The generated package is a draft, not an autopost.",
   },
   {
-    label: "Gate 04",
-    title: "Human approval",
-    body: "The package is explicitly a review draft; publishable assets are selected by the repo owner.",
+    label: "Check 04",
+    title: "Export ready",
+    body: "README, social, and square formats stay aligned.",
   },
 ] satisfies Array<PublishGate>;
 
@@ -344,22 +344,22 @@ export const pricingPlans = [
     name: "Free scan",
     price: "$0",
     cadence: "per repo",
-    description: "Validate whether one public repository has enough source evidence for a credible social launch package.",
+    description: "Try one public repo and see the launch visual direction.",
     badge: "1 repo",
     ctaLabel: "Generate free scan",
     href: "#hero",
     features: [
-      "Repo evidence intake",
-      "Social angle summary",
+      "Repo intake",
+      "Launch angle summary",
       "README visual direction",
-      "Evidence manifest preview",
+      "Export preview",
     ],
   },
   {
     name: "Launch package",
     price: "$49",
     cadence: "per month",
-    description: "Package repeat launches into reviewable README, X/LinkedIn, square social, and manifest assets.",
+    description: "Generate repeat README, X/LinkedIn, and square-card launch packages.",
     badge: "5 launches",
     ctaLabel: "Start launch package",
     href: "/sign-up",
@@ -367,7 +367,7 @@ export const pricingPlans = [
     features: [
       "5 launches",
       "X/LinkedIn launch posts",
-      "README and square social visuals",
+      "README and square visuals",
       "Prompt and quality reports",
     ],
   },
@@ -375,7 +375,7 @@ export const pricingPlans = [
     name: "Team review",
     price: "Custom",
     cadence: "for teams",
-    description: "Add human approval paths, shared source maps, and launch review support for technical teams.",
+    description: "Add shared review and launch-package QA for technical teams.",
     badge: "Source-backed review",
     ctaLabel: "Talk to team",
     href: "/contact?intent=launch-package&utm_source=pricing",
@@ -392,23 +392,23 @@ export const faqItems = [
   {
     question: "What does QuickFork generate from a repository URL?",
     answer:
-      "QuickFork generates a source-backed social launch brief, infographic prompt, README visual, social post copy, channel card direction, quality report, and manifest for review.",
+      "QuickFork generates an infographic prompt, README visual direction, social post copy, square-card direction, quality report, and manifest for review.",
     defaultOpen: true,
   },
   {
     question: "What do I need before starting?",
     answer:
-      "Start with a public GitHub repository URL. The workflow works best when the README, repository metadata, official links, screenshots, and identity assets already describe the project clearly.",
+      "Start with a public GitHub repository URL. Clear README text, links, screenshots, and identity assets improve the output.",
   },
   {
     question: "Can the generated launch package be edited?",
     answer:
-      "Yes. The generated package is a draft for human review. Builders can edit claims, remove unsupported language, change tone, and choose which README, post, or social card assets are publishable.",
+      "Yes. The generated package is a draft. Builders can edit copy, change tone, and choose which visual assets are publishable.",
   },
   {
     question: "What does the export include?",
     answer:
-      "The current workflow returns artifact paths for prompts, generated images, quality reports, launch copy, channel cards, and manifest data. The product direction keeps exports focused on README and social launch use cases.",
+      "The workflow returns artifact paths for prompts, generated images, quality reports, launch copy, channel cards, and manifest data.",
   },
   {
     question: "How does QuickFork avoid generic AI marketing copy?",
@@ -423,4 +423,4 @@ export const faqItems = [
 ] satisfies Array<FaqItem>;
 
 export const pageNote =
-  "Repo-to-social launch workspace - GitHub repository to story, README, post, channel card, and evidence assets";
+  "Repo-to-infographic launch workspace - GitHub repository to README visual, social post, square card, and launch copy";

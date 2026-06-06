@@ -11,6 +11,8 @@
   --lavender: #bdbbff;
   --magenta: #ef2cc1;
   --orange: #fc4c02;
+  --accent: #178f74;
+  --accent-soft: rgba(23, 143, 116, 0.12);
   --shadow: rgba(1, 1, 32, 0.1) 0 4px 10px;
   --font-display: "Iowan Old Style", Charter, Georgia, serif;
   --font-body: "The Future", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
@@ -322,7 +324,7 @@ blockquote {
   outline-offset: 2px;
 }
 
-.navCta,
+.accountCta,
 .primaryButton,
 .secondaryButton,
 .button {
@@ -338,17 +340,11 @@ blockquote {
   white-space: nowrap;
 }
 
-.navCta,
+.accountCta,
 .primaryButton {
   border: 1px solid var(--dark);
   color: #ffffff;
   background: var(--dark);
-}
-
-.navCta.secondary {
-  border-color: var(--border);
-  color: var(--fg);
-  background: #ffffff;
 }
 
 .secondaryButton {
@@ -370,11 +366,7 @@ blockquote {
   justify-self: end;
 }
 
-.navGenerateLink svg {
-  flex: 0 0 auto;
-}
-
-.authLinks a:not(.navCta) {
+.authLinks a:not(.accountCta) {
   min-height: 42px;
   display: inline-flex;
   align-items: center;
@@ -383,8 +375,8 @@ blockquote {
   font-weight: 650;
 }
 
-.authLinks a:not(.navCta):hover,
-.authLinks a:not(.navCta):focus-visible {
+.authLinks a:not(.accountCta):hover,
+.authLinks a:not(.accountCta):focus-visible {
   color: var(--fg);
 }
 
@@ -600,11 +592,11 @@ blockquote {
 
 .hero {
   width: min(var(--container), calc(100% - 40px));
-  min-height: calc(100svh - 128px);
+  min-height: 0;
   margin: 0 auto;
-  padding: 24px 0;
+  padding: 110px 0 64px;
   display: grid;
-  align-items: center;
+  align-items: start;
 }
 
 .heroGrid {
@@ -624,10 +616,10 @@ blockquote {
 }
 
 .hero h1 {
-  max-width: 560px;
+  max-width: 620px;
   font-family: var(--font-body);
-  font-size: 72px;
-  line-height: 0.94;
+  font-size: 58px;
+  line-height: 0.96;
   font-weight: 760;
   letter-spacing: 0;
   text-wrap: balance;
@@ -663,6 +655,18 @@ blockquote {
   background: rgba(255, 255, 255, 0.72);
   font: 650 11px/1 var(--font-mono);
   text-transform: uppercase;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.heroActions .primaryButton,
+.heroActions .secondaryButton {
+  min-height: 42px;
 }
 
 .generatorStack {
@@ -1509,17 +1513,21 @@ blockquote {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(176px, 0.32fr);
   grid-template-areas:
-    "media outputs"
     "artifact outputs"
-    "flow flow";
+    "flow outputs";
   gap: 12px;
   align-items: stretch;
-  min-height: 540px;
+  min-height: 420px;
   isolation: isolate;
 }
 
-.productPlayback {
-  grid-area: media;
+.visualPackageStack span,
+.visualPipeline {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.productDemoPlayback {
   width: 100%;
   max-width: none;
   border: 0;
@@ -1528,8 +1536,6 @@ blockquote {
   background: transparent;
   box-shadow: none;
   overflow: hidden;
-  justify-self: stretch;
-  align-self: end;
 }
 
 .videoFrame {
@@ -1554,7 +1560,7 @@ blockquote {
   margin: 0;
   border: 1px solid rgba(2, 2, 15, 0.16);
   display: grid;
-  grid-template-columns: minmax(128px, 0.42fr) minmax(0, 1fr);
+  grid-template-columns: minmax(250px, 0.74fr) minmax(0, 0.26fr);
   align-items: stretch;
   background: rgba(255, 255, 255, 0.94);
   box-shadow: none;
@@ -1571,18 +1577,11 @@ blockquote {
 
 .heroArtifactPreview figcaption {
   border-left: 1px solid var(--border);
-  padding: 12px;
+  padding: 16px;
   display: grid;
   align-content: center;
-  gap: 4px;
+  gap: 6px;
   background: #ffffff;
-}
-
-.heroArtifactPreview span,
-.visualPackageStack span,
-.visualPipeline {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
 }
 
 .heroArtifactPreview span {
@@ -1593,8 +1592,8 @@ blockquote {
 
 .heroArtifactPreview strong {
   color: var(--fg);
-  font-size: 14px;
-  line-height: 1.2;
+  font-size: 18px;
+  line-height: 1.08;
 }
 
 .visualPackageStack {
@@ -1640,6 +1639,7 @@ blockquote {
   position: static;
   grid-area: flow;
   justify-self: end;
+  align-self: end;
   min-height: 36px;
   border: 1px solid rgba(2, 2, 15, 0.14);
   border-radius: 4px;
@@ -1648,7 +1648,7 @@ blockquote {
   gap: 8px;
   padding: 0 12px;
   color: var(--fg);
-  background: rgba(189, 187, 255, 0.92);
+  background: var(--accent);
   font-size: 10px;
   font-weight: 650;
   white-space: nowrap;
@@ -1657,6 +1657,7 @@ blockquote {
 
 .pageNote,
 .section,
+.productDemoSection,
 .splitShowcase,
 .studioSection,
 .pricingSection,
@@ -1671,6 +1672,41 @@ blockquote {
   color: var(--muted);
   font-size: 11px;
   font-weight: 650;
+}
+
+.productDemoSection {
+  padding: 46px 0 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
+  gap: 24px;
+  align-items: end;
+}
+
+.productDemoIntro {
+  display: grid;
+  gap: 12px;
+  align-content: end;
+}
+
+.productDemoIntro h2 {
+  max-width: 460px;
+  font-family: var(--font-body);
+  font-size: clamp(34px, 4.2vw, 54px);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.productDemoIntro p {
+  max-width: 460px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.productDemoPlayback {
+  border: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 .section,
@@ -1753,7 +1789,7 @@ blockquote {
 .socialFlowBoard {
   grid-column: 3 / -1;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
   gap: 18px;
   align-items: stretch;
 }
@@ -3739,10 +3775,6 @@ blockquote {
     gap: 8px;
   }
 
-  .navCta.secondary {
-    display: none;
-  }
-
   .navLinks {
     justify-self: start;
     max-width: 100%;
@@ -3769,6 +3801,7 @@ blockquote {
 
   .heroGrid,
   .sectionGrid,
+  .productDemoSection,
   .socialFlowBoard,
   .splitShowcase,
   .reviewWorkbench,
@@ -3815,10 +3848,9 @@ blockquote {
   .heroVisual {
     grid-template-columns: 1fr;
     grid-template-areas:
-      "media"
-      "flow"
       "artifact"
-      "outputs";
+      "outputs"
+      "flow";
     min-height: 0;
     padding-top: 0;
   }
@@ -3863,6 +3895,7 @@ blockquote {
   .authShell,
   .pageNote,
   .section,
+  .productDemoSection,
   .splitShowcase,
   .studioSection,
   .pricingSection,
@@ -3878,17 +3911,14 @@ blockquote {
     width: min(calc(100vw - 28px), var(--container));
   }
 
-  .navActions > .navCta.secondary {
-    display: none;
-  }
-
   .navInner {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 10px;
     padding: 8px 0 10px;
   }
 
   .navLinks {
+    grid-column: 1 / -1;
     justify-self: start;
     width: 100%;
     gap: 6px;
@@ -3906,7 +3936,29 @@ blockquote {
   }
 
   .navActions {
+    grid-row: 1;
+    grid-column: 2;
+    display: flex;
+    justify-self: end;
+    align-self: center;
+  }
+
+  .authLinks {
+    gap: 8px;
+  }
+
+  .authLinks a:not(.accountCta) {
     display: none;
+  }
+
+  .authLinks a:not(.accountCta),
+  .accountCta {
+    min-height: 36px;
+    font-size: 13px;
+  }
+
+  .accountCta {
+    padding: 0 12px;
   }
 
   .userMenu {
@@ -4009,6 +4061,7 @@ blockquote {
 
   .referenceForm,
   .referenceControls,
+  .productDemoSection,
   .launchBriefHead,
   .launchBriefMeta,
   .launchAudienceDiscoveryHead,
@@ -4043,10 +4096,6 @@ blockquote {
     padding-top: 0;
   }
 
-  .productPlayback {
-    padding: 0;
-  }
-
   .heroArtifactPreview,
   .visualPackageStack,
   .visualPipeline {
@@ -4058,6 +4107,12 @@ blockquote {
 
   .heroArtifactPreview {
     order: 2;
+    grid-template-columns: 1fr;
+  }
+
+  .heroArtifactPreview figcaption {
+    border-top: 1px solid var(--border);
+    border-left: 0;
   }
 
   .visualPackageStack {

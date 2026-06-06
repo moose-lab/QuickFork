@@ -21,19 +21,17 @@ const localeOptions: Array<{ id: LocaleCode; label: string; shortLabel: string }
 ];
 
 const heroPackageItems = [
-  "Social story",
-  "README visual",
-  "Post copy",
-  "Channel card",
-  "Evidence manifest",
+  "Infographic",
+  "README",
+  "X / LinkedIn",
+  "Square card",
 ] as const;
 
 const heroVisualOutputs = [
-  { label: "Story", value: "Social angle" },
   { label: "README", value: "Hero visual" },
-  { label: "Post", value: "Launch copy" },
-  { label: "Card", value: "Channel visual" },
-  { label: "Manifest", value: "Evidence trail" },
+  { label: "X / LinkedIn", value: "Launch post" },
+  { label: "Square", value: "Feed card" },
+  { label: "Story", value: "Short brief" },
 ] as const;
 
 const soundUnlockEvents = ["pointerdown", "keydown", "touchstart"] as const;
@@ -350,7 +348,7 @@ function ProjectLaunchInputPanel() {
   return (
     <div className="generatorStack">
       <form className="referencePanel" aria-label="Project launch generator" onSubmit={handleSubmit}>
-        <p className="referencePrompt">Generate a social launch story, visual, and post from one repo.</p>
+        <p className="referencePrompt">Paste a repo. Generate launch visuals.</p>
         <div className="referenceForm">
           <label className="referenceField">
             <Github aria-hidden="true" size={17} />
@@ -909,42 +907,17 @@ function getLaunchMaterialArtifactTypeCount(launchMaterialsMap: RepoLaunchMateri
   return new Set(launchMaterialsMap.channels.map((channel) => channel.type)).size;
 }
 
-function ProductAnimationPanel() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (!videoRef.current) return;
-    void startManagedHeroVideoPlayback(videoRef.current);
-  }, []);
-
+function HeroResultPanel() {
   return (
     <div className="heroVisual" aria-label="QuickFork product preview">
-      <aside className="productPlayback">
-        <div className="videoFrame">
-          <video
-            aria-label="Product animation playback"
-            autoPlay
-            data-audio-autoplay="managed"
-            disablePictureInPicture
-            disableRemotePlayback
-            loop
-            onContextMenu={(event) => event.preventDefault()}
-            playsInline
-            poster="/examples/flashqla-reference.jpeg"
-            preload="metadata"
-            ref={videoRef}
-            src="/media/quickfork-hero-16x9-black.mp4"
-          />
-        </div>
-      </aside>
       <figure className="heroArtifactPreview">
-        <img alt="QuickFork generated social launch visual" src="/examples/flashqla-reference.jpeg" />
+        <img alt="QuickFork generated launch infographic" src="/examples/flashqla-reference.jpeg" />
         <figcaption>
-          <span>Generated social direction</span>
-          <strong>Social angle to card to proof</strong>
+          <span>Generated infographic</span>
+          <strong>README + social ready</strong>
         </figcaption>
       </figure>
-      <ul className="visualPackageStack" aria-label="Generated launch package preview">
+      <ul className="visualPackageStack" aria-label="Launch asset format preview">
         {heroVisualOutputs.map((item) => (
           <li key={item.label}>
             <span>{item.label}</span>
@@ -952,12 +925,12 @@ function ProductAnimationPanel() {
           </li>
         ))}
       </ul>
-      <div className="visualPipeline" aria-label="Repository to social launch package flow">
-        <span>Repo scan</span>
+      <div className="visualPipeline" aria-label="Repository to launch infographic flow">
+        <span>Repo</span>
         <ArrowRight aria-hidden="true" size={14} />
-        <span>Social story</span>
+        <span>Infographic</span>
         <ArrowRight aria-hidden="true" size={14} />
-        <span>Launch package</span>
+        <span>Share</span>
       </div>
     </div>
   );
@@ -968,11 +941,11 @@ export function HeroSection() {
     <section className="hero" id="hero" aria-labelledby="hero-title">
       <div className="heroGrid">
         <div className="heroContent">
-          <h1 id="hero-title">Repo to social launch package.</h1>
+          <h1 id="hero-title">Repo in. Infographic out.</h1>
           <p className="heroCopy">
-            Paste a public repo. QuickFork builds a social launch story, README visual, post copy, channel card, and evidence manifest. Claims stay tied to repo sources.
+            Paste a GitHub repo. QuickFork builds a README-ready infographic and social copy for cold-start distribution.
           </p>
-          <ul className="heroPackageLine" aria-label="Launch package outputs">
+          <ul className="heroPackageLine" aria-label="Launch asset outputs">
             {heroPackageItems.map((item) => (
               <li key={item}>
                 {item}
@@ -980,9 +953,21 @@ export function HeroSection() {
             ))}
           </ul>
           <ProjectLaunchInputPanel />
+          <div className="heroActions" aria-label="Landing page actions">
+            <a className="primaryButton" href={getLandingAnchorHref("#studio")}>
+              Generate now
+            </a>
+            <a className="secondaryButton" href="/examples/qwenlm-flashqla-launch-card">
+              View example
+            </a>
+          </div>
         </div>
-        <ProductAnimationPanel />
+        <HeroResultPanel />
       </div>
     </section>
   );
+}
+
+function getLandingAnchorHref(hash: string) {
+  return window.location.pathname === "/" ? hash : `/${hash}`;
 }
