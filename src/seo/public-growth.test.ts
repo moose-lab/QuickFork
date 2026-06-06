@@ -118,19 +118,22 @@ describe("public growth infrastructure", () => {
   it("sets homepage metadata for canonical public discovery", () => {
     const index = readProjectFile("index.html");
 
-    expect(index).toContain("<title>QuickFork - Repo-to-Social Launch Package for GitHub Repositories</title>");
+    expect(index).toContain(
+      "<title>QuickFork - Repo-to-Social Launch Assets for Developer Cold Starts</title>",
+    );
     expect(index).toContain('<link rel="canonical" href="https://seekersai.com/" />');
     expect(index).toContain(
-      'content="QuickFork turns a GitHub repository into a source-backed social launch story, README visual, post copy, channel card, and evidence manifest."',
+      'content="QuickFork turns a public GitHub repository into source-backed launch assets: infographic, README hero, X/LinkedIn copy, square card, and reviewable proof for developer cold starts."',
     );
     expect(index).toContain(
-      '<meta property="og:title" content="QuickFork - Repo-to-Social Launch Package for GitHub Repositories" />',
+      '<meta property="og:title" content="QuickFork - Repo-to-Social Launch Assets for Developer Cold Starts" />',
     );
     expect(index).toContain(
-      '<meta name="twitter:title" content="QuickFork - Repo-to-Social Launch Package for GitHub Repositories" />',
+      '<meta name="twitter:title" content="QuickFork - Repo-to-Social Launch Assets for Developer Cold Starts" />',
     );
     expect(index).toContain('<meta property="og:url" content="https://seekersai.com/" />');
     expect(index).toContain('"@type": "SoftwareApplication"');
+    expect(index).toContain('"@type": "FAQPage"');
     expect(index).not.toContain("Launch-Ready Marketing Assets");
     expect(index).not.toContain("marketing card");
   });
