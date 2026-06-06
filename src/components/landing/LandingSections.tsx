@@ -277,18 +277,13 @@ export function LandingFooter() {
       links: [
         { href: "/contact", label: "Contact" },
         { href: "/help", label: "Help" },
-        { href: "/sign-in", label: "Sign in" },
-        { href: "/sign-up", label: "Sign up" },
       ],
     },
     {
-      title: "Legal and AI Discovery",
+      title: "Legal",
       links: [
         { href: "/privacy", label: "Privacy" },
         { href: "/terms", label: "Terms" },
-        { href: "/llms.txt", label: "llms.txt" },
-        { href: "/pricing.md", label: "pricing.md" },
-        { href: "/sitemap.xml", label: "sitemap.xml" },
       ],
     },
   ];
@@ -298,6 +293,7 @@ export function LandingFooter() {
       <div className="footerBrand">
         <span>QuickFork</span>
         <small>Source-backed launch assets for public repositories.</small>
+        <small>(c) 2026 QuickFork.</small>
       </div>
       <nav className="footerNav" aria-label="Footer navigation">
         {footerGroups.map((group) => (

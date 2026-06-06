@@ -76,6 +76,11 @@ describe("App", () => {
     expect(within(footerNav).getByRole("link", { name: /^help$/i })).toHaveAttribute("href", "/help");
     expect(within(footerNav).getByRole("link", { name: /^privacy$/i })).toHaveAttribute("href", "/privacy");
     expect(within(footerNav).getByRole("link", { name: /^terms$/i })).toHaveAttribute("href", "/terms");
+    expect(within(footerNav).queryByRole("link", { name: /^sign in$/i })).not.toBeInTheDocument();
+    expect(within(footerNav).queryByRole("link", { name: /^sign up$/i })).not.toBeInTheDocument();
+    expect(within(footerNav).queryByRole("link", { name: /^llms\.txt$/i })).not.toBeInTheDocument();
+    expect(within(footerNav).queryByRole("link", { name: /^pricing\.md$/i })).not.toBeInTheDocument();
+    expect(within(footerNav).queryByRole("link", { name: /^sitemap\.xml$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /start a fork/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
@@ -222,7 +227,7 @@ describe("App", () => {
     const footerNav = screen.getByRole("navigation", { name: /footer/i });
     expect(within(footerNav).getByRole("heading", { name: /^product$/i })).toBeInTheDocument();
     expect(within(footerNav).getByRole("heading", { name: /^resources$/i })).toBeInTheDocument();
-    expect(within(footerNav).getByRole("heading", { name: /^legal and ai discovery$/i })).toBeInTheDocument();
+    expect(within(footerNav).getByRole("heading", { name: /^legal$/i })).toBeInTheDocument();
     expect(within(footerNav).getByRole("link", { name: /repo-to-social package/i })).toHaveAttribute(
       "href",
       "/product/github-repo-to-launch-package",
@@ -231,8 +236,11 @@ describe("App", () => {
       "href",
       "/resources/github-repo-launch-demand-map",
     );
-    expect(within(footerNav).getByRole("link", { name: /^llms\.txt$/i })).toHaveAttribute("href", "/llms.txt");
-    expect(within(footerNav).getByRole("link", { name: /^pricing\.md$/i })).toHaveAttribute("href", "/pricing.md");
+    expect(within(footerNav).queryByRole("link", { name: /^llms\.txt$/i })).not.toBeInTheDocument();
+    expect(within(footerNav).queryByRole("link", { name: /^pricing\.md$/i })).not.toBeInTheDocument();
+    expect(within(footerNav).queryByRole("link", { name: /^sitemap\.xml$/i })).not.toBeInTheDocument();
+    expect(within(footerNav).queryByRole("link", { name: /^sign in$/i })).not.toBeInTheDocument();
+    expect(within(footerNav).queryByRole("link", { name: /^sign up$/i })).not.toBeInTheDocument();
   });
 
   it("renders marketing breadcrumbs and curated related routes for high-priority pages", () => {
@@ -1303,7 +1311,9 @@ describe("App", () => {
     rerender(<App />);
 
     expect(screen.getByRole("heading", { name: /privacy policy/i })).toBeInTheDocument();
-    expect(screen.getByText(/QuickFork should only use repository evidence/i)).toBeInTheDocument();
+    expect(screen.getByText(/Effective date: June 6, 2026/i)).toBeInTheDocument();
+    expect(screen.getByText(/Public repository inputs/i)).toBeInTheDocument();
+    expect(screen.getByText(/QuickFork uses public repository evidence/i)).toBeInTheDocument();
     expect(document.title).toBe("Privacy Policy | QuickFork");
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute("href", "https://seekersai.com/privacy");
 
@@ -1311,9 +1321,14 @@ describe("App", () => {
     rerender(<App />);
 
     expect(screen.getByRole("heading", { name: /terms of service/i })).toBeInTheDocument();
-    expect(screen.getByText(/Do not use QuickFork to publish unsupported claims/i)).toBeInTheDocument();
+    expect(screen.getByText(/Effective date: June 6, 2026/i)).toBeInTheDocument();
+    expect(screen.getByText(/Source-backed use/i)).toBeInTheDocument();
+    expect(screen.getByText(/You are responsible for reviewing generated launch assets/i)).toBeInTheDocument();
     expect(document.title).toBe("Terms of Service | QuickFork");
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute("href", "https://seekersai.com/terms");
+    expect(existsSync("src/content/footer-pages/help.ts")).toBe(true);
+    expect(existsSync("src/content/footer-pages/privacy.ts")).toBe(true);
+    expect(existsSync("src/content/footer-pages/terms.ts")).toBe(true);
   });
 
   it("submits the Hero generator form to the backend generation API", async () => {
