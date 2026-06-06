@@ -7,7 +7,7 @@ import type {
   CrmLifecycleUpdateInput,
   CrmOpportunityInput,
   CrmOpportunityRecord,
-} from "./types";
+} from "./types.js";
 
 interface MockCrmAdapterOptions {
   now?: () => string;

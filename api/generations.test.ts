@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeCreateGenerationInput } from "./generations";
+import { normalizeCreateGenerationInput } from "./generations.js";
 
 describe("/api/generations input contract", () => {
   it("normalizes a valid project launch generation request", () => {
