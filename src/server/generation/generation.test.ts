@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  CHATGPT_OAUTH_ACCESS_TOKEN_ENV,
   createMockLlmAdapter,
   DEFAULT_GENERATION_MODELS,
   OPENAI_API_KEY_ENV,
@@ -76,6 +77,7 @@ const openDesignMetadata = {
 describe("project launch generation backend", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+    delete process.env.CHATGPT_OAUTH_ACCESS_TOKEN;
     delete process.env.OPENAI_API_KEY;
     delete process.env.OPENAI_BASE_URL;
     delete process.env.WAVESPEED_API_KEY;
@@ -1100,6 +1102,83 @@ describe("project launch generation backend", () => {
         { provider: "openai", model: "gpt-image-2", endpoint: "https://api.openai.com/v1/images/generations", purpose: "image_generation", status: "completed" },
       ]);
       expect(result.outputs.en.imageUrl).toMatch(/^data:image\/png;base64,/);
+    } finally {
+      await rm(outputRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("defaults to ChatGPT OAuth bearer auth for repo analysis, launch planning, and image generation", async () => {
+    const outputRoot = await mkdtemp(join(tmpdir(), "quickfork-chatgpt-oauth-generation-"));
+    const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const endpoint = String(url);
+      const headers = init?.headers as Record<string, string>;
+      expect(headers.Authorization).toBe("Bearer oauth-user-token");
+      if (endpoint === OPENAI_RESPONSES_URL) {
+        return new Response(JSON.stringify({ output_text: "Use deterministic project evidence from the README." }), {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      if (endpoint === OPENAI_IMAGE_ENDPOINT) {
+        return new Response(JSON.stringify({ data: [{ b64_json: Buffer.from("oauth-card").toString("base64") }] }), {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      throw new Error(`Unexpected fetch: ${endpoint}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    try {
+      const result = await runProjectLaunchGeneration({
+        repoUrl: "https://github.com/QwenLM/FlashQLA",
+        locales: ["en"],
+        preset: "16:9",
+        imageQuality: "low",
+        outputRoot,
+        auth: {
+          bearerToken: "Bearer “oauth-user-token”",
+          source: "request_header",
+        },
+        mock: {
+          readmeMarkdown: openDesignReadme,
+        },
+      });
+      const manifest = JSON.parse(await readFile(result.manifestPath, "utf8")) as {
+        modelCalls: Array<{ provider: string; purpose: string; credentialSource?: string }>;
+      };
+
+      expect(fetchMock).toHaveBeenCalledTimes(3);
+      expect(result.modelCalls).toMatchObject([
+        { provider: "chatgpt-oauth", model: "gpt-5.5", endpoint: "https://api.openai.com/v1/responses", purpose: "readme_analysis", status: "completed", credentialSource: "request_header" },
+        { provider: "chatgpt-oauth", model: "gpt-5.5", endpoint: "https://api.openai.com/v1/responses", purpose: "launch_plan", status: "completed", credentialSource: "request_header" },
+        { provider: "chatgpt-oauth", model: "gpt-image-2", endpoint: "https://api.openai.com/v1/images/generations", purpose: "image_generation", status: "completed", credentialSource: "request_header" },
+      ]);
+      expect(result.outputs.en.imageUrl).toBe(`data:image/png;base64,${Buffer.from("oauth-card").toString("base64")}`);
+      expect(JSON.stringify(manifest)).not.toContain("oauth-user-token");
+    } finally {
+      await rm(outputRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("requires a ChatGPT OAuth bearer token when provider is chatgpt-oauth", async () => {
+    const outputRoot = await mkdtemp(join(tmpdir(), "quickfork-chatgpt-oauth-missing-token-"));
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    try {
+      await expect(
+        runProjectLaunchGeneration({
+          repoUrl: "https://github.com/QwenLM/FlashQLA",
+          locales: ["en"],
+          provider: "chatgpt-oauth",
+          outputRoot,
+          mock: {
+            readmeMarkdown: openDesignReadme,
+          },
+        }),
+      ).rejects.toThrow(`${CHATGPT_OAUTH_ACCESS_TOKEN_ENV} or request Authorization bearer token is required`);
+      expect(fetchMock).not.toHaveBeenCalled();
     } finally {
       await rm(outputRoot, { recursive: true, force: true });
     }

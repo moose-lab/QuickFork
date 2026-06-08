@@ -1,5 +1,6 @@
 export type LocaleCode = "en" | "zh" | "ja";
-export type GenerationProvider = "mock" | "openai" | "wavespeed";
+export type GenerationProvider = "mock" | "chatgpt-oauth" | "openai" | "wavespeed";
+export type GenerationCredentialSource = "request_header" | "environment";
 export type OutputPreset =
   | "1:1"
   | "3:2"
@@ -282,6 +283,10 @@ export interface CreateGenerationInput {
   imageQuality?: ImageQuality;
   models?: Partial<GenerationModelConfig>;
   outputRoot?: string;
+  auth?: {
+    bearerToken: string;
+    source: GenerationCredentialSource;
+  };
   mock?: {
     repoMetadata?: Partial<GitHubRepoMetadata>;
     readmeMarkdown?: string;
@@ -311,6 +316,7 @@ export interface GenerationModelCall {
   endpoint?: string;
   purpose: "repository_source" | "readme_analysis" | "launch_plan" | "image_generation";
   status: "completed" | "failed" | "skipped";
+  credentialSource?: GenerationCredentialSource;
 }
 
 export interface GenerationResponse {

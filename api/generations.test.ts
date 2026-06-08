@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeCreateGenerationInput } from "./generations.js";
+import { attachRequestAuth, normalizeCreateGenerationInput } from "./generations.js";
 
 describe("/api/generations input contract", () => {
   it("normalizes a valid project launch generation request", () => {
@@ -9,7 +9,7 @@ describe("/api/generations input contract", () => {
         repoUrl: " https://github.com/QwenLM/FlashQLA ",
         locales: ["en", "zh"],
         preset: "4:3",
-        provider: "openai",
+        provider: "chatgpt-oauth",
         imageQuality: "low",
         models: {
           llm: "gpt-5.5",
@@ -20,7 +20,7 @@ describe("/api/generations input contract", () => {
       repoUrl: "https://github.com/QwenLM/FlashQLA",
       locales: ["en", "zh"],
       preset: "4:3",
-      provider: "openai",
+      provider: "chatgpt-oauth",
       imageQuality: "low",
       models: {
         llm: "gpt-5.5",
@@ -60,7 +60,13 @@ describe("/api/generations input contract", () => {
     ).toThrow(/locales/i);
   });
 
-  it("accepts direct OpenAI and Wavespeed providers while rejecting unknown providers", () => {
+  it("accepts ChatGPT OAuth, direct OpenAI, and Wavespeed providers while rejecting unknown providers", () => {
+    expect(
+      normalizeCreateGenerationInput({
+        repoUrl: "https://github.com/QwenLM/FlashQLA",
+        provider: "chatgpt-oauth",
+      }).provider,
+    ).toBe("chatgpt-oauth");
     expect(
       normalizeCreateGenerationInput({
         repoUrl: "https://github.com/QwenLM/FlashQLA",
@@ -76,8 +82,26 @@ describe("/api/generations input contract", () => {
     expect(() =>
       normalizeCreateGenerationInput({
         repoUrl: "https://github.com/QwenLM/FlashQLA",
-        provider: "chatgpt-oauth",
+        provider: "manual-oauth",
       }),
-    ).toThrow("provider must be openai, wavespeed, or mock.");
+    ).toThrow("provider must be chatgpt-oauth, openai, wavespeed, or mock.");
+  });
+
+  it("attaches ChatGPT Action OAuth bearer tokens from the request header only", () => {
+    const normalized = normalizeCreateGenerationInput({
+      repoUrl: "https://github.com/QwenLM/FlashQLA",
+      provider: "chatgpt-oauth",
+      auth: {
+        bearerToken: "body-token-must-not-be-trusted",
+      },
+    } as unknown);
+    const withAuth = attachRequestAuth(normalized, "Bearer “oauth-user-token”");
+
+    expect(normalized.auth).toBeUndefined();
+    expect(withAuth.auth).toEqual({
+      bearerToken: "oauth-user-token",
+      source: "request_header",
+    });
+    expect(JSON.stringify(withAuth)).not.toContain("Bearer");
   });
 });

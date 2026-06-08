@@ -116,6 +116,8 @@ Secrets belong on the server, not in browser code:
 
 ```env
 OPENAI_API_KEY=
+# Optional local/dev token for provider="chatgpt-oauth" when no ChatGPT Action Authorization header is present.
+CHATGPT_OAUTH_ACCESS_TOKEN=
 # Optional OpenAI-compatible gateway override. Leave blank for the official OpenAI API.
 OPENAI_BASE_URL=
 # Optional fallback provider key when /api/generations uses provider="wavespeed".
@@ -158,13 +160,13 @@ https://your-domain.example/api/auth/callback/google
 `POST /api/generations` runs the server-side launch-card workflow:
 
 1. fetches GitHub repository metadata and README content, with deterministic fallback data for failed source lookups
-2. calls OpenAI Responses for repository analysis and launch planning when `provider` is `openai`
+2. calls OpenAI Responses for repository analysis and launch planning when `provider` is `chatgpt-oauth` or `openai`
 3. calls OpenAI Images for the marketing card render and returns `outputs[locale].imageUrl` for browser preview
 4. writes prompt, image, quality report, and manifest artifacts under the server output root
 
-The Hero generator sends `provider: "openai"` by default and requires `OPENAI_API_KEY` in server runtime configuration. The API still accepts `provider: "mock"` for tests and `provider: "wavespeed"` for the existing Wavespeed-compatible path.
+The Hero generator sends `provider: "chatgpt-oauth"` by default, and the backend uses `chatgpt-oauth` when `provider` is omitted. For ChatGPT Action traffic, QuickFork reads the OAuth bearer token from the request `Authorization` header and uses it for repo analysis, launch planning, and image generation. For local development or server-side fallback, set `CHATGPT_OAUTH_ACCESS_TOKEN`.
 
-ChatGPT OAuth is not used for this backend path. ChatGPT Actions OAuth authenticates ChatGPT to a third-party action API; QuickFork's own web backend calls OpenAI directly with a server-side API key.
+The API still accepts `provider: "openai"` with `OPENAI_API_KEY`, `provider: "mock"` for tests, and `provider: "wavespeed"` for the existing Wavespeed-compatible path. OAuth tokens are never written into manifests or API responses; model call metadata records only the credential source.
 
 ## Local Development
 

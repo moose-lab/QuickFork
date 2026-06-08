@@ -2,8 +2,10 @@ import { buildProjectBrief } from "./brief.js";
 import { buildLayoutSpec, buildLocalizedCopies } from "./copy.js";
 import { extractReadmeContext } from "./readme.js";
 import { selectVisualDirection } from "./visual.js";
+import { GenerationError } from "./types.js";
 import type {
   GenerationProvider,
+  GenerationCredentialSource,
   GitHubRepoMetadata,
   GenerationModelConfig,
   LocalizedCardCopy,
@@ -11,6 +13,7 @@ import type {
   ProjectBrief,
   ReadmeContext,
   RepoReference,
+  CreateGenerationInput,
   StoredReferenceAsset,
   VisualDirection,
 } from "./types.js";
@@ -29,6 +32,7 @@ export const OPENAI_API_KEY_ENV = "OPENAI_API_KEY";
 export const OPENAI_BASE_URL_ENV = "OPENAI_BASE_URL";
 export const OPENAI_API_BASE_URL = "https://api.openai.com/v1";
 export const OPENAI_RESPONSES_URL = `${OPENAI_API_BASE_URL}/responses`;
+export const CHATGPT_OAUTH_ACCESS_TOKEN_ENV = "CHATGPT_OAUTH_ACCESS_TOKEN";
 export const WAVESPEED_API_KEY_ENV = "WAVESPEED_API_KEY";
 export const WAVESPEED_LLM_BASE_URL = "https://llm.wavespeed.ai/v1";
 export const WAVESPEED_CHAT_COMPLETIONS_URL = `${WAVESPEED_LLM_BASE_URL}/chat/completions`;
@@ -59,6 +63,11 @@ function normalizeBearerToken(value: string) {
 
 export const normalizeWavespeedApiKey = normalizeBearerToken;
 export const normalizeOpenAIApiKey = normalizeBearerToken;
+
+export interface GenerationBearerCredential {
+  bearerToken: string;
+  source: GenerationCredentialSource;
+}
 
 export interface OpenAIResponsesRequest {
   url: string;
@@ -98,11 +107,31 @@ export interface ProjectLaunchLlmAdapter {
 }
 
 export function resolveGenerationModelConfig(models?: Partial<GenerationModelConfig>, provider: GenerationProvider = "wavespeed"): GenerationModelConfig {
-  const defaults = provider === "openai" ? OPENAI_GENERATION_MODELS : DEFAULT_GENERATION_MODELS;
+  const defaults = provider === "openai" || provider === "chatgpt-oauth" ? OPENAI_GENERATION_MODELS : DEFAULT_GENERATION_MODELS;
   return {
     llm: models?.llm?.trim() || defaults.llm,
     image: models?.image?.trim() || defaults.image,
   };
+}
+
+export function resolveChatGptOAuthCredential(auth?: CreateGenerationInput["auth"]): GenerationBearerCredential {
+  if (auth?.bearerToken) {
+    return {
+      bearerToken: normalizeOpenAIApiKey(auth.bearerToken),
+      source: auth.source,
+    };
+  }
+  const environmentToken = process.env[CHATGPT_OAUTH_ACCESS_TOKEN_ENV];
+  if (environmentToken) {
+    return {
+      bearerToken: normalizeOpenAIApiKey(environmentToken),
+      source: "environment",
+    };
+  }
+  throw new GenerationError(
+    "VALIDATION_ERROR",
+    `${CHATGPT_OAUTH_ACCESS_TOKEN_ENV} or request Authorization bearer token is required to use provider chatgpt-oauth.`,
+  );
 }
 
 export function buildWavespeedChatCompletionRequest(input: {
@@ -221,10 +250,11 @@ export async function callWavespeedChatCompletion(input: {
   return content;
 }
 
-export function createOpenAILlmAdapter(config: { model?: string; fetchImpl?: typeof fetch } = {}): ProjectLaunchLlmAdapter {
+export function createOpenAILlmAdapter(config: { model?: string; apiKey?: string; fetchImpl?: typeof fetch } = {}): ProjectLaunchLlmAdapter {
   const model = config.model?.trim() || OPENAI_GENERATION_MODELS.llm;
   const readRepositoryContext: ProjectLaunchLlmAdapter["readRepositoryContext"] = async (input) => {
     await callOpenAIResponses({
+      apiKey: config.apiKey,
       model,
       fetchImpl: config.fetchImpl,
       temperature: 0.2,
@@ -251,6 +281,7 @@ export function createOpenAILlmAdapter(config: { model?: string; fetchImpl?: typ
           readmeMarkdown: input.readmeMarkdown,
         }));
       await callOpenAIResponses({
+        apiKey: config.apiKey,
         model,
         fetchImpl: config.fetchImpl,
         temperature: 0.3,

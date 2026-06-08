@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import type { GeneratedImageResult, ImagePromptResult, LocaleCode } from "./types.js";
+import type { GeneratedImageResult, GenerationProvider, ImagePromptResult, LocaleCode } from "./types.js";
 import { OPENAI_API_KEY_ENV, WAVESPEED_API_KEY_ENV, normalizeOpenAIApiKey, normalizeWavespeedApiKey } from "./llm.js";
 import { WAVESPEED_PREDICTIONS_ENDPOINT, buildOpenAIImageRequest, buildWavespeedImageRequest } from "./prompt.js";
 
@@ -52,6 +52,7 @@ export async function generateOpenAIImage(
   input: {
     preset: Parameters<typeof buildOpenAIImageRequest>[0]["preset"];
     apiKey?: string;
+    provider?: Extract<GenerationProvider, "chatgpt-oauth" | "openai">;
     fetchImpl?: typeof fetch;
   },
 ): Promise<GeneratedImageResult> {
@@ -86,6 +87,7 @@ export async function generateOpenAIImage(
       prompt,
       promptPath,
       model: request.model,
+      provider: input.provider ?? "openai",
       message: `OpenAI image generation failed with ${response.status}.`,
     });
   }
@@ -95,7 +97,7 @@ export async function generateOpenAIImage(
   if (typeof firstImage?.b64_json === "string" && firstImage.b64_json.trim()) {
     await writeFile(imagePath, Buffer.from(firstImage.b64_json, "base64"));
     return {
-      provider: "openai",
+      provider: input.provider ?? "openai",
       model: request.model,
       status: "completed",
       imagePath,
@@ -108,7 +110,7 @@ export async function generateOpenAIImage(
   if (typeof firstImage?.url === "string" && firstImage.url.trim()) {
     await writeFile(imagePath, `OpenAI image URL\n${firstImage.url}\n`, "utf8");
     return {
-      provider: "openai",
+      provider: input.provider ?? "openai",
       model: request.model,
       status: "completed",
       imagePath,
@@ -124,6 +126,7 @@ export async function generateOpenAIImage(
     prompt,
     promptPath,
     model: request.model,
+    provider: input.provider ?? "openai",
     message: `OpenAI image generation returned no image for ${locale}. error=${formatProviderError(body.error)}`,
   });
 }
@@ -250,11 +253,12 @@ async function writeFailedOpenAIImage(input: {
   prompt: ImagePromptResult;
   promptPath: string;
   model: string;
+  provider?: Extract<GenerationProvider, "chatgpt-oauth" | "openai">;
   message: string;
 }): Promise<GeneratedImageResult> {
   await writeFile(input.imagePath, `OpenAI image generation failed\n${input.message}\n`, "utf8");
   return {
-    provider: "openai",
+    provider: input.provider ?? "openai",
     model: input.model,
     status: "failed",
     imagePath: input.imagePath,
