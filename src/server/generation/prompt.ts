@@ -1,5 +1,5 @@
 import type { ImagePromptResult, ImageQuality, LocalizedCardCopy, MarketingCardLayoutSpec, ProjectBrief, StoredReferenceAsset, VisualDirection } from "./types.js";
-import { DEFAULT_GENERATION_MODELS } from "./llm.js";
+import { DEFAULT_GENERATION_MODELS, OPENAI_API_BASE_URL, OPENAI_BASE_URL_ENV, OPENAI_GENERATION_MODELS } from "./llm.js";
 
 const PRESET_SIZES = {
   "1:1": "1200x1200",
@@ -29,6 +29,11 @@ const PRESET_ASPECT_RATIOS = {
 
 export const WAVESPEED_IMAGE_ENDPOINT = "https://api.wavespeed.ai/api/v3/openai/gpt-image-2/text-to-image";
 export const WAVESPEED_PREDICTIONS_ENDPOINT = "https://api.wavespeed.ai/api/v3/predictions";
+export const OPENAI_IMAGE_ENDPOINT = "https://api.openai.com/v1/images/generations";
+
+export function openAIImageEndpoint() {
+  return `${(process.env[OPENAI_BASE_URL_ENV] ?? OPENAI_API_BASE_URL).replace(/\/+$/, "")}/images/generations`;
+}
 
 export function imageSizeForPreset(preset: keyof typeof PRESET_SIZES) {
   return PRESET_SIZES[preset];
@@ -40,6 +45,37 @@ export function imageAspectRatioForPreset(preset: keyof typeof PRESET_ASPECT_RAT
 
 export function normalizeWavespeedImageQuality(_quality: ImageQuality) {
   return "low";
+}
+
+export function openAIImageSizeForPreset(preset: keyof typeof PRESET_ASPECT_RATIOS) {
+  if (preset === "1:1") return "1024x1024";
+  if (["2:3", "3:4", "4:5", "9:16"].includes(preset)) return "1024x1536";
+  return "1536x1024";
+}
+
+export function normalizeOpenAIImageQuality(_quality: ImageQuality) {
+  return "low";
+}
+
+export function buildOpenAIImageRequest(input: {
+  model?: string;
+  prompt: string;
+  preset: keyof typeof PRESET_ASPECT_RATIOS;
+  quality: ImageQuality;
+}) {
+  const model = input.model?.trim() || OPENAI_GENERATION_MODELS.image;
+  return {
+    url: openAIImageEndpoint(),
+    model,
+    body: {
+      model,
+      prompt: input.prompt,
+      size: openAIImageSizeForPreset(input.preset),
+      quality: normalizeOpenAIImageQuality(input.quality),
+      n: 1,
+      output_format: "png",
+    },
+  };
 }
 
 export function buildWavespeedImageRequest(input: {

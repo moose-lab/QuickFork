@@ -1357,18 +1357,18 @@ describe("App", () => {
             en: {
               promptPath: "output/project-launch/qwenlm-flashqla/en/marketing_card_prompt.txt",
               imagePath: "output/project-launch/qwenlm-flashqla/en/marketing-card.png",
-              imageUrl: "https://wavespeed.ai/generated/qwenlm-flashqla.png",
+              imageUrl: "data:image/png;base64,cXdlbmxtLWZsYXNocWxh",
               qualityReportPath: "output/project-launch/qwenlm-flashqla/en/quality-report.json",
             },
           },
           stages: [
             { id: "repo", label: "Repository source", status: "completed" },
-            { id: "readme", label: "GPT5.5 README analysis", status: "completed", model: "openai/gpt-5.5" },
-            { id: "image", label: "gpt-image-2 render", status: "completed", model: "openai/gpt-image-2/text-to-image" },
+            { id: "readme", label: "OpenAI README analysis", status: "completed", model: "gpt-5.5" },
+            { id: "image", label: "gpt-image-2 render", status: "completed", model: "gpt-image-2" },
           ],
           modelCalls: [
-            { provider: "wavespeed", model: "openai/gpt-5.5", purpose: "readme_analysis", status: "completed" },
-            { provider: "wavespeed", model: "openai/gpt-image-2/text-to-image", purpose: "image_generation", status: "completed" },
+            { provider: "openai", model: "gpt-5.5", purpose: "readme_analysis", status: "completed" },
+            { provider: "openai", model: "gpt-image-2", purpose: "image_generation", status: "completed" },
           ],
           launchBrief: {
             summary: "CUDA kernels for faster attention inference.",
@@ -1562,19 +1562,19 @@ describe("App", () => {
       repoUrl: "https://github.com/QwenLM/FlashQLA",
       locales: ["en"],
       preset: "4:3",
-      provider: "wavespeed",
+      provider: "openai",
       imageQuality: "low",
     });
     expect(await screen.findByText(/generated gen_qwenlm_flashqla_test/i)).toBeInTheDocument();
     const previewImage = await within(form).findByRole("img", { name: /qwenlm\/flashqla launch card/i });
     const controls = form.querySelector(".referenceControls");
-    expect(previewImage).toHaveAttribute("src", "https://wavespeed.ai/generated/qwenlm-flashqla.png");
-    expect(previewImage.closest(".generationPreview")).toHaveAccessibleName("Generated Wavespeed image result");
+    expect(previewImage).toHaveAttribute("src", "data:image/png;base64,cXdlbmxtLWZsYXNocWxh");
+    expect(previewImage.closest(".generationPreview")).toHaveAccessibleName("Generated OpenAI image result");
     expect(controls).not.toBeNull();
     expect((controls?.compareDocumentPosition(previewImage) ?? 0) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
     expect(within(form).getByRole("link", { name: /download generated image/i })).toHaveAttribute(
       "href",
-      "https://wavespeed.ai/generated/qwenlm-flashqla.png",
+      "data:image/png;base64,cXdlbmxtLWZsYXNocWxh",
     );
     const briefRegion = await screen.findByRole("region", { name: /free repo launch brief/i });
     expect(within(briefRegion).getByText(/AI project builders, open-source maintainers/i)).toBeInTheDocument();
@@ -1733,7 +1733,7 @@ describe("App", () => {
     const previewDialog = await screen.findByRole("dialog", { name: /generated image preview/i });
     expect(within(previewDialog).getByRole("img", { name: /qwenlm\/flashqla launch card/i })).toHaveAttribute(
       "src",
-      "https://wavespeed.ai/generated/qwenlm-flashqla.png",
+      "data:image/png;base64,cXdlbmxtLWZsYXNocWxh",
     );
     expect(within(previewDialog).getByRole("link", { name: /download generated image/i })).toHaveAttribute(
       "download",

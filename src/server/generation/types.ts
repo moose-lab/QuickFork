@@ -1,5 +1,5 @@
 export type LocaleCode = "en" | "zh" | "ja";
-export type GenerationProvider = "mock" | "wavespeed";
+export type GenerationProvider = "mock" | "openai" | "wavespeed";
 export type OutputPreset =
   | "1:1"
   | "3:2"

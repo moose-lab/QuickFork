@@ -208,7 +208,7 @@ async function createGeneration(input: {
       repoUrl: input.repoUrl,
       locales: input.locales,
       preset: input.preset,
-      provider: "wavespeed",
+      provider: "openai",
       imageQuality: input.imageQuality,
     }),
   });
@@ -399,7 +399,7 @@ function ProjectLaunchInputPanel() {
           </label>
         </div>
         {generatedImageUrl ? (
-          <figure className="generationPreview" aria-label="Generated Wavespeed image result">
+          <figure className="generationPreview" aria-label="Generated OpenAI image result">
             <button
               aria-label="Open generated image preview"
               className="generationPreviewButton"

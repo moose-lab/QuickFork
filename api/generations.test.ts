@@ -9,22 +9,22 @@ describe("/api/generations input contract", () => {
         repoUrl: " https://github.com/QwenLM/FlashQLA ",
         locales: ["en", "zh"],
         preset: "4:3",
-        provider: "mock",
+        provider: "openai",
         imageQuality: "low",
         models: {
-          llm: "openai/gpt-5.5",
-          image: "openai/gpt-image-2/text-to-image",
+          llm: "gpt-5.5",
+          image: "gpt-image-2",
         },
       }),
     ).toMatchObject({
       repoUrl: "https://github.com/QwenLM/FlashQLA",
       locales: ["en", "zh"],
       preset: "4:3",
-      provider: "mock",
+      provider: "openai",
       imageQuality: "low",
       models: {
-        llm: "openai/gpt-5.5",
-        image: "openai/gpt-image-2/text-to-image",
+        llm: "gpt-5.5",
+        image: "gpt-image-2",
       },
     });
   });
@@ -60,12 +60,24 @@ describe("/api/generations input contract", () => {
     ).toThrow(/locales/i);
   });
 
-  it("uses the production provider requirement in validation errors", () => {
-    expect(() =>
+  it("accepts direct OpenAI and Wavespeed providers while rejecting unknown providers", () => {
+    expect(
       normalizeCreateGenerationInput({
         repoUrl: "https://github.com/QwenLM/FlashQLA",
         provider: "openai",
+      }).provider,
+    ).toBe("openai");
+    expect(
+      normalizeCreateGenerationInput({
+        repoUrl: "https://github.com/QwenLM/FlashQLA",
+        provider: "wavespeed",
+      }).provider,
+    ).toBe("wavespeed");
+    expect(() =>
+      normalizeCreateGenerationInput({
+        repoUrl: "https://github.com/QwenLM/FlashQLA",
+        provider: "chatgpt-oauth",
       }),
-    ).toThrow("provider must be wavespeed.");
+    ).toThrow("provider must be openai, wavespeed, or mock.");
   });
 });

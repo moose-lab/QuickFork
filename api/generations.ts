@@ -18,7 +18,7 @@ const presetValues = [
   "16:9",
   "21:9",
 ] as const;
-const providerValues = ["mock", "wavespeed"] as const;
+const providerValues = ["mock", "openai", "wavespeed"] as const;
 const qualityValues = ["low"] as const;
 
 function sendJson(res: ServerResponse, statusCode: number, body: unknown) {
@@ -80,7 +80,7 @@ export function normalizeCreateGenerationInput(body: unknown): CreateGenerationI
     throw new GenerationError("VALIDATION_ERROR", "preset is not supported.");
   }
   if (value.provider !== undefined && !isOneOf(value.provider, providerValues)) {
-    throw new GenerationError("VALIDATION_ERROR", "provider must be wavespeed.");
+    throw new GenerationError("VALIDATION_ERROR", "provider must be openai, wavespeed, or mock.");
   }
   if (value.imageQuality !== undefined && !isOneOf(value.imageQuality, qualityValues)) {
     throw new GenerationError("VALIDATION_ERROR", "imageQuality must be low.");

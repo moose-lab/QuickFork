@@ -2,8 +2,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import type { GeneratedImageResult, ImagePromptResult, LocaleCode } from "./types.js";
-import { WAVESPEED_API_KEY_ENV, normalizeWavespeedApiKey } from "./llm.js";
-import { WAVESPEED_PREDICTIONS_ENDPOINT, buildWavespeedImageRequest } from "./prompt.js";
+import { OPENAI_API_KEY_ENV, WAVESPEED_API_KEY_ENV, normalizeOpenAIApiKey, normalizeWavespeedApiKey } from "./llm.js";
+import { WAVESPEED_PREDICTIONS_ENDPOINT, buildOpenAIImageRequest, buildWavespeedImageRequest } from "./prompt.js";
 
 const WAVESPEED_IMAGE_POLL_INTERVAL_MS = 1000;
 const WAVESPEED_IMAGE_MAX_POLLS = 120;
@@ -16,6 +16,14 @@ type WavespeedImageResponse = {
   status?: string;
   urls?: Record<string, unknown>;
   data?: unknown;
+  error?: unknown;
+};
+
+type OpenAIImageResponse = {
+  data?: Array<{
+    b64_json?: unknown;
+    url?: unknown;
+  }>;
   error?: unknown;
 };
 
@@ -35,6 +43,89 @@ export async function generateMockImage(localeDir: string, locale: LocaleCode, p
     assetPaths: prompt.referencedAssets.map((asset) => asset.localPath),
     warnings: [],
   };
+}
+
+export async function generateOpenAIImage(
+  localeDir: string,
+  locale: LocaleCode,
+  prompt: ImagePromptResult,
+  input: {
+    preset: Parameters<typeof buildOpenAIImageRequest>[0]["preset"];
+    apiKey?: string;
+    fetchImpl?: typeof fetch;
+  },
+): Promise<GeneratedImageResult> {
+  const apiKey = input.apiKey ?? process.env[OPENAI_API_KEY_ENV];
+  if (!apiKey) {
+    throw new Error(`${OPENAI_API_KEY_ENV} is required to call OpenAI image generation.`);
+  }
+  const normalizedApiKey = normalizeOpenAIApiKey(apiKey);
+
+  await mkdir(localeDir, { recursive: true });
+  const promptPath = join(localeDir, "marketing_card_prompt.txt");
+  const imagePath = join(localeDir, "marketing-card.png");
+  await writeFile(promptPath, prompt.prompt, "utf8");
+
+  const request = buildOpenAIImageRequest({
+    model: prompt.model,
+    prompt: prompt.prompt,
+    preset: input.preset,
+    quality: prompt.quality,
+  });
+  const response = await (input.fetchImpl ?? fetch)(request.url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${normalizedApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request.body),
+  });
+  if (!response.ok) {
+    return writeFailedOpenAIImage({
+      imagePath,
+      prompt,
+      promptPath,
+      model: request.model,
+      message: `OpenAI image generation failed with ${response.status}.`,
+    });
+  }
+
+  const body = (await response.json()) as OpenAIImageResponse;
+  const firstImage = body.data?.[0];
+  if (typeof firstImage?.b64_json === "string" && firstImage.b64_json.trim()) {
+    await writeFile(imagePath, Buffer.from(firstImage.b64_json, "base64"));
+    return {
+      provider: "openai",
+      model: request.model,
+      status: "completed",
+      imagePath,
+      imageUrl: `data:image/png;base64,${firstImage.b64_json}`,
+      promptPath,
+      assetPaths: prompt.referencedAssets.map((asset) => asset.localPath),
+      warnings: [],
+    };
+  }
+  if (typeof firstImage?.url === "string" && firstImage.url.trim()) {
+    await writeFile(imagePath, `OpenAI image URL\n${firstImage.url}\n`, "utf8");
+    return {
+      provider: "openai",
+      model: request.model,
+      status: "completed",
+      imagePath,
+      imageUrl: firstImage.url,
+      promptPath,
+      assetPaths: prompt.referencedAssets.map((asset) => asset.localPath),
+      warnings: ["Stored the OpenAI output URL in the image artifact placeholder. Replace with binary download when production storage is selected."],
+    };
+  }
+
+  return writeFailedOpenAIImage({
+    imagePath,
+    prompt,
+    promptPath,
+    model: request.model,
+    message: `OpenAI image generation returned no image for ${locale}. error=${formatProviderError(body.error)}`,
+  });
 }
 
 export async function generateWavespeedImage(
@@ -109,7 +200,7 @@ export async function generateWavespeedImage(
         prompt,
         promptPath,
         model: request.model,
-        message: `Wavespeed image generation failed for ${locale}. id=${body.id ?? "unknown"} error=${formatWavespeedError(body.error)}`,
+        message: `Wavespeed image generation failed for ${locale}. id=${body.id ?? "unknown"} error=${formatProviderError(body.error)}`,
       });
     }
     return writeFailedWavespeedImage({
@@ -145,6 +236,25 @@ async function writeFailedWavespeedImage(input: {
   await writeFile(input.imagePath, `Wavespeed image generation failed\n${input.message}\n`, "utf8");
   return {
     provider: "wavespeed",
+    model: input.model,
+    status: "failed",
+    imagePath: input.imagePath,
+    promptPath: input.promptPath,
+    assetPaths: input.prompt.referencedAssets.map((asset) => asset.localPath),
+    warnings: [input.message],
+  };
+}
+
+async function writeFailedOpenAIImage(input: {
+  imagePath: string;
+  prompt: ImagePromptResult;
+  promptPath: string;
+  model: string;
+  message: string;
+}): Promise<GeneratedImageResult> {
+  await writeFile(input.imagePath, `OpenAI image generation failed\n${input.message}\n`, "utf8");
+  return {
+    provider: "openai",
     model: input.model,
     status: "failed",
     imagePath: input.imagePath,
@@ -214,7 +324,7 @@ function normalizeWavespeedImageResponse(response: WavespeedImageResponse): Wave
   return response;
 }
 
-function formatWavespeedError(error: unknown) {
+function formatProviderError(error: unknown) {
   if (typeof error === "string" && error.trim()) return error;
   if (error && typeof error === "object") return JSON.stringify(error);
   return "unknown";
