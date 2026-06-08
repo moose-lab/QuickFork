@@ -3,14 +3,22 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { resolveBrandAssets, storeReferenceAsset } from "./assets.js";
-import { generateMockImage, generateWavespeedImage } from "./image-generator.js";
+import { generateMockImage, generateOpenAIImage, generateWavespeedImage } from "./image-generator.js";
 import { buildRepoLaunchBrief } from "./launch-brief.js";
-import { WAVESPEED_CHAT_COMPLETIONS_URL, createMockLlmAdapter, createWavespeedLlmAdapter, resolveGenerationModelConfig } from "./llm.js";
-import { WAVESPEED_IMAGE_ENDPOINT, buildImagePrompt } from "./prompt.js";
+import {
+  WAVESPEED_CHAT_COMPLETIONS_URL,
+  createMockLlmAdapter,
+  createOpenAILlmAdapter,
+  createWavespeedLlmAdapter,
+  openAIResponsesUrl,
+  resolveChatGptOAuthCredential,
+  resolveGenerationModelConfig,
+} from "./llm.js";
+import { WAVESPEED_IMAGE_ENDPOINT, buildImagePrompt, openAIImageEndpoint } from "./prompt.js";
 import { inspectMarketingCard } from "./quality.js";
 import { parseGitHubRepositoryUrl } from "./repo.js";
 import { resolveRepositorySource } from "./repository-source.js";
-import type { CreateGenerationInput, GenerationModelCall, GenerationResponse, GenerationStage, LocaleCode } from "./types.js";
+import type { CreateGenerationInput, GenerationCredentialSource, GenerationModelCall, GenerationProvider, GenerationResponse, GenerationStage, LocaleCode } from "./types.js";
 import { GenerationError } from "./types.js";
 
 const DEFAULT_LOCALES: LocaleCode[] = ["en", "zh", "ja"];
@@ -28,6 +36,62 @@ function responseRepo(owner: string, repo: string) {
   };
 }
 
+function assertSupportedProvider(provider: GenerationProvider) {
+  if (provider !== "mock" && provider !== "chatgpt-oauth" && provider !== "openai" && provider !== "wavespeed") {
+    throw new GenerationError("VALIDATION_ERROR", "provider must be chatgpt-oauth, openai, wavespeed, or mock.");
+  }
+}
+
+function createLlmAdapter(provider: GenerationProvider, model: string, bearerToken?: string) {
+  if (provider === "chatgpt-oauth") return createOpenAILlmAdapter({ model, apiKey: bearerToken });
+  if (provider === "openai") return createOpenAILlmAdapter({ model });
+  if (provider === "wavespeed") return createWavespeedLlmAdapter({ model });
+  return createMockLlmAdapter({ model });
+}
+
+function llmEndpoint(provider: GenerationProvider) {
+  if (provider === "chatgpt-oauth" || provider === "openai") return openAIResponsesUrl();
+  if (provider === "wavespeed") return WAVESPEED_CHAT_COMPLETIONS_URL;
+  return undefined;
+}
+
+function llmCallStatus(provider: GenerationProvider) {
+  return provider === "mock" ? "skipped" : "completed";
+}
+
+function readmeStageLabel(provider: GenerationProvider) {
+  if (provider === "chatgpt-oauth") return "ChatGPT OAuth README analysis";
+  if (provider === "openai") return "OpenAI README analysis";
+  if (provider === "wavespeed") return "GPT5.5 README analysis";
+  return "README analysis";
+}
+
+function launchPlanStageLabel(provider: GenerationProvider) {
+  if (provider === "chatgpt-oauth") return "ChatGPT OAuth launch plan";
+  if (provider === "openai") return "OpenAI launch plan";
+  if (provider === "wavespeed") return "GPT5.5 launch plan";
+  return "Launch plan";
+}
+
+function imageEndpoint(provider: GenerationProvider) {
+  if (provider === "chatgpt-oauth" || provider === "openai") return openAIImageEndpoint();
+  if (provider === "wavespeed") return WAVESPEED_IMAGE_ENDPOINT;
+  return undefined;
+}
+
+function imageStageLabel(provider: GenerationProvider, model: string) {
+  if (provider === "mock") return "Mock image render";
+  return `${model} render`;
+}
+
+function imageCallStatus(provider: GenerationProvider, generationStatus: "completed" | "failed") {
+  return provider === "mock" ? "skipped" : generationStatus;
+}
+
+function credentialSource(provider: GenerationProvider, source?: GenerationCredentialSource) {
+  return provider === "chatgpt-oauth" ? source : undefined;
+}
+
 function resolveOutputRoot(outputRoot?: string) {
   if (outputRoot) return outputRoot;
   if (process.env.VERCEL) return join(tmpdir(), "quickfork-output", "project-launch");
@@ -41,17 +105,15 @@ async function writeJson(path: string, value: unknown) {
 export async function runProjectLaunchGeneration(input: CreateGenerationInput): Promise<GenerationResponse> {
   const repo = parseGitHubRepositoryUrl(input.repoUrl);
   const locales = input.locales?.length ? input.locales : DEFAULT_LOCALES;
-  const provider = input.provider ?? "mock";
+  const provider = input.provider ?? "chatgpt-oauth";
   const preset = input.preset ?? "4:3";
   const imageQuality = input.imageQuality ?? "low";
-  const modelConfig = resolveGenerationModelConfig(input.models);
-  const llm = provider === "wavespeed" ? createWavespeedLlmAdapter({ model: modelConfig.llm }) : createMockLlmAdapter({ model: modelConfig.llm });
+  assertSupportedProvider(provider);
+  const chatGptOAuthCredential = provider === "chatgpt-oauth" ? resolveChatGptOAuthCredential(input.auth) : undefined;
+  const modelConfig = resolveGenerationModelConfig(input.models, provider);
+  const llm = createLlmAdapter(provider, modelConfig.llm, chatGptOAuthCredential?.bearerToken);
   const stages: GenerationStage[] = [];
   const modelCalls: GenerationModelCall[] = [];
-
-  if (provider !== "mock" && provider !== "wavespeed") {
-    throw new GenerationError("VALIDATION_ERROR", "provider must be wavespeed.");
-  }
 
   const repositorySource = await resolveRepositorySource(repo, input);
   stages.push({
@@ -64,16 +126,17 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
   const readme = await llm.readRepositoryContext({ repo, metadata, readmeMarkdown });
   stages.push({
     id: "readme",
-    label: provider === "wavespeed" ? "GPT5.5 README analysis" : "README analysis",
+    label: readmeStageLabel(provider),
     status: "completed",
     model: modelConfig.llm,
   });
   modelCalls.push({
     provider,
     model: modelConfig.llm,
-    endpoint: provider === "wavespeed" ? WAVESPEED_CHAT_COMPLETIONS_URL : undefined,
+    endpoint: llmEndpoint(provider),
     purpose: "readme_analysis",
-    status: provider === "wavespeed" ? "completed" : "skipped",
+    status: llmCallStatus(provider),
+    credentialSource: credentialSource(provider, chatGptOAuthCredential?.source),
   });
   const { primaryAsset } = resolveBrandAssets(repo, metadata, readme);
 
@@ -91,16 +154,17 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
   });
   stages.push({
     id: "brief",
-    label: provider === "wavespeed" ? "GPT5.5 launch plan" : "Launch plan",
+    label: launchPlanStageLabel(provider),
     status: "completed",
     model: modelConfig.llm,
   });
   modelCalls.push({
     provider,
     model: modelConfig.llm,
-    endpoint: provider === "wavespeed" ? WAVESPEED_CHAT_COMPLETIONS_URL : undefined,
+    endpoint: llmEndpoint(provider),
     purpose: "launch_plan",
-    status: provider === "wavespeed" ? "completed" : "skipped",
+    status: llmCallStatus(provider),
+    credentialSource: credentialSource(provider, chatGptOAuthCredential?.source),
   });
   const { brief, visualDirection, layout, localizedCopy } = plan;
   const launchBrief = buildRepoLaunchBrief({
@@ -140,9 +204,17 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
       });
     }
     const generated =
-      provider === "wavespeed"
-        ? await generateWavespeedImage(localeDir, locale, prompt, { preset })
-        : await generateMockImage(localeDir, locale, prompt);
+      provider === "chatgpt-oauth"
+        ? await generateOpenAIImage(localeDir, locale, prompt, {
+            preset,
+            apiKey: chatGptOAuthCredential?.bearerToken,
+            provider: "chatgpt-oauth",
+          })
+        : provider === "openai"
+          ? await generateOpenAIImage(localeDir, locale, prompt, { preset })
+        : provider === "wavespeed"
+          ? await generateWavespeedImage(localeDir, locale, prompt, { preset })
+          : await generateMockImage(localeDir, locale, prompt);
     if (generated.status === "failed") {
       hasImageFailure = true;
     }
@@ -168,16 +240,17 @@ export async function runProjectLaunchGeneration(input: CreateGenerationInput): 
   const generationStatus = hasImageFailure ? "failed" : "completed";
   stages.push({
     id: "image",
-    label: provider === "wavespeed" ? "gpt-image-2 render" : "Mock image render",
+    label: imageStageLabel(provider, modelConfig.image),
     status: generationStatus,
     model: modelConfig.image,
   });
   modelCalls.push({
     provider,
     model: modelConfig.image,
-    endpoint: provider === "wavespeed" ? WAVESPEED_IMAGE_ENDPOINT : undefined,
+    endpoint: imageEndpoint(provider),
     purpose: "image_generation",
-    status: provider === "wavespeed" ? generationStatus : "skipped",
+    status: imageCallStatus(provider, generationStatus),
+    credentialSource: credentialSource(provider, chatGptOAuthCredential?.source),
   });
   stages.push({
     id: "quality",

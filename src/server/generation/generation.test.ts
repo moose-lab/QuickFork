@@ -5,17 +5,22 @@ import { tmpdir } from "node:os";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  CHATGPT_OAUTH_ACCESS_TOKEN_ENV,
   createMockLlmAdapter,
   DEFAULT_GENERATION_MODELS,
+  OPENAI_API_KEY_ENV,
+  OPENAI_BASE_URL_ENV,
+  OPENAI_RESPONSES_URL,
   WAVESPEED_API_KEY_ENV,
+  buildOpenAIResponsesRequest,
   buildWavespeedChatCompletionRequest,
 } from "./llm";
 import { resolveBrandAssets, storeReferenceAsset } from "./assets";
 import { buildProjectBrief } from "./brief";
 import { buildLayoutSpec, buildLocalizedCopies } from "./copy";
-import { generateWavespeedImage } from "./image-generator";
+import { generateOpenAIImage, generateWavespeedImage } from "./image-generator";
 import { runProjectLaunchGeneration } from "./orchestrator";
-import { buildImagePrompt, buildWavespeedImageRequest, imageAspectRatioForPreset, imageSizeForPreset } from "./prompt";
+import { OPENAI_IMAGE_ENDPOINT, buildImagePrompt, buildOpenAIImageRequest, buildWavespeedImageRequest, imageAspectRatioForPreset, imageSizeForPreset } from "./prompt";
 import { inspectMarketingCard } from "./quality";
 import { extractReadmeContext } from "./readme";
 import { fetchGitHubRepoMetadata, fetchRepositoryReadme, resolveRepositorySource } from "./repository-source";
@@ -72,6 +77,9 @@ const openDesignMetadata = {
 describe("project launch generation backend", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+    delete process.env.CHATGPT_OAUTH_ACCESS_TOKEN;
+    delete process.env.OPENAI_API_KEY;
+    delete process.env.OPENAI_BASE_URL;
     delete process.env.WAVESPEED_API_KEY;
     delete process.env.VERCEL;
   });
@@ -131,6 +139,45 @@ describe("project launch generation backend", () => {
     expect(JSON.stringify(request)).not.toContain("YOUR_API_KEY");
   });
 
+  it("builds the OpenAI Responses request without persisting credentials", () => {
+    const request = buildOpenAIResponsesRequest({
+      model: "gpt-5.5",
+      instructions: "Read this README and return project signals.",
+      input: JSON.stringify({ repo: "QwenLM/FlashQLA" }),
+      temperature: 0.2,
+    });
+
+    expect(OPENAI_API_KEY_ENV).toBe("OPENAI_API_KEY");
+    expect(request.url).toBe("https://api.openai.com/v1/responses");
+    expect(request.body).toMatchObject({
+      model: "gpt-5.5",
+      instructions: "Read this README and return project signals.",
+      input: expect.stringContaining("QwenLM/FlashQLA"),
+      temperature: 0.2,
+    });
+    expect(JSON.stringify(request)).not.toContain("test-openai-key");
+  });
+
+  it("uses the optional OpenAI-compatible base URL for text and image requests", () => {
+    process.env[OPENAI_BASE_URL_ENV] = "https://gateway.example.test/openai/v1/";
+
+    expect(
+      buildOpenAIResponsesRequest({
+        model: "gpt-5.5",
+        instructions: "Analyze.",
+        input: "README",
+      }).url,
+    ).toBe("https://gateway.example.test/openai/v1/responses");
+    expect(
+      buildOpenAIImageRequest({
+        model: "gpt-image-2",
+        prompt: "Create a launch card",
+        preset: "3:2",
+        quality: "low",
+      }).url,
+    ).toBe("https://gateway.example.test/openai/v1/images/generations");
+  });
+
   it("normalizes copied Wavespeed API keys before writing request headers", async () => {
     process.env.WAVESPEED_API_KEY = "“test-key”";
     const fetchMock = vi.fn(async (_url: string | URL | Request, _init?: RequestInit) =>
@@ -150,6 +197,29 @@ describe("project launch generation backend", () => {
     const firstRequest = fetchMock.mock.calls[0]?.[1];
     expect(firstRequest?.headers).toMatchObject({
       Authorization: "Bearer test-key",
+    });
+  });
+
+  it("normalizes copied OpenAI API keys before writing request headers", async () => {
+    process.env.OPENAI_API_KEY = "Bearer “test-openai-key”";
+    const fetchMock = vi.fn(async (_url: string | URL | Request, _init?: RequestInit) =>
+      new Response(JSON.stringify({ output_text: "ok" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await import("./llm").then(({ callOpenAIResponses }) =>
+      callOpenAIResponses({
+        instructions: "Analyze the repository.",
+        input: "README",
+      }),
+    );
+
+    const firstRequest = fetchMock.mock.calls[0]?.[1];
+    expect(firstRequest?.headers).toMatchObject({
+      Authorization: "Bearer test-openai-key",
     });
   });
 
@@ -759,6 +829,26 @@ describe("project launch generation backend", () => {
     });
   });
 
+  it("builds the OpenAI image request from the prompt contract", () => {
+    const imageRequest = buildOpenAIImageRequest({
+      model: "gpt-image-2",
+      prompt: "Create a launch card",
+      preset: "16:9",
+      quality: "low",
+    });
+
+    expect(imageRequest.url).toBe("https://api.openai.com/v1/images/generations");
+    expect(imageRequest.model).toBe("gpt-image-2");
+    expect(imageRequest.body).toEqual({
+      model: "gpt-image-2",
+      prompt: "Create a launch card",
+      size: "1536x1024",
+      quality: "low",
+      n: 1,
+      output_format: "png",
+    });
+  });
+
   it("builds an image prompt with source-backed identity rules and exact text slots", () => {
     const repo = parseGitHubRepositoryUrl("https://github.com/nexu-io/open-design");
     const readme = extractReadmeContext(openDesignReadme, repo, openDesignMetadata);
@@ -919,6 +1009,178 @@ describe("project launch generation backend", () => {
       expect(result.artifactRoot).not.toMatch(/^output[/\\]/);
     } finally {
       if (artifactRoot) await rm(artifactRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("writes OpenAI image b64 results and returns a browser-renderable data URL", async () => {
+    const outputRoot = await mkdtemp(join(tmpdir(), "quickfork-openai-image-"));
+    process.env.OPENAI_API_KEY = "test-openai-key";
+
+    try {
+      const result = await generateOpenAIImage(outputRoot, "en", {
+        model: "gpt-image-2",
+        size: "1536x1024",
+        quality: "low",
+        prompt: "Create a launch card with exact text.",
+        referencedAssets: [],
+      }, {
+        preset: "3:2",
+        fetchImpl: vi.fn(async () =>
+          new Response(JSON.stringify({ data: [{ b64_json: Buffer.from("fake-png").toString("base64") }] }), {
+            headers: { "Content-Type": "application/json" },
+            status: 200,
+          }),
+        ),
+      });
+
+      expect(result.status).toBe("completed");
+      expect(result.provider).toBe("openai");
+      expect(result.imageUrl).toBe(`data:image/png;base64,${Buffer.from("fake-png").toString("base64")}`);
+      await expect(readFile(result.promptPath, "utf8")).resolves.toContain("Create a launch card with exact text.");
+      await expect(readFile(result.imagePath, "utf8")).resolves.toBe("fake-png");
+    } finally {
+      await rm(outputRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("calls direct OpenAI Responses and Images APIs when provider is openai", async () => {
+    const outputRoot = await mkdtemp(join(tmpdir(), "quickfork-openai-generation-"));
+    process.env.OPENAI_API_KEY = "test-openai-key";
+    const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const endpoint = String(url);
+      const headers = init?.headers as Record<string, string>;
+      expect(headers.Authorization).toBe("Bearer test-openai-key");
+      if (endpoint === OPENAI_RESPONSES_URL) {
+        return new Response(JSON.stringify({ output_text: "Use deterministic project evidence from the README." }), {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      if (endpoint === OPENAI_IMAGE_ENDPOINT) {
+        expect(JSON.parse(String(init?.body))).toMatchObject({
+          model: "gpt-image-2",
+          prompt: expect.stringContaining("Asset type:"),
+          size: "1536x1024",
+          quality: "low",
+          output_format: "png",
+        });
+        return new Response(JSON.stringify({ data: [{ b64_json: Buffer.from("openai-card").toString("base64") }] }), {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      throw new Error(`Unexpected fetch: ${endpoint}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    try {
+      const result = await runProjectLaunchGeneration({
+        repoUrl: "https://github.com/QwenLM/FlashQLA",
+        locales: ["en"],
+        provider: "openai",
+        preset: "16:9",
+        imageQuality: "low",
+        outputRoot,
+        mock: {
+          readmeMarkdown: openDesignReadme,
+        },
+      });
+
+      expect(fetchMock).toHaveBeenCalledTimes(3);
+      expect(fetchMock.mock.calls.map((call) => String(call[0]))).toEqual([
+        "https://api.openai.com/v1/responses",
+        "https://api.openai.com/v1/responses",
+        "https://api.openai.com/v1/images/generations",
+      ]);
+      expect(result.modelConfig).toEqual({
+        llm: "gpt-5.5",
+        image: "gpt-image-2",
+      });
+      expect(result.modelCalls).toMatchObject([
+        { provider: "openai", model: "gpt-5.5", endpoint: "https://api.openai.com/v1/responses", purpose: "readme_analysis", status: "completed" },
+        { provider: "openai", model: "gpt-5.5", endpoint: "https://api.openai.com/v1/responses", purpose: "launch_plan", status: "completed" },
+        { provider: "openai", model: "gpt-image-2", endpoint: "https://api.openai.com/v1/images/generations", purpose: "image_generation", status: "completed" },
+      ]);
+      expect(result.outputs.en.imageUrl).toMatch(/^data:image\/png;base64,/);
+    } finally {
+      await rm(outputRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("defaults to ChatGPT OAuth bearer auth for repo analysis, launch planning, and image generation", async () => {
+    const outputRoot = await mkdtemp(join(tmpdir(), "quickfork-chatgpt-oauth-generation-"));
+    const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const endpoint = String(url);
+      const headers = init?.headers as Record<string, string>;
+      expect(headers.Authorization).toBe("Bearer oauth-user-token");
+      if (endpoint === OPENAI_RESPONSES_URL) {
+        return new Response(JSON.stringify({ output_text: "Use deterministic project evidence from the README." }), {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      if (endpoint === OPENAI_IMAGE_ENDPOINT) {
+        return new Response(JSON.stringify({ data: [{ b64_json: Buffer.from("oauth-card").toString("base64") }] }), {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      throw new Error(`Unexpected fetch: ${endpoint}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    try {
+      const result = await runProjectLaunchGeneration({
+        repoUrl: "https://github.com/QwenLM/FlashQLA",
+        locales: ["en"],
+        preset: "16:9",
+        imageQuality: "low",
+        outputRoot,
+        auth: {
+          bearerToken: "Bearer “oauth-user-token”",
+          source: "request_header",
+        },
+        mock: {
+          readmeMarkdown: openDesignReadme,
+        },
+      });
+      const manifest = JSON.parse(await readFile(result.manifestPath, "utf8")) as {
+        modelCalls: Array<{ provider: string; purpose: string; credentialSource?: string }>;
+      };
+
+      expect(fetchMock).toHaveBeenCalledTimes(3);
+      expect(result.modelCalls).toMatchObject([
+        { provider: "chatgpt-oauth", model: "gpt-5.5", endpoint: "https://api.openai.com/v1/responses", purpose: "readme_analysis", status: "completed", credentialSource: "request_header" },
+        { provider: "chatgpt-oauth", model: "gpt-5.5", endpoint: "https://api.openai.com/v1/responses", purpose: "launch_plan", status: "completed", credentialSource: "request_header" },
+        { provider: "chatgpt-oauth", model: "gpt-image-2", endpoint: "https://api.openai.com/v1/images/generations", purpose: "image_generation", status: "completed", credentialSource: "request_header" },
+      ]);
+      expect(result.outputs.en.imageUrl).toBe(`data:image/png;base64,${Buffer.from("oauth-card").toString("base64")}`);
+      expect(JSON.stringify(manifest)).not.toContain("oauth-user-token");
+    } finally {
+      await rm(outputRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("requires a ChatGPT OAuth bearer token when provider is chatgpt-oauth", async () => {
+    const outputRoot = await mkdtemp(join(tmpdir(), "quickfork-chatgpt-oauth-missing-token-"));
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    try {
+      await expect(
+        runProjectLaunchGeneration({
+          repoUrl: "https://github.com/QwenLM/FlashQLA",
+          locales: ["en"],
+          provider: "chatgpt-oauth",
+          outputRoot,
+          mock: {
+            readmeMarkdown: openDesignReadme,
+          },
+        }),
+      ).rejects.toThrow(`${CHATGPT_OAUTH_ACCESS_TOKEN_ENV} or request Authorization bearer token is required`);
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      await rm(outputRoot, { recursive: true, force: true });
     }
   });
 

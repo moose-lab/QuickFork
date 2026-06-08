@@ -83,10 +83,12 @@ src/
   server/
     auth.ts               Better Auth configuration
     db/                   Neon Drizzle client and auth schema
+    generation/           GitHub source lookup, launch brief orchestration, and image provider adapters
   styles/
     app.css               Responsive product UI
 api/
   auth/[...all].ts        Vercel Function mounted at /api/auth/*
+  generations.ts          Vercel Function mounted at /api/generations
 drizzle/
   *.sql                   Database migrations
 public/
@@ -114,6 +116,12 @@ Secrets belong on the server, not in browser code:
 
 ```env
 OPENAI_API_KEY=
+# Optional local/dev token for provider="chatgpt-oauth" when no ChatGPT Action Authorization header is present.
+CHATGPT_OAUTH_ACCESS_TOKEN=
+# Optional OpenAI-compatible gateway override. Leave blank for the official OpenAI API.
+OPENAI_BASE_URL=
+# Optional fallback provider key when /api/generations uses provider="wavespeed".
+WAVESPEED_API_KEY=
 DATABASE_URL=
 BETTER_AUTH_SECRET=
 BETTER_AUTH_URL=
@@ -147,14 +155,18 @@ http://localhost:5173/api/auth/callback/google
 https://your-domain.example/api/auth/callback/google
 ```
 
-For live generation, add a Node API layer or Vercel serverless route that:
+## Live Generation API
 
-1. fetches GitHub README / metadata / optional PDF context
-2. calls the copy model
-3. calls the image model
-4. stores a manifest with copy, prompt, image path, model settings, and output preset
+`POST /api/generations` runs the server-side launch-card workflow:
 
-The current app keeps the core workflow deterministic and client-safe.
+1. fetches GitHub repository metadata and README content, with deterministic fallback data for failed source lookups
+2. calls OpenAI Responses for repository analysis and launch planning when `provider` is `chatgpt-oauth` or `openai`
+3. calls OpenAI Images for the marketing card render and returns `outputs[locale].imageUrl` for browser preview
+4. writes prompt, image, quality report, and manifest artifacts under the server output root
+
+The Hero generator sends `provider: "chatgpt-oauth"` by default, and the backend uses `chatgpt-oauth` when `provider` is omitted. For ChatGPT Action traffic, QuickFork reads the OAuth bearer token from the request `Authorization` header and uses it for repo analysis, launch planning, and image generation. For local development or server-side fallback, set `CHATGPT_OAUTH_ACCESS_TOKEN`.
+
+The API still accepts `provider: "openai"` with `OPENAI_API_KEY`, `provider: "mock"` for tests, and `provider: "wavespeed"` for the existing Wavespeed-compatible path. OAuth tokens are never written into manifests or API responses; model call metadata records only the credential source.
 
 ## Local Development
 
@@ -193,10 +205,7 @@ VERCEL_PROJECT_ID=
 
 ## Roadmap
 
-- Fetch GitHub README and repository metadata automatically.
 - Add PDF upload and extraction for paper-style repositories.
-- Add server-side OpenAI generation using `OPENAI_API_KEY`.
-- Save generation manifests for repeatable publishing.
 - Export README banners, slide images, and social cards as separate assets.
 - Add project pages for public showcases.
 

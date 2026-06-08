@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { runProjectLaunchGeneration } from "../src/server/generation/orchestrator.js";
 import type { CreateGenerationInput } from "../src/server/generation/types.js";
 import { GenerationError } from "../src/server/generation/types.js";
+import { normalizeOpenAIApiKey } from "../src/server/generation/llm.js";
 
 type ApiErrorCode = "VALIDATION_ERROR" | "METHOD_NOT_ALLOWED" | "GENERATION_FAILED";
 const localeValues = ["en", "zh", "ja"] as const;
@@ -18,7 +19,7 @@ const presetValues = [
   "16:9",
   "21:9",
 ] as const;
-const providerValues = ["mock", "wavespeed"] as const;
+const providerValues = ["mock", "chatgpt-oauth", "openai", "wavespeed"] as const;
 const qualityValues = ["low"] as const;
 
 function sendJson(res: ServerResponse, statusCode: number, body: unknown) {
@@ -67,7 +68,7 @@ export function normalizeCreateGenerationInput(body: unknown): CreateGenerationI
   if (!body || typeof body !== "object") {
     throw new GenerationError("VALIDATION_ERROR", "Request body must be a JSON object.");
   }
-  const value = body as Partial<CreateGenerationInput>;
+  const { auth: _untrustedAuth, ...value } = body as Partial<CreateGenerationInput> & { auth?: unknown };
   if (typeof value.repoUrl !== "string" || !value.repoUrl.trim()) {
     throw new GenerationError("VALIDATION_ERROR", "repoUrl is required.");
   }
@@ -80,7 +81,7 @@ export function normalizeCreateGenerationInput(body: unknown): CreateGenerationI
     throw new GenerationError("VALIDATION_ERROR", "preset is not supported.");
   }
   if (value.provider !== undefined && !isOneOf(value.provider, providerValues)) {
-    throw new GenerationError("VALIDATION_ERROR", "provider must be wavespeed.");
+    throw new GenerationError("VALIDATION_ERROR", "provider must be chatgpt-oauth, openai, wavespeed, or mock.");
   }
   if (value.imageQuality !== undefined && !isOneOf(value.imageQuality, qualityValues)) {
     throw new GenerationError("VALIDATION_ERROR", "imageQuality must be low.");
@@ -98,6 +99,30 @@ export function normalizeCreateGenerationInput(body: unknown): CreateGenerationI
   } as CreateGenerationInput;
 }
 
+function authorizationHeaderValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function bearerTokenFromAuthorizationHeader(value: string | string[] | undefined) {
+  const header = authorizationHeaderValue(value);
+  if (!header?.trim()) return undefined;
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  if (!match?.[1]) return undefined;
+  return normalizeOpenAIApiKey(match[1]);
+}
+
+export function attachRequestAuth(input: CreateGenerationInput, authorizationHeader: string | string[] | undefined): CreateGenerationInput {
+  const bearerToken = bearerTokenFromAuthorizationHeader(authorizationHeader);
+  if (!bearerToken) return input;
+  return {
+    ...input,
+    auth: {
+      bearerToken,
+      source: "request_header",
+    },
+  };
+}
+
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -107,7 +132,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     const body = await readJsonBody(req);
-    const input = normalizeCreateGenerationInput(body);
+    const input = attachRequestAuth(normalizeCreateGenerationInput(body), req.headers.authorization);
     const result = await runProjectLaunchGeneration(input);
     sendJson(res, 201, result);
   } catch (error) {
